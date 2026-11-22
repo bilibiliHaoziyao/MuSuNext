@@ -8,7 +8,7 @@
     <string name="home_lkm_update_available">A newer bundled LKM is available. Tap to update.</string>
     <string name="home_lkm_custom">Custom</string>
     <string name="home_unsupported">Unsupported</string>
-    <string name="home_unsupported_reason">MuSu Next only supports GKI kernels now, but you can patch the image for GKI devices.</string>
+    <string name="home_unsupported_reason">MuSu Next only supports GKI kernels (5.10+) via a loadable kernel module.</string>
     <string name="home_device_model">Device model</string>
     <string name="home_kernel">Kernel version</string>
     <string name="home_manager_version">Manager version</string>
@@ -111,7 +111,6 @@
     <string name="home_click_to_learn_kernelsu">Learn how to install MuSu Next and use modules.</string>
     <string name="home_support_title">Support Us</string>
     <string name="home_support_content">MuSu Next is, and always will be, free, and open source. However, you can show us that you care by making a donation.</string>
-    <string name="home_gki_warning">Starting from v3.0.0, the GKI work mode will be used only in testing environments. We do not recommend it for daily use, and image files will no longer be provided.</string>
     <string name="about_source_code"><![CDATA[View source code at %1$s<br/>Follow us on %2$s]]></string>
     <string name="profile" translatable="false">App Profile</string>
     <string name="profile_default">Default</string>
@@ -130,7 +129,6 @@
     <string name="failed_to_update_app_profile">Failed to update App Profile for %s</string>
     <string name="require_manager_version">Manager update required</string>
     <string name="require_kernel_version">Kernel update required. Tap to install.</string>
-    <string name="require_kernel_version_gki">Kernel update required</string>
     <string name="settings_umount_modules_default">Umount modules by default</string>
     <string name="settings_umount_modules_default_summary">The global default value for \"Umount modules\" in App Profile. If enabled, it will remove all module modifications to the system for apps that don\'t have a profile set.</string>
     <string name="profile_umount_modules_summary">Enabling this option will allow MuSu Next to restore any modified files by the modules for this app.</string>
@@ -294,7 +292,6 @@
     <string name="module_shortcut_permission_tip_default">If shortcut creation fails, please enable desktop shortcut permission for this app in system settings.</string>
     <string name="no_such_module">Module %s does not exist</string>
     <string name="module_unavailable">Module %s is disabled, updating, or pending removal</string>
-    <string name="select_file_tip_nogki">Please select the GKI device image file you want to patch!</string>
     <string name="current_kmi">KMI version of this device: %s</string>
     <string name="current_device_kmi">This device KMI</string>
     <string name="settings_enable_blur">Blur</string>

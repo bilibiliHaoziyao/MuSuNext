@@ -8,7 +8,7 @@ const projectJsonLd = JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'SoftwareSourceCode',
     name: 'MuSu Next',
-    description: 'An open-source, kernel-based root solution for Android GKI devices.',
+    description: 'An open-source, kernel-based root solution for Android GKI devices, running as a loadable kernel module.',
     url: `${SITE_URL}/`,
     image: `${SITE_URL}/logo.png`,
     codeRepository: 'https://github.com/bilibiliHaoziyao/MuSuNext',

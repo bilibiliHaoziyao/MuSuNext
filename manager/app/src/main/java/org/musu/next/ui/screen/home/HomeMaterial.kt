@@ -101,14 +101,9 @@ fun HomePagerMaterial(
             } else if (state.showKernelPrBuildWarning) {
                 WarningCard(stringResource(id = R.string.home_pr_kernel_warning), level = WarningLevel.Notice)
             }
-            if (state.showGkiWarning) {
-                WarningCard(stringResource(id = R.string.home_gki_warning), level = WarningLevel.Notice)
-            }
             if (state.requiresNewKernel) {
                 WarningCard(
-                    stringResource(
-                        id = if (state.canInstallKernelUpdate) R.string.require_kernel_version else R.string.require_kernel_version_gki
-                    ),
+                    stringResource(id = R.string.require_kernel_version),
                     onClick = if (state.canInstallKernelUpdate) actions.onInstallClick else null
                 )
             }
@@ -198,7 +193,7 @@ private fun StatusCard(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(13.dp)) {
         val ksuActive = state.ksuVersion != null
-        val notInstalled = !ksuActive && state.kernelVersion.isGKI()
+        val notInstalled = !ksuActive && state.kernelVersion.isSupportedKernel()
 
         val containerColor = if (ksuActive) {
             MaterialTheme.colorScheme.secondaryContainer
@@ -226,7 +221,7 @@ private fun StatusCard(
             when (state.lkmMode) {
                 null -> ""
                 true -> "LKM"
-                else -> "GKI"
+                else -> "Built-in"
             }
         } else ""
 

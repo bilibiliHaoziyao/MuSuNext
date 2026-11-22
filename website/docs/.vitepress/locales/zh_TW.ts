@@ -48,7 +48,6 @@ function sidebarGuide() {
           { text: 'MuSu Next 與 Magisk 的差異', link: '/zh_TW/guide/difference-with-magisk' },
           { text: '安裝', link: '/zh_TW/guide/installation' },
           { text: '如何建置？', link: '/zh_TW/guide/how-to-build' },
-          { text: '如何為非 GKI 核心整合 MuSu Next', link: '/zh_TW/guide/how-to-integrate-for-non-gki'},
           { text: '非官方支援裝置', link: '/zh_TW/guide/unofficially-support-devices.md' },
           { text: '模組指南', link: '/zh_TW/guide/module.md' },
           { text: '元模組', link: '/zh_TW/guide/metamodule.md' },

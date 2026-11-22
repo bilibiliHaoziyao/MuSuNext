@@ -307,7 +307,7 @@ MuSu Next 模組不支援在 Recovery 中安裝！！
 - `IS64BIT` (bool): 是否為 64 位元裝置
 - `API` (int): 目前裝置的 Android API 版本 (例如 Android 6.0 上為 `23`)
 - `KSU_UAPI_VER` (int): MuSu Next 使用者空間 (ksud) 的 UAPI 版本號 (例如 `2`)。當核心驅動發生破壞性更改時此版本號會遞增，模組可據此判斷相容性。
-- `KSU_RUNTIME_MODE` (string): MuSu Next 目前的執行模式。可能的值為 `built-in`（即 GKI 模式，編譯進核心）、`lkm`（開機時作為核心模組載入）或 `late-load`（開機後作為核心模組載入）。
+- `KSU_RUNTIME_MODE` (string): MuSu Next 目前的執行模式。可能的值為 `built-in`（編譯進核心）、`lkm`（開機時作為核心模組載入）或 `late-load`（開機後作為核心模組載入）。
 - `KSU_LATE_LOAD` (int?): 如果 MuSu Next 是在開機後延遲載入的，此變數的值為 `1`，否則不設定此變數。
 
 ::: warning 警告
@@ -375,15 +375,12 @@ set_perm_recursive <directory> <owner> <group> <dirpermission> <filepermission> 
 以下是Android的相關啟動流程（部分省略），其中包括MuSu Next的運行（帶前導星號），可以幫助您更好地理解這些模組腳本的用途：
 ```txt
 0. Bootloader (nothing on screen)
-load patched boot.img
-load kernel:
-    - GKI mode: GKI kernel with MuSu Next integrated
-    - LKM mode: stock kernel
+load patched boot.img（原廠核心 + 注入 MuSu Next 的 ramdisk）
+load kernel: stock kernel
 ...
 
 1. kernel exec init (oem logo on screen):
-    - GKI mode: stock init
-    - LKM mode: exec ksuinit, insmod kernelsu.ko, exec stock init
+    exec ksuinit, insmod kernelsu.ko, exec stock init
 mount /dev, /dev/pts, /proc, /sys, etc.
 property-init -> read default props
 read init.rc

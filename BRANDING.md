@@ -58,7 +58,7 @@ DER Size: 888 bytes (0x0378)
 
 **MuSu Next 管理器不能搭配官方 KernelSU 内核使用**（签名哈希不匹配）。你有两种方式让内核识别 MuSu Next 管理器：
 
-### 方式 A：LKM 模块（推荐，需要 GKI 设备）
+### 方式 A：LKM 模块（推荐，适用于 GKI 2.0 设备）
 
 内核侧 `kernel/Kbuild` 已写入新签名值，直接用本项目源码编译 LKM 即可：
 
@@ -74,9 +74,9 @@ make -f Kbuild \
 
 CI 工作流 `build-lkm.yml` / `ddk-lkm.yml` 已内置这些值，可直接触发云端构建。
 
-### 方式 B：集成进内核源码
+### 方式 B：编译进内核（built-in）
 
-把 `kernel/` 目录按上游文档 instructions 集成进你的内核源码树，编译出的 `kernelsu.ko` 会自带新的包名与签名校验值。
+把 `kernel/` 目录集成进你的内核源码树随内核一起编译（对应 `CONFIG_KSU=y`）。此方式为高级用法：主攻路线是方式 A 的 LKM 模块。无论哪种方式，包名与签名校验值都已内置在源码中。
 
 ### 签名私钥
 

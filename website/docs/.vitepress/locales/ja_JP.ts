@@ -47,7 +47,6 @@ function sidebarGuide() {
         { text: 'MuSu Next とは?', link: '/ja_JP/guide/what-is-kernelsu' },
         { text: 'インストール', link: '/ja_JP/guide/installation' },
         { text: 'ビルドするには?', link: '/ja_JP/guide/how-to-build' },
-        { text: '非 GKI デバイスでの実装', link: '/ja_JP/guide/how-to-integrate-for-non-gki' },
         { text: '非公式の対応デバイス', link: '/ja_JP/guide/unofficially-support-devices.md' },
         { text: 'モジュールのガイド', link: '/ja_JP/guide/module.md' },
         { text: 'メタモジュール', link: '/ja_JP/guide/metamodule.md' },

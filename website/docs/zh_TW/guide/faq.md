@@ -47,9 +47,6 @@ MuSu Next 的模組系統與 Magisk 的 magic mount 存在衝突，如果在 MuS
 
 可以，目前最低支援到 4.14；更低的版本您需要手動移植它，歡迎 PR！
 
-## 如何為舊版核心整合 MuSu Next？
-
-請參閱[指南](how-to-integrate-for-non-gki.md)
 
 ## 為何我的 Android 版本為 13，但核心版本卻是 "android12-5.10"？
 

@@ -118,5 +118,5 @@ MuSu Next 提供了一種無須直接修改系統分區的方式 (systemless) �
 2. 關閉「預設卸載模組」的開關，然後針對需要「卸載模組」的應用程式進行單獨的設置，在 App Profile 中開啟「卸載模組」；（相當於「黑名單」）。
 
 :::info 提示
-MuSu Next 在 5.10 及以上內核上，內核無須任何修改就可以卸載模組；但在 5.10 以下的設備上，這個開關僅僅是一個"設定"，MuSu Next 本身不會做任何動作，如果你希望在 5.10 以前的內核可以卸載模組，你需要將 `path_unmount` 函數向後移植到 `fs/namespace.c`，您可以在[如何為非 GKI 核心整合 MuSu Next](how-to-integrate-for-non-gki.md#how-to-backport-path_unpount)獲取更多資訊。一些模組（如 ZygiskNext）也會透過這個設定決定是否需要卸載。
+MuSu Next 在 5.10 及以上內核上，內核無須任何修改就可以卸載模組；但在 5.10 以下的設備上，這個開關僅僅是一個"設定"，MuSu Next 本身不會做任何動作，如果你希望在 5.10 以前的內核可以卸載模組，你需要將 `path_unmount` 函數向後移植到 `fs/namespace.c`，您需要自行將該函數向後移植到核心原始碼。一些模組（如 ZygiskNext）也會透過這個設定決定是否需要卸載。
 :::

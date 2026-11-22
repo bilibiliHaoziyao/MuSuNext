@@ -1,4 +1,4 @@
-[English](README.md) | [Español](README_ES.md) | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | **日本語** | [한국어](README_KR.md) | [Polski](README_PL.md) | [Português (Brasil)](README_PT-BR.md) | [Türkçe](README_TR.md) | [Русский](README_RU.md) | [Tiếng Việt](README_VI.md) | [Indonesia](README_ID.md) | [עברית](README_IW.md) | [हिंदी](README_IN.md) | [Italiano](README_IT.md)
+[English](README.md) | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | **日本語**
 
 # MuSu Next
 
@@ -20,7 +20,7 @@ Android におけるカーネルベースの root ソリューションです。
 
 ## 対応状況
 
-MuSu Next は GKI 2.0 デバイス（カーネルバージョン 5.10 以上）を公式にサポートしています。古いカーネル（4.14以上）とも互換性がありますが、自分でカーネルをビルドする必要があります。
+MuSu Next はローダブルカーネルモジュール（LKM）によって GKI 2.0 デバイス（カーネルバージョン 5.10 以上）を公式にサポートしています。古いカーネル（4.14以上）とも互換性がありますが、モジュールを自分でビルドする必要があります。直接フラッシュできる GKI boot イメージは提供されません。
 
 WSA 、ChromeOS とコンテナ上で動作する Android でも MuSu Next を統合して動かせます。
 

@@ -792,7 +792,7 @@ pub fn run() -> Result<()> {
             }
             BootInfo::DefaultPartition => {
                 let kmi = crate::boot_patch::get_current_kmi().unwrap_or_else(|_| String::new());
-                let name = crate::boot_patch::choose_boot_partition(&kmi, false, &None);
+                let name = crate::boot_patch::choose_boot_partition(&kmi, &None);
                 println!("{name}");
                 return Ok(());
             }

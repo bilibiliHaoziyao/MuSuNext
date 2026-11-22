@@ -1,76 +1,48 @@
-# 如何建置 MuSu Next? {#how-to-build-kernelsu}
+---
+description: 為 GKI 核心編譯 MuSu Next 可載入核心模組（kernelsu.ko）。
+---
 
-::: warning
-該文件僅供存檔參考，不再維護更新。
-自 MuSu Next v3.0 版本之後，為了更快的迭代和建置速度，我們放棄了對 GKI 映像模式的官方支援。推薦使用 `Ylarod/ddk` 建置 LKM 使用。
+# 如何編譯 LKM
+
+MuSu Next 以可載入核心模組（`kernelsu.ko`）的形式發布，而不是 boot 映像。本頁介紹如何自行編譯該模組。
+
+## 準備條件
+
+- 與裝置 KMI 匹配的 GKI 核心原始碼。MuSu Next 支援：`android12-5.10`、`android13-5.10`、`android13-5.15`、`android14-5.15`、`android14-6.1`、`android15-6.6`、`android16-6.12`、`android17-6.18`。
+- LLVM/Clang 工具鏈（包含 `llvm-strip`）。
+- Linux 環境（或 WSL2 / Linux 容器）。
+
+## 使用 ddk 編譯（推薦）
+
+最簡單的方式是使用 [ddk](https://github.com/5ec1cff/ddk) 編譯環境；[Ylarod/ddk](https://github.com/Ylarod/ddk) 提供了開箱即用的 Docker 映像。進入容器後，在儲存庫根目錄執行：
+
+```bash
+cd kernel
+./build-all.sh                # 編譯全部支援的 KMI
+./build-all.sh android14-6.1  # 或只編譯單一 KMI
+```
+
+產物是 `kernel/` 目錄下的 `kernelsu-<kmi>.ko`。
+
+## 手動編譯單一 KMI
+
+如果你已經有匹配的 GKI 核心原始碼（已編譯出 `vmlinux`）：
+
+```bash
+make -C kernel KDIR=/path/to/gki-kernel-source
+```
+
+Makefile 會基於 `KDIR` 編譯模組，然後執行 `check_symbol` 驗證 `kernelsu.ko` 對核心映像沒有未解析的符號依賴。
+
+:::tip x86_64
+模擬器與 WSA 請使用 `kernel/build-all-x64.sh`，並配合 `scripts/prepare-ddk-x64.sh` 準備環境。
 :::
 
-首先,您需要閱讀核心建置的 Android 官方文件：
+## 安裝模組
 
-1. [建置核心](https://source.android.com/docs/setup/build/building-kernels)
-2. [標準核心映像 (GKI) 發行組建](https://source.android.com/docs/core/architecture/kernel/gki-release-builds)
+透過管理器安裝（在安裝介面選擇 `.ko` 檔案），或用命令列 `ksud boot-patch -m kernelsu.ko` 安裝。參見[安裝](./installation.md)。
 
-::: warning 警告
-此文件適用於 GKI 裝置，如果您是舊版核心，請參閱[如何為非 GKI 裝置整合 MuSu Next](how-to-integrate-for-non-gki)
-:::
+## 說明
 
-## 建置核心 {#build-kernel}
-
-### 同步核心原始碼 {#sync-the-kernel-source-code}
-
-```sh
-repo init -u https://android.googlesource.com/kernel/manifest
-mv <kernel_manifest.xml> .repo/manifests
-repo init -m manifest.xml
-repo sync
-```
-
-`<kernel_manifest.xml>` 是一個可以唯一確定組建的資訊清單，您可以使用這個資訊清單進行可重新預測的組建。您需要從[標準核心映像 (GKI) 發行組建](https://source.android.com/docs/core/architecture/kernel/gki-release-builds)下載資訊清單。
-
-### 建置 {#build}
-
-請先查看[官方文件](https://source.android.com/docs/setup/build/building-kernels)。
-
-例如，我們需要建置 aarch64 核心映像：
-
-```sh
-LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh
-```
-
-不要忘記新增 `LTO=thin`，否則，如果您的電腦記憶體小於 24GB，建置可能會失敗。
-
-從 Android 13 開始，核心使用 `bazel` 建置：
-
-```sh
-tools/bazel build --config=fast //common:kernel_aarch64_dist
-```
-
-:::info 你可能需要知道...
-對於某些 Android 14 核心，要使 Wi-Fi/藍牙正常工作，可能需要刪除所有受 GKI 保護的匯出：
-
-```sh
-rm common/android/abi_gki_protected_exports_*
-```
-:::
-
-## 與 MuSu Next 一起建置核心 {#build-kernel-with-kernelsu}
-
-如果您可以成功建置核心，那麼建置 MuSu Next 就會非常輕鬆，依自己的需求在核心原始碼根目錄中執行以下任一命令：
-
-::: code-group
-
-```sh[最新 tag (穩定版本)]
-curl -LSs "https://raw.githubusercontent.com/bilibiliHaoziyao/MuSuNext/main/kernel/setup.sh" | bash -
-```
-
-```sh[main 分支 (開發版本)]
-curl -LSs "https://raw.githubusercontent.com/bilibiliHaoziyao/MuSuNext/main/kernel/setup.sh" | bash -s main
-```
-
-```sh[選取 tag (例如 v0.5.2)]
-curl -LSs "https://raw.githubusercontent.com/bilibiliHaoziyao/MuSuNext/main/kernel/setup.sh" | bash -s v0.5.2
-```
-
-:::
-
-然後重新建置核心，您將會得到一個帶有 MuSu Next 的核心映像！
+- 管理器簽章驗證值已寫入 `kernel/Kbuild`，編譯時無需手動傳參。
+- CI 工作流（`build-lkm.yml` / `ddk-lkm.yml`）會在每次發布時自動編譯相同的 KMI 清單。

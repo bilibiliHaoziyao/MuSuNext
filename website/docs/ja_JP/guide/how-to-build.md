@@ -1,63 +1,48 @@
-# MuSu Next のビルド方法は？
+---
+description: GKI カーネル向けに MuSu Next のローダブルカーネルモジュール（kernelsu.ko）をビルドします。
+---
 
-::: warning
-このドキュメントはアーカイブ参照のみを目的としており、更新されなくなりました。
-MuSu Next v3.0以降、より高速な反復とビルド速度のため、GKIイメージモードの公式サポートを終了しました。`Ylarod/ddk` を使用してLKMをビルドすることをお勧めします。
+# LKM のビルド方法
+
+MuSu Next は boot イメージではなく、ローダブルカーネルモジュール（`kernelsu.ko`）として提供されます。このページではモジュールの自前ビルド方法を説明します。
+
+## 必要なもの
+
+- 端末の KMI に一致する GKI カーネルソース。MuSu Next が対応する KMI：`android12-5.10`、`android13-5.10`、`android13-5.15`、`android14-5.15`、`android14-6.1`、`android15-6.6`、`android16-6.12`、`android17-6.18`。
+- LLVM/Clang ツールチェーン（`llvm-strip` を含む）。
+- Linux 環境（または WSL2 / Linux コンテナ）。
+
+## ddk でのビルド（推奨）
+
+最も簡単な方法は [ddk](https://github.com/5ec1cff/ddk) ビルド環境の利用です。[Ylarod/ddk](https://github.com/Ylarod/ddk) がすぐに使える Docker イメージを提供しています。コンテナ内でリポジトリのルートから実行します：
+
+```bash
+cd kernel
+./build-all.sh                # 対応するすべての KMI をビルド
+./build-all.sh android14-6.1  # 単一の KMI のみをビルド
+```
+
+出力物は `kernel/` ディレクトリ内の `kernelsu-<kmi>.ko` です。
+
+## 単一 KMI の手動ビルド
+
+対応する GKI カーネルソース（`vmlinux` までビルド済み）が既にある場合：
+
+```bash
+make -C kernel KDIR=/path/to/gki-kernel-source
+```
+
+Makefile は `KDIR` を基にモジュールをコンパイルし、その後 `check_symbol` を実行して、`kernelsu.ko` にカーネルイメージに対する未解決のシンボル依存がないことを検証します。
+
+:::tip x86_64
+エミュレーターや WSA 向けには `kernel/build-all-x64.sh` と `scripts/prepare-ddk-x64.sh` を使用してください。
 :::
 
-まず、Android の公式ドキュメントを読むべきです：
+## モジュールのインストール
 
-1. [カーネルをビルドする](https://source.android.com/docs/setup/build/building-kernels)
-2. [GKI リリースビルド](https://source.android.com/docs/core/architecture/kernel/gki-release-builds)
+ビルドしたモジュールはマネージャーからインストールする（インストール画面で `.ko` を選択）か、コマンドラインの `ksud boot-patch -m kernelsu.ko` でインストールします。詳しくは[インストール](./installation.md)を参照してください。
 
-::: 警告
-このページは GKI デバイス用です。もし古いカーネルを使用している場合は、[古いカーネルへの MuSu Next の統合方法](how-to-integrate-for-non-gki)を参照してください。
-:::
+## 補足
 
-## カーネルビルド
-
-### カーネルソースコードの同期
-
-```sh
-repo init -u https://android.googlesource.com/kernel/manifest
-mv <kernel_manifest.xml> .repo/manifests
-repo init -m manifest.xml
-repo sync
-```
-
-`<kernel_manifest.xml>` は、ビルドを一意に決定するマニフェストファイルです。マニフェストを使用して再現可能なビルドを行えます。マニフェストファイルは [Google GKI リリースビルド](https://source.android.com/docs/core/architecture/kernel/gki-release-builds) からダウンロードしてください。
-
-### ビルド
-
-まずは [公式ドキュメント](https://source.android.com/docs/setup/build/building-kernels)を確認してください。
-
-たとえば、aarch64 カーネルイメージをビルドする必要があります：
-
-```sh
-LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh
-```
-`LTO=thin` フラグを追加するのを忘れないでください。それをしないと、コンピュータのメモリが 24Gb 未満の場合にビルドに失敗する可能性があります。
-
-Android 13 からは、カーネルは `bazel` によってビルドされます：
-
-```sh
-tools/bazel build --config=fast //common:kernel_aarch64_dist
-```
-## MuSu Next を使ったカーネルビルド
-
-もしカーネルを正常にビルドできた場合、MuSu Next をビルドするのは簡単です。カーネルソースのルートディレクトリで任意のものを選択して実行します：
-
-::: code-group
-```sh[最新タグ(安定版)]
-curl -LSs "https://raw.githubusercontent.com/bilibiliHaoziyao/MuSuNext/main/kernel/setup.sh" | bash -
-```
-```sh[ main ブランチ (開発用)]
-curl -LSs "https://raw.githubusercontent.com/bilibiliHaoziyao/MuSuNext/main/kernel/setup.sh" | bash -s main
-```
-```sh[タグを選択 (例：v0.5.2)]
-curl -LSs "https://raw.githubusercontent.com/bilibiliHaoziyao/MuSuNext/main/kernel/setup.sh" | bash -s v0.5.2
-```
-
-:::
-
-その後でカーネルを再ビルドすると、MuSu Next が組み込まれたカーネルイメージが得られます！
+- マネージャーの署名検証値は `kernel/Kbuild` に組み込まれているため、手動で渡す必要はありません。
+- CI ワークフロー（`build-lkm.yml` / `ddk-lkm.yml`）はリリースごとに同じ KMI リストを自動ビルドします。

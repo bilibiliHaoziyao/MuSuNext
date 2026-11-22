@@ -297,7 +297,7 @@ MuSu Next モジュールは、カスタムリカバリーからのインスト�
 - `IS64BIT` (bool): `ARCH` が `arm64` または `x64` のときは `true` 
 - `API` (int): 端末の API レベル・Android のバージョン（例：Android 6.0 なら`23`）
 - `KSU_UAPI_VER` (int): MuSu Next ユーザー空間 (ksud) の UAPI バージョン（例：`2`）。カーネルドライバーに破壊的変更がある場合にこのバージョンが更新されます。モジュールはこの値で互換性を確認できます。
-- `KSU_RUNTIME_MODE` (string): MuSu Next の現在の実行モード。値は `built-in`（GKI モード、カーネルに組み込み）、`lkm`（起動時にカーネルモジュールとして読み込み）、または `late-load`（起動後にカーネルモジュールとして読み込み）のいずれかです。
+- `KSU_RUNTIME_MODE` (string): MuSu Next の現在の実行モード。値は `built-in`（カーネルに組み込み）、`lkm`（起動時にカーネルモジュールとして読み込み）、または `late-load`（起動後にカーネルモジュールとして読み込み）のいずれかです。
 - `KSU_LATE_LOAD` (int?): MuSu Next が起動後に遅延読み込みされた場合、この変数の値は `1` になります。それ以外の場合、この変数は設定されません。
 
 ::: warning 警告

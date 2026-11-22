@@ -48,7 +48,6 @@ function sidebarGuide() {
           { text: 'Difference with Magisk', link: '/guide/difference-with-magisk' },
           { text: 'Installation', link: '/guide/installation' },
           { text: 'How to build', link: '/guide/how-to-build' },
-          { text: 'Intergrate for non-GKI devices', link: '/guide/how-to-integrate-for-non-gki'},
           { text: 'Unofficially supported devices', link: '/guide/unofficially-support-devices.md' },
           { text: 'Module guide', link: '/guide/module.md' },
           { text: 'Metamodule', link: '/guide/metamodule.md' },

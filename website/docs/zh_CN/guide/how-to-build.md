@@ -1,68 +1,48 @@
-# 如何构建 MuSu Next？
+---
+description: 为 GKI 内核编译 MuSu Next 可加载内核模块（kernelsu.ko）。
+---
 
-::: warning
-该文档仅供存档参考，不再维护更新。
-自 MuSu Next v3.0 版本之后，为了更快的迭代和构建速度，我们放弃了对 GKI 镜像模式的官方支持。推荐使用 `Ylarod/ddk` 构建 LKM 使用。
+# 如何编译 LKM
+
+MuSu Next 以可加载内核模块（`kernelsu.ko`）的形式发布，而不是 boot 镜像。本页介绍如何自行编译该模块。
+
+## 准备条件
+
+- 与设备 KMI 匹配的 GKI 内核源码。MuSu Next 支持：`android12-5.10`、`android13-5.10`、`android13-5.15`、`android14-5.15`、`android14-6.1`、`android15-6.6`、`android16-6.12`、`android17-6.18`。
+- LLVM/Clang 工具链（包含 `llvm-strip`）。
+- Linux 环境（或 WSL2 / Linux 容器）。
+
+## 使用 ddk 编译（推荐）
+
+最简单的方式是使用 [ddk](https://github.com/5ec1cff/ddk) 编译环境；[Ylarod/ddk](https://github.com/Ylarod/ddk) 提供了开箱即用的 Docker 镜像。进入容器后，在仓库根目录执行：
+
+```bash
+cd kernel
+./build-all.sh                # 编译全部支持的 KMI
+./build-all.sh android14-6.1  # 或只编译单个 KMI
+```
+
+产物是 `kernel/` 目录下的 `kernelsu-<kmi>.ko`。
+
+## 手动编译单个 KMI
+
+如果你已经有匹配的 GKI 内核源码（已编译出 `vmlinux`）：
+
+```bash
+make -C kernel KDIR=/path/to/gki-kernel-source
+```
+
+Makefile 会基于 `KDIR` 编译模块，然后运行 `check_symbol` 校验 `kernelsu.ko` 对内核镜像没有未解析的符号依赖。
+
+:::tip x86_64
+模拟器与 WSA 请使用 `kernel/build-all-x64.sh`，并配合 `scripts/prepare-ddk-x64.sh` 准备环境。
 :::
 
-首先，您应该阅读内核构建的 Android 官方文档：
+## 安装模块
 
-1. [构建内核](https://source.android.com/docs/setup/build/building-kernels)
-2. [通用内核映像 (GKI) 发布构建](https://source.android.com/docs/core/architecture/kernel/gki-release-builds)
+通过管理器安装（在安装界面选择 `.ko` 文件），或用命令行 `ksud boot-patch -m kernelsu.ko` 安装。参见[安装](./installation.md)。
 
-::: warning
-本文档适用于 GKI 设备，如果你是旧内核，请参考[如何为非GKI设备集成 MuSu Next](how-to-integrate-for-non-gki)
-:::
+## 说明
 
-## 构建内核
-
-### 同步内核源码
-
-```sh
-repo init -u https://android.googlesource.com/kernel/manifest
-mv <kernel_manifest.xml> .repo/manifests
-repo init -m manifest.xml
-repo sync
-```
-
-`<kernel_manifest.xml>` 是一个可以唯一确定构建的清单文件，您可以使用该清单进行可重新预测的构建。 您应该从 [通用内核映像 (GKI) 发布构建](https://source.android.com/docs/core/architecture/kernel/gki-release-builds) 下载清单文件 
-
-### 构建
-
-请先查看 [官方文档](https://source.android.com/docs/setup/build/building-kernels)。
-
-例如，我们需要构建 aarch64 内核镜像：
-
-```sh
-LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh
-```
-
-不要忘记添加 `LTO=thin`, 否则，如果您的计算机内存小于 24GB，构建可能会失败.
-
-从 Android 13 开始，内核由 `bazel` 构建:
-
-```sh
-tools/bazel build --config=fast //common:kernel_aarch64_dist
-```
-
-## 使用 MuSu Next 构建内核
-
-如果您可以成功构建内核，那么构建 MuSu Next 就很容易，根据自己的需求在内核源代码根目录中运行以下任一命令：
-
-::: code-group
-
-```sh[最新 tag(稳定版本)]
-curl -LSs "https://raw.githubusercontent.com/bilibiliHaoziyao/MuSuNext/main/kernel/setup.sh" | bash -
-```
-
-```sh[main 分支(开发版本)]
-curl -LSs "https://raw.githubusercontent.com/bilibiliHaoziyao/MuSuNext/main/kernel/setup.sh" | bash -s main
-```
-
-```sh[指定 tag(比如 v0.5.2)]
-curl -LSs "https://raw.githubusercontent.com/bilibiliHaoziyao/MuSuNext/main/kernel/setup.sh" | bash -s v0.5.2
-```
-
-:::
-
-然后重建内核，您将获得带有 MuSu Next 的内核映像！
+- 管理器签名校验值已写入 `kernel/Kbuild`，编译时无需手动传参。
+- CI 工作流（`build-lkm.yml` / `ddk-lkm.yml`）会在每次发布时自动编译相同的 KMI 列表。

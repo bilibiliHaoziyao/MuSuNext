@@ -22,7 +22,7 @@ const llmsTxtTemplate = `# {title}
 
 - Website: ${SITE_URL}
 - Source code: https://github.com/bilibiliHaoziyao/MuSuNext
-- Downloads (manager APK, LKM and GKI images): https://github.com/bilibiliHaoziyao/MuSuNext/releases
+- Downloads (manager APK and LKM): https://github.com/bilibiliHaoziyao/MuSuNext/releases
 - Telegram: https://b23.tv/6UtmCB0
 
 ## Table of Contents
@@ -48,9 +48,9 @@ export default defineConfig( {
                 customLLMsTxtTemplate: llmsTxtTemplate,
                 customTemplateVariables: {
                     title: 'MuSu Next',
-                    description: 'MuSu Next is an open-source, kernel-based root solution for Android GKI devices.',
+                    description: 'MuSu Next is an open-source, kernel-based root solution for Android GKI devices, running as a loadable kernel module.',
                     details: 'MuSu Next runs inside the Linux kernel and grants root access to permitted apps directly from kernel space. ' +
-                        'It consists of a kernel module (loaded as an LKM or built into a GKI kernel), the userspace daemon `ksud`, and the MuSu Next manager app. ' +
+                        'It consists of a loadable kernel module (LKM), the userspace daemon `ksud`, and the MuSu Next manager app. ' +
                         'Most Magisk modules work on MuSu Next; modules that modify `/system` require a metamodule such as meta-overlayfs.',
                 },
             }),

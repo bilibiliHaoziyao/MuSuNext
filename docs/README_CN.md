@@ -1,4 +1,4 @@
-[English](README.md) | [Español](README_ES.md) | **简体中文** | [繁體中文](README_TW.md) | [日本語](README_JP.md) | [한국어](README_KR.md) | [Polski](README_PL.md) | [Português (Brasil)](README_PT-BR.md) | [Türkçe](README_TR.md) | [Русский](README_RU.md) | [Tiếng Việt](README_VI.md) | [Indonesia](README_ID.md) | [עברית](README_IW.md) | [हिंदी](README_IN.md) | [Italiano](README_IT.md)
+[English](README.md) | **简体中文** | [繁體中文](README_TW.md) | [日本語](README_JP.md)
 
 # MuSu Next
 
@@ -20,7 +20,7 @@
 
 ## 兼容状态
 
-MuSu Next 官方支持 GKI 2.0 的设备（内核版本5.10以上）；旧内核也是兼容的（最低4.14+），不过需要自己编译内核。
+MuSu Next 通过可加载内核模块（LKM）官方支持 GKI 2.0 的设备（内核版本5.10以上）；旧内核也是兼容的（最低4.14+），不过需要自己编译模块。不再提供可直接刷写的 GKI boot 镜像。
 
 WSA, ChromeOS 和运行在容器上的 Android 也可以与 MuSu Next 一起工作。
 

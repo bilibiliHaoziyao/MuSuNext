@@ -55,9 +55,6 @@ It's the device's kernel that affects MuSu Next's compatibility, and it has noth
 
 It's possible. MuSu Next is backported to kernel 4.14 now. For older kernels, you need to backport it manually, and PRs are always welcome!
 
-## How to integrate MuSu Next for an older kernel?
-
-Please check the [Integrate for non-GKI devices](how-to-integrate-for-non-gki) guide.
 
 ## Why my Android version is 13, and the kernel shows "android12-5.10"?
 

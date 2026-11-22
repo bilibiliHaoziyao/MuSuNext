@@ -386,7 +386,7 @@ The `customize.sh` script runs in MuSu Next's BusyBox `ash` shell with Standalon
 - `IS64BIT` (bool): `true` if `$ARCH` is either `arm64` or `x64`.
 - `API` (int): the API level (Android version) of the device (e.g., `23` for Android 6.0).
 - `KSU_UAPI_VER` (int): the UAPI version of MuSu Next userspace (ksud) (e.g., `2`). This version is incremented when there are breaking changes in the kernel driver, and can be used by modules to check compatibility.
-- `KSU_RUNTIME_MODE` (string): the current MuSu Next runtime mode. Possible values are `built-in` (a.k.a. GKI mode, compiled into the kernel), `lkm` (loaded as a kernel module at boot), or `late-load` (loaded as a kernel module after boot).
+- `KSU_RUNTIME_MODE` (string): the current MuSu Next runtime mode. Possible values are `built-in` (compiled into the kernel), `lkm` (loaded as a kernel module at boot), or `late-load` (loaded as a kernel module after boot).
 - `KSU_LATE_LOAD` (int?): if MuSu Next is late-loaded after boot, this variable is set to `1`; otherwise it is not set.
 - `KSU_HAS_HOT_INSTALL` (bool): `true` if the installer supports [hot install](#hot-install).
 
@@ -491,15 +491,12 @@ The following is the relevant boot process for Android (some parts are omitted),
 
 ```txt
 0. Bootloader (nothing on screen)
-load patched boot.img
-load kernel:
-    - GKI mode: GKI kernel with MuSu Next integrated
-    - LKM mode: stock kernel
+load patched boot.img (stock kernel, patched ramdisk)
+load kernel: stock kernel
 ...
 
 1. kernel exec init (OEM logo on screen):
-    - GKI mode: stock init
-    - LKM mode: exec ksuinit, insmod kernelsu.ko, exec stock init
+    - exec ksuinit, insmod kernelsu.ko, exec stock init
 mount /dev, /dev/pts, /proc, /sys, etc.
   *preinit: before loading SELinux policy, the kernel runs modules' preinit.conf
 property-init -> read default props

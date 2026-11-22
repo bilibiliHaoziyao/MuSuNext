@@ -72,16 +72,15 @@ fun InstallScreen() {
     val defaultPartition by produceState(initialValue = "") { value = getDefaultPartition() }
     val rootAvailable by produceState(initialValue = false) { value = rootAvailable() }
     val isAbDevice by produceState(initialValue = false) { value = isAbDevice() }
-    val isGkiDevice by produceState(initialValue = false) { value = getKernelVersion().isGKI() }
+    val isSupportedDevice by produceState(initialValue = false) { value = getKernelVersion().isSupportedKernel() }
 
     val selectFileTip = stringResource(id = R.string.select_file_tip, defaultPartition)
-    val selectFileTipNoGki = stringResource(id = R.string.select_file_tip_nogki)
     val downloadFileMsg = stringResource(id = R.string.download_dialog_msg)
-    val installMethodOptions = remember(rootAvailable, isAbDevice, isGkiDevice, selectFileTip, selectFileTipNoGki, downloadFileMsg) {
+    val installMethodOptions = remember(rootAvailable, isAbDevice, isSupportedDevice, selectFileTip, downloadFileMsg) {
         buildList {
-            add(InstallMethod.SelectFile(summary = if (isGkiDevice) selectFileTip else selectFileTipNoGki))
+            add(InstallMethod.SelectFile(summary = selectFileTip))
             add(InstallMethod.DownloadFile(summary = downloadFileMsg))
-            if (rootAvailable && isGkiDevice) {
+            if (rootAvailable && isSupportedDevice) {
                 add(InstallMethod.DirectInstall)
                 if (isAbDevice) add(InstallMethod.DirectInstallToInactiveSlot)
             }
@@ -213,7 +212,7 @@ fun InstallScreen() {
     ) {
         if (it.resultCode == Activity.RESULT_OK) {
             it.data?.data?.let { uri ->
-                installMethod = InstallMethod.SelectFile(uri, summary = if (isGkiDevice) selectFileTip else selectFileTipNoGki)
+                installMethod = InstallMethod.SelectFile(uri, summary = selectFileTip)
             }
         }
     }

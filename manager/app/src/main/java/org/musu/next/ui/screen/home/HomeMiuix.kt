@@ -135,14 +135,9 @@ fun HomePagerMiuix(
                         } else if (state.showKernelPrBuildWarning) {
                             WarningCard(stringResource(id = R.string.home_pr_kernel_warning), level = WarningLevel.Notice)
                         }
-                        if (state.showGkiWarning) {
-                            WarningCard(stringResource(id = R.string.home_gki_warning), level = WarningLevel.Notice)
-                        }
                         if (state.requiresNewKernel) {
                             WarningCard(
-                                stringResource(
-                                    id = if (state.canInstallKernelUpdate) R.string.require_kernel_version else R.string.require_kernel_version_gki
-                                ),
+                                stringResource(id = R.string.require_kernel_version),
                                 onClick = if (state.canInstallKernelUpdate) actions.onInstallClick else null
                             )
                         }
@@ -259,7 +254,7 @@ private fun StatusCard(
                 val workingMode = when (state.lkmMode) {
                     null -> null
                     true -> "LKM"
-                    else -> "GKI"
+                    else -> "Built-in"
                 }
                 val workingText = "${stringResource(id = R.string.home_working)}$workingState"
 
@@ -368,7 +363,7 @@ private fun StatusCard(
                 }
             }
 
-            state.kernelVersion.isGKI() -> {
+            state.kernelVersion.isSupportedKernel() -> {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Card(
                         modifier = Modifier.weight(1f),
@@ -608,7 +603,7 @@ private fun StatusCardJailbreakPreview() {
 }
 
 private val previewSystemInfo = SystemInfo(
-    kernelVersion = "6.12.23-android16-5-g123456789000-abogki123456789-4k",
+    kernelVersion = "6.12.23-android16-5-g123456789000-ab123456789-4k",
     managerVersion = "3.0.0 (30000)",
     deviceModel = "Xiaomi 17 Pro Max",
     fingerprint = "Xiaomi/popsicle/popsicle:16/BQ2A.250705.001-BP2A.250605.031.A3/OS3.0.313.0.WPBCNXM:user/release-keys",
