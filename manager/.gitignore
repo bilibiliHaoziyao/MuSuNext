@@ -8,3 +8,6 @@ captures
 .cxx
 local.properties
 key.jks
+
+# 签名配置（含明文密码，切勿提交）
+sign.properties

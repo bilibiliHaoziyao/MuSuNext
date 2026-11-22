@@ -50,32 +50,36 @@ cp userspace/ksud/target/aarch64-linux-android/release/ksud manager/app/src/main
 
 ## 第 2 步：做出安装包（APK）
 
-先建一个小文件，告诉工具我们的签名在哪。
+签名密钥是 `signing/musu-next.jks`（密码见单独的签名材料备份 zip，**不要**写进 gradle.properties 提交）。
+构建时用命令行参数把签名信息传给工具 —— 注意：**别用 sign.properties 文件**，那个插件不读它，会悄悄退回 debug 签名，导致内核不认。
 
-复制这段，粘进去，回车（把里面的 `你的密码` 换成真实密码，引号别删）：
+先把密钥复制一份到 manager 目录（和正式 CI 的做法一致）：
 
 ```bash
-cat > /workspace/MuSuNext/manager/sign.properties <<'EOF'
-KEYSTORE_FILE=../signing/musu-next.jks
-KEYSTORE_PASSWORD=你的密码
-KEY_ALIAS=musu
-KEY_PASSWORD=你的密码
-EOF
+cp /workspace/MuSuNext/signing/musu-next.jks /workspace/MuSuNext/manager/key.jks
 ```
 
-然后做安装包：
+然后做安装包（把 `你的密码` 换成真实密码）：
 
 ```bash
 cd /workspace/MuSuNext/manager
-./gradlew assembleRelease --no-daemon
+./gradlew assembleRelease --no-daemon \
+  -PKEYSTORE_FILE=key.jks \
+  -PKEYSTORE_PASSWORD=你的密码 \
+  -PKEY_ALIAS=musu \
+  -PKEY_PASSWORD=你的密码
 ```
 
-**看到什么算成功**：最后出现 `BUILD SUCCESSFUL`。
-**不对怎么办**：把最后 20 行报错复制给我，别自己改。
+**看到什么算成功**：最后出现 `BUILD SUCCESSFUL`，并且日志里**没有** `fallbacks to use debug signature` 这行警告。有这行就说明没签上，装了内核也不认。
 
 **做好的文件在这里**（记住这个位置）：
 ```
-/workspace/MuSuNext/manager/app/build/outputs/apk/release/app-release.apk
+/workspace/MuSuNext/manager/app/build/outputs/apk/release/MuSu_Next_0.0.1_1-release.apk
+```
+
+**验证签名对不对**（输出里的 SHA-256 必须等于内核里的 `KSU_EXPECTED_HASH`）：
+```bash
+apksigner verify --print-certs /workspace/MuSuNext/manager/app/build/outputs/apk/release/MuSu_Next_0.0.1_1-release.apk
 ```
 
 ---
