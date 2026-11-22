@@ -8,7 +8,7 @@
     <string name="home_lkm_update_available">内嵌 LKM 有可用更新，点击更新</string>
     <string name="home_lkm_custom">自定义</string>
     <string name="home_unsupported">不支持</string>
-    <string name="home_unsupported_reason">MuSu Next 仅支持通过可加载内核模块（LKM）使用 GKI 内核（5.10+）</string>
+    <string name="home_unsupported_reason">你的设备不受支持，换个 Root 方案试试吧</string>
     <string name="home_device_model">设备型号</string>
     <string name="home_kernel">内核版本</string>
     <string name="home_manager_version">管理器版本</string>
