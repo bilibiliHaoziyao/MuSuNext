@@ -48,7 +48,7 @@ DER Size: 888 bytes (0x0378)
 - `/data/adb/ksu/` 数据路径、`/data/adb/modules/` 模块路径
 - `ksud`、`libksud.so`、metamodule 机制
 - `KSU_*` 内核符号、supercall IOCTL 命令号、uapi 头文件
-- 内核文件名 `kernelsu.ko`、`Kconfig` 选项 `CONFIG_KSU_*`
+- 内核文件名 `musu.ko`、`Kconfig` 选项 `CONFIG_KSU_*`
 - 上游公共服务地址：`modules.kernelsu.org`（模块仓库）、`mui.kernelsu.org`（WebUI）、`kernelsu.org/templates`（模板）
 - Cargo.lock 中 `KernelSU2/*` 第三方依赖组织名
 

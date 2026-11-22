@@ -1,10 +1,10 @@
 ---
-description: GKI カーネル向けに MuSu Next のローダブルカーネルモジュール（kernelsu.ko）をビルドします。
+description: GKI カーネル向けに MuSu Next のローダブルカーネルモジュール（musu.ko）をビルドします。
 ---
 
 # LKM のビルド方法
 
-MuSu Next は boot イメージではなく、ローダブルカーネルモジュール（`kernelsu.ko`）として提供されます。このページではモジュールの自前ビルド方法を説明します。
+MuSu Next は boot イメージではなく、ローダブルカーネルモジュール（`musu.ko`）として提供されます。このページではモジュールの自前ビルド方法を説明します。
 
 ## 必要なもの
 
@@ -22,7 +22,7 @@ cd kernel
 ./build-all.sh android14-6.1  # 単一の KMI のみをビルド
 ```
 
-出力物は `kernel/` ディレクトリ内の `kernelsu-<kmi>.ko` です。
+出力物は `kernel/` ディレクトリ内の `musu-<kmi>.ko` です。
 
 ## 単一 KMI の手動ビルド
 
@@ -32,7 +32,7 @@ cd kernel
 make -C kernel KDIR=/path/to/gki-kernel-source
 ```
 
-Makefile は `KDIR` を基にモジュールをコンパイルし、その後 `check_symbol` を実行して、`kernelsu.ko` にカーネルイメージに対する未解決のシンボル依存がないことを検証します。
+Makefile は `KDIR` を基にモジュールをコンパイルし、その後 `check_symbol` を実行して、`musu.ko` にカーネルイメージに対する未解決のシンボル依存がないことを検証します。
 
 :::tip x86_64
 エミュレーターや WSA 向けには `kernel/build-all-x64.sh` と `scripts/prepare-ddk-x64.sh` を使用してください。
@@ -40,7 +40,7 @@ Makefile は `KDIR` を基にモジュールをコンパイルし、その後 `c
 
 ## モジュールのインストール
 
-ビルドしたモジュールはマネージャーからインストールする（インストール画面で `.ko` を選択）か、コマンドラインの `ksud boot-patch -m kernelsu.ko` でインストールします。詳しくは[インストール](./installation.md)を参照してください。
+ビルドしたモジュールはマネージャーからインストールする（インストール画面で `.ko` を選択）か、コマンドラインの `ksud boot-patch -m musu.ko` でインストールします。詳しくは[インストール](./installation.md)を参照してください。
 
 ## 補足
 

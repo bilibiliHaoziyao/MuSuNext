@@ -1,10 +1,10 @@
 ---
-description: 為 GKI 核心編譯 MuSu Next 可載入核心模組（kernelsu.ko）。
+description: 為 GKI 核心編譯 MuSu Next 可載入核心模組（musu.ko）。
 ---
 
 # 如何編譯 LKM
 
-MuSu Next 以可載入核心模組（`kernelsu.ko`）的形式發布，而不是 boot 映像。本頁介紹如何自行編譯該模組。
+MuSu Next 以可載入核心模組（`musu.ko`）的形式發布，而不是 boot 映像。本頁介紹如何自行編譯該模組。
 
 ## 準備條件
 
@@ -22,7 +22,7 @@ cd kernel
 ./build-all.sh android14-6.1  # 或只編譯單一 KMI
 ```
 
-產物是 `kernel/` 目錄下的 `kernelsu-<kmi>.ko`。
+產物是 `kernel/` 目錄下的 `musu-<kmi>.ko`。
 
 ## 手動編譯單一 KMI
 
@@ -32,7 +32,7 @@ cd kernel
 make -C kernel KDIR=/path/to/gki-kernel-source
 ```
 
-Makefile 會基於 `KDIR` 編譯模組，然後執行 `check_symbol` 驗證 `kernelsu.ko` 對核心映像沒有未解析的符號依賴。
+Makefile 會基於 `KDIR` 編譯模組，然後執行 `check_symbol` 驗證 `musu.ko` 對核心映像沒有未解析的符號依賴。
 
 :::tip x86_64
 模擬器與 WSA 請使用 `kernel/build-all-x64.sh`，並配合 `scripts/prepare-ddk-x64.sh` 準備環境。
@@ -40,7 +40,7 @@ Makefile 會基於 `KDIR` 編譯模組，然後執行 `check_symbol` 驗證 `ker
 
 ## 安裝模組
 
-透過管理器安裝（在安裝介面選擇 `.ko` 檔案），或用命令列 `ksud boot-patch -m kernelsu.ko` 安裝。參見[安裝](./installation.md)。
+透過管理器安裝（在安裝介面選擇 `.ko` 檔案），或用命令列 `ksud boot-patch -m musu.ko` 安裝。參見[安裝](./installation.md)。
 
 ## 說明
 

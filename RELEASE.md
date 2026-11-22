@@ -7,7 +7,7 @@
 
 ## 先记住三句话
 
-1. 我们要做出两个文件：一个**安装包（APK）**（装在手机上的），一个**内核文件（kernelsu.ko）**（刷进系统的）。
+1. 我们要做出两个文件：一个**安装包（APK）**（装在手机上的），一个**内核文件（musu.ko）**（刷进系统的）。
 2. 这俩必须**一起用**，而且都必须用我们这个项目做出来的——用别人家的会认不出来。
 3. 你现在什么都不用懂，只要照着下面的步骤敲命令。
 
@@ -93,10 +93,10 @@ make -f Kbuild \
   KSU_PACKAGE_NAME=org.musu.next
 ```
 
-**看到什么算成功**：屏幕上出现 `kernelsu.ko` 相关的生成信息，没有 `Error`。
+**看到什么算成功**：屏幕上出现 `musu.ko` 相关的生成信息，没有 `Error`。
 **不对怎么办**：把报错复制给我。
 
-**做好的文件**：`/workspace/MuSuNext/kernel/kernelsu.ko`
+**做好的文件**：`/workspace/MuSuNext/kernel/musu.ko`
 
 > 看不懂这一大串命令？没关系，你只要知道：这串命令是告诉编译器"这是 MuSu Next 自己的东西"，照粘就行，一个字都别改（除了内核源码路径）。
 
@@ -134,7 +134,7 @@ gh release create v1.0.0 \
   --title "MuSu Next v1.0.0" \
   --notes-file CHANGELOG.md \
   manager/app/build/outputs/apk/release/app-release.apk \
-  kernel/kernelsu.ko
+  kernel/musu.ko
 ```
 
 **看到什么算成功**：终端会给出一个网址，打开就能看到下载按钮。

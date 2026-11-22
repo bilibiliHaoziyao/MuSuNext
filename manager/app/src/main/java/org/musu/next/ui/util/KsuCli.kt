@@ -355,7 +355,7 @@ sealed class LkmSelection : Parcelable {
 
 private fun writeLkmFile(lkm: LkmSelection): File? {
     if (lkm !is LkmSelection.LkmUri) return null
-    val file = File(ksuApp.cacheDir, "kernelsu-tmp-lkm.ko")
+    val file = File(ksuApp.cacheDir, "musu-tmp-lkm.ko")
     ksuApp.contentResolver.openInputStream(lkm.uri)?.use { input ->
         file.outputStream().use { output -> input.copyTo(output) }
     }

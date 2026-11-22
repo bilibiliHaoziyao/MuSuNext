@@ -496,7 +496,7 @@ load kernel: stock kernel
 ...
 
 1. kernel exec init (OEM logo on screen):
-    - exec ksuinit, insmod kernelsu.ko, exec stock init
+    - exec ksuinit, insmod musu.ko, exec stock init
 mount /dev, /dev/pts, /proc, /sys, etc.
   *preinit: before loading SELinux policy, the kernel runs modules' preinit.conf
 property-init -> read default props
@@ -559,7 +559,7 @@ In addition to the standard boot flow described above, MuSu Next supports a **la
 
 Late-load is triggered by running the `ksud late-load` command. This command:
 
-1. Detects the current KMI version and loads the corresponding `kernelsu.ko` from embedded assets.
+1. Detects the current KMI version and loads the corresponding `musu.ko` from embedded assets.
 2. Performs module initialization (SELinux rules, allowlist, features, etc.) that would normally happen during boot.
 
 Since the system is already fully running, certain boot-time mechanisms are unavailable or unnecessary.
@@ -592,7 +592,7 @@ In late-load mode, the script execution order is:
 
 ```txt
 ksud late-load:
-  1. Load kernelsu.ko (if not already loaded)
+  1. Load musu.ko (if not already loaded)
   2. Extract binaries, handle module updates, load SELinux rules, init features
   3. Execute late-load.d/ and module late-load scripts (blocking)
   4. Load system.prop (resetprop -n)

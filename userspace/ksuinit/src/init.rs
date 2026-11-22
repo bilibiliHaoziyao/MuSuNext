@@ -106,9 +106,9 @@ pub fn init() -> Result<()> {
     if ksuinit::has_kernelsu() {
         log::info!("MuSu Next may be already loaded in kernel, skip!");
     } else {
-        log::info!("Loading kernelsu.ko..");
-        if let Err(e) = load_module_from_path("/kernelsu.ko") {
-            log::error!("Cannot load kernelsu.ko: {:?}", e);
+        log::info!("Loading musu.ko..");
+        if let Err(e) = load_module_from_path("/musu.ko") {
+            log::error!("Cannot load musu.ko: {:?}", e);
         }
     }
 

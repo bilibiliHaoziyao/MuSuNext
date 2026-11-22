@@ -1,10 +1,10 @@
 ---
-description: Build the MuSu Next loadable kernel module (kernelsu.ko) for GKI kernels.
+description: Build the MuSu Next loadable kernel module (musu.ko) for GKI kernels.
 ---
 
 # How to build the LKM
 
-MuSu Next ships as a loadable kernel module (`kernelsu.ko`) instead of a boot image. This page describes how to build the module yourself.
+MuSu Next ships as a loadable kernel module (`musu.ko`) instead of a boot image. This page describes how to build the module yourself.
 
 ## Prerequisites
 
@@ -22,7 +22,7 @@ cd kernel
 ./build-all.sh android14-6.1  # or build a single KMI
 ```
 
-Output: `kernelsu-<kmi>.ko` files in the `kernel/` directory.
+Output: `musu-<kmi>.ko` files in the `kernel/` directory.
 
 ## Build a single KMI manually
 
@@ -32,7 +32,7 @@ If you already have a matching GKI kernel source tree (with `vmlinux` built):
 make -C kernel KDIR=/path/to/gki-kernel-source
 ```
 
-The Makefile compiles the module against `KDIR` and then runs `check_symbol` to verify that `kernelsu.ko` has no unresolved symbol dependencies against the kernel image.
+The Makefile compiles the module against `KDIR` and then runs `check_symbol` to verify that `musu.ko` has no unresolved symbol dependencies against the kernel image.
 
 :::tip x86_64
 For emulators and WSA, use `kernel/build-all-x64.sh` together with `scripts/prepare-ddk-x64.sh`.
@@ -40,7 +40,7 @@ For emulators and WSA, use `kernel/build-all-x64.sh` together with `scripts/prep
 
 ## Install the module
 
-Install the built module through the manager (pick the `.ko` in the install screen) or from the command line with `ksud boot-patch -m kernelsu.ko`. See [Installation](./installation.md).
+Install the built module through the manager (pick the `.ko` in the install screen) or from the command line with `ksud boot-patch -m musu.ko`. See [Installation](./installation.md).
 
 ## Notes
 
