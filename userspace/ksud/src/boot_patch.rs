@@ -612,6 +612,7 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
         #[cfg(target_os = "android")]
         let patch_file = image.is_some();
 
+        #[cfg(target_os = "android")]
         if ramdisk && flash {
             bail!("incompatiable option: --ramdisk and --flash")
         }
