@@ -1,6 +1,6 @@
 import type { PageData } from 'vitepress'
 
-export const SITE_URL = 'https://github.com/bilibiliHaoziyao/MuSuNext'
+export const SITE_URL = 'https://su.novasync.cn/docs'
 
 // Describes the project for search engines and AI agents. SoftwareSourceCode is used
 // instead of SoftwareApplication, which Google flags as invalid without ratings.

@@ -20,10 +20,11 @@ const llmsTxtTemplate = `# {title}
 
 ## Official links
 
-- Website: ${SITE_URL}
+- Website: https://su.novasync.cn
+- Documentation: ${SITE_URL}
 - Source code: https://github.com/bilibiliHaoziyao/MuSuNext
 - Downloads (manager APK and LKM): https://github.com/bilibiliHaoziyao/MuSuNext/releases
-- Telegram: https://b23.tv/6UtmCB0
+- Bilibili: https://b23.tv/6UtmCB0
 
 ## Table of Contents
 
@@ -32,6 +33,7 @@ const llmsTxtTemplate = `# {title}
 
 export default defineConfig( {
     title: 'MuSu Next',
+    base: '/docs/',
     locales: locales.locales,
     transformPageData,
     vite: {
@@ -64,7 +66,7 @@ export default defineConfig( {
         }],
     ],
     sitemap: {
-        hostname: 'https://github.com/bilibiliHaoziyao/MuSuNext'
+        hostname: 'https://su.novasync.cn'
     },
     buildEnd: async (config: SiteConfig) => {
         const templateDir = resolve(config.outDir, 'templates');
