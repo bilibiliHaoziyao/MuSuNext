@@ -197,10 +197,15 @@ class DownloadService : Service() {
                             put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
                             put(MediaStore.Downloads.IS_PENDING, 1)
                         }
-                        val downloadUri = contentResolver.insert(
-                            MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
-                            values
-                        ) ?: throw IOException("Failed to create download")
+                        // Android 10 以下没有 MediaStore.Downloads 集合，用通用的 external 文件集合
+                        val downloadCollection =
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                            } else {
+                                MediaStore.Files.getContentUri("external")
+                            }
+                        val downloadUri = contentResolver.insert(downloadCollection, values)
+                            ?: throw IOException("Failed to create download")
                         pendingUri = downloadUri
                         displayName = downloadUri.getFileName(this@DownloadService) ?: fileName
 

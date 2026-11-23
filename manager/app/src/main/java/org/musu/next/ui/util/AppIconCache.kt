@@ -64,6 +64,7 @@ object AppIconCache {
     @Volatile
     private var cachedMainUserId: Int? = null
 
+    @android.annotation.SuppressLint("NewApi") // HiddenApiBypass 内部按版本处理
     internal fun getMainUserId(context: Context): Int {
         cachedMainUserId?.let { return it }
 

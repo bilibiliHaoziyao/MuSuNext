@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import java.io.File;
 
+@android.annotation.SuppressLint("NewApi") // zygotePreloadName 属性在 API29 以下被系统忽略
 public class AppZygotePreload implements ZygotePreload {
     public static final String TAG = "MuSuNextMagica";
 

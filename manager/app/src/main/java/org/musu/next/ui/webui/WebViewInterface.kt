@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
@@ -333,7 +334,12 @@ class WebUIDownloadInterface(private val state: WebUIState) {
             var pendingUri: Uri? = null
             val savedUri = try {
                 val decoded = Base64.decode(base64, Base64.DEFAULT)
-                val collection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                // Android 10 以下没有 MediaStore.Downloads 集合，用通用的 external 文件集合
+                val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                } else {
+                    MediaStore.Files.getContentUri("external")
+                }
                 val values = android.content.ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
                     put(MediaStore.MediaColumns.MIME_TYPE, mimeType)

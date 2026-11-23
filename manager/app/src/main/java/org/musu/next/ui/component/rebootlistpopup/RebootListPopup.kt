@@ -24,7 +24,8 @@ fun getRebootListOption(): List<RebootListOption> {
     val pm = LocalContext.current.getSystemService(Context.POWER_SERVICE) as PowerManager?
 
     @Suppress("DEPRECATION")
-    val isRebootingUserspaceSupported = pm?.isRebootingUserspaceSupported == true
+    val isRebootingUserspaceSupported = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R &&
+        pm?.isRebootingUserspaceSupported == true
 
     return buildList {
         add(RebootListOption(R.string.reboot, ""))

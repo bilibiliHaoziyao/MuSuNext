@@ -148,7 +148,11 @@ fun AppProfileScreenMiuix(
                         appUid = state.uid,
                         sharedUserId = if (state.isUidGroup) state.sharedUserId else "",
                         appVersionName = if (state.isUidGroup) "" else (state.appGroup.primary.packageInfo.versionName ?: ""),
-                        appVersionCode = if (state.isUidGroup) 0L else state.appGroup.primary.packageInfo.longVersionCode,
+                        appVersionCode = if (state.isUidGroup) 0L else {
+                    val pi = state.appGroup.primary.packageInfo
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) pi.longVersionCode
+                    else @Suppress("DEPRECATION") pi.versionCode.toLong()
+                },
                         profile = state.profile,
                         isUidGroup = state.isUidGroup,
                         isSpecialApp = state.appGroup.primary.special,

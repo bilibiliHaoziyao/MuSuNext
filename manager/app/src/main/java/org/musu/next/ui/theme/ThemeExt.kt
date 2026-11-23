@@ -1,5 +1,6 @@
 package org.musu.next.ui.theme
 
+import android.os.Build
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.material3.ColorScheme
@@ -34,8 +35,10 @@ fun rememberMuSuNextColorScheme(
     colorSpec: ColorSpec.SpecVersion,
 ): ColorScheme {
     val context = LocalContext.current
-    val seed = if (seedColor == Color.Unspecified) {
+    val seed = if (seedColor == Color.Unspecified && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         (if (isDark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)).primary
+    } else if (seedColor == Color.Unspecified) {
+        Color(0xFF6750A4) // Android 12 以下无动态取色，用静态兜底色
     } else {
         seedColor
     }
