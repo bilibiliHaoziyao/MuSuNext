@@ -18,4 +18,5 @@ MuSu Next の最大の特徴は、**カーネルベース**であることです
 
 ## ディスカッション
 
-- Telegram: [@MuSu Next](https://b23.tv/6UtmCB0)
+- Bilibili: [@MuSu Next](https://b23.tv/6UtmCB0)
+- QQ チャンネル: [参加する](https://pd.qq.com/s/Na9xis6inx?b=9)

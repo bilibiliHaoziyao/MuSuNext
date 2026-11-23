@@ -22,4 +22,5 @@ See [How to build](how-to-build.md).
 
 ## Discussion
 
-- Telegram: [@MuSu Next](https://b23.tv/6UtmCB0)
+- Bilibili: [@MuSu Next](https://b23.tv/6UtmCB0)
+- QQ Channel: [Join us](https://pd.qq.com/s/Na9xis6inx?b=9)

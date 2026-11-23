@@ -18,4 +18,5 @@ MuSu Next 的主要特点是它是**基于内核的**。MuSu Next 运行在内�
 
 ## 讨论 {#discussion}
 
-- Telegram: [@MuSu Next](https://b23.tv/6UtmCB0)
+- Bilibili：[@慕寒](https://b23.tv/6UtmCB0)
+- QQ 频道：[加入我们](https://pd.qq.com/s/Na9xis6inx?b=9)

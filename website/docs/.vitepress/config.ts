@@ -20,8 +20,7 @@ const llmsTxtTemplate = `# {title}
 
 ## Official links
 
-- Website: https://su.novasync.cn
-- Documentation: ${SITE_URL}
+- Website & Documentation: ${SITE_URL}
 - Source code: https://github.com/bilibiliHaoziyao/MuSuNext
 - Downloads (manager APK and LKM): https://github.com/bilibiliHaoziyao/MuSuNext/releases
 - Bilibili: https://b23.tv/6UtmCB0
@@ -33,7 +32,7 @@ const llmsTxtTemplate = `# {title}
 
 export default defineConfig( {
     title: 'MuSu Next',
-    base: '/docs/',
+    base: '/',
     locales: locales.locales,
     transformPageData,
     vite: {

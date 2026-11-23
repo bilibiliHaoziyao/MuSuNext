@@ -93,7 +93,7 @@
     <string name="reboot_to_apply">重启生效</string>
     <string name="module_magisk_conflict">因与 Magisk 有冲突，所有模块不可用！</string>
     <string name="home_learn_kernelsu">了解 MuSu Next</string>
-    <string name="home_learn_kernelsu_url">https://su.novasync.cn/docs/zh_CN/guide/what-is-kernelsu.html</string>
+    <string name="home_learn_kernelsu_url">https://su.novasync.cn/zh_CN/guide/what-is-kernelsu.html</string>
     <string name="home_click_to_learn_kernelsu">了解如何安装 MuSu Next 以及如何开发模块</string>
     <string name="about_source_code"><![CDATA[在 %1$s 查看源码<br/>关注我们的 %2$s 主页<br/>加入我们的 <b><a href="https://pd.qq.com/s/Na9xis6inx?b=9">QQ</a></b> 频道]]></string>
     <string name="profile_default">默认</string>

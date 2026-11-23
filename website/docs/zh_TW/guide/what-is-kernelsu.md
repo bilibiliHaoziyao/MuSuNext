@@ -18,4 +18,5 @@ MuSu Next 的主要功能是它是**基於核心的**。 MuSu Next 在核心空�
 
 ## 討論 {#discussion}
 
-- Telegram: [@MuSu Next](https://b23.tv/6UtmCB0)
+- Bilibili：[@慕寒](https://b23.tv/6UtmCB0)
+- QQ 頻道：[加入我們](https://pd.qq.com/s/Na9xis6inx?b=9)

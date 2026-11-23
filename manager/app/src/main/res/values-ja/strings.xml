@@ -42,7 +42,7 @@
     <string name="reboot_to_apply">再起動すると有効化されます</string>
     <string name="module_magisk_conflict">モジュールが Magisk との競合により利用できません!</string>
     <string name="home_learn_kernelsu">MuSu Next について</string>
-    <string name="home_learn_kernelsu_url">https://su.novasync.cn/docs/ja_JP/guide/what-is-kernelsu.html</string>
+    <string name="home_learn_kernelsu_url">https://su.novasync.cn/ja_JP/guide/what-is-kernelsu.html</string>
     <string name="home_click_to_learn_kernelsu">MuSu Next のインストール方法やモジュールの使い方はこちら</string>
     <string name="about_source_code"><![CDATA[%1$s でソースコードを表示<br/>%2$s チャンネルに参加]]></string>
     <string name="profile">アプリのプロファイル</string>
