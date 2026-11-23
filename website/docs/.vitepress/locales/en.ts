@@ -36,6 +36,13 @@ export default defineConfig({
 function nav() {
   return [
     { text: 'Guide', link: '/guide/what-is-kernelsu' },
+    {
+      text: 'Tools',
+      items: [
+        { text: 'Kernel module match', link: '/kmi' },
+        { text: 'Signature check', link: '/verify' },
+      ],
+    },
   ]
 }
 

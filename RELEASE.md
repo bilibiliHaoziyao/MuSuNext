@@ -7,9 +7,9 @@
 
 ## 先记住三句话
 
-1. 我们要做出两个文件：一个**安装包（APK）**（装在手机上的），一个**内核文件（musu.ko）**（刷进系统的）。
-2. 这俩必须**一起用**，而且都必须用我们这个项目做出来的——用别人家的会认不出来。
-3. 你现在什么都不用懂，只要照着下面的步骤敲命令。
+1. **官方发布的安装包（APK）已经自带模块**：8 个 KMI 版本全在里面，用户选 boot、弹窗选 KMI 就能修补，不需要另外下载 `musu.ko`。
+2. 只有**自己编内核**的人，才需要单独产出一个 `musu.ko`；那个文件是给他自己用的，不是给普通用户的。
+3. 你自己从源码做 APK 时，要先把编好的模块放进指定目录，再编 ksud —— 否则做出来的 APK 里是空的，弹窗会没有选项。
 
 ---
 
@@ -32,19 +32,32 @@
 
 安装包里要塞一个小程序，先把它做出来。
 
-复制这一整段，粘到终端，回车：
+**编之前先检查一件事**：`userspace/ksud/bin/aarch64/` 里得有 8 个 `*_musu.ko`。
+这些就是"内置模块"，编进去以后用户才能选 KMI。没有的话，先按第 3 步把模块编出来，再拷进来：
+
+```bash
+ls /workspace/MuSuNext/userspace/ksud/bin/aarch64/*_musu.ko | wc -l
+```
+
+**看到什么算成功**：输出 `8`。
+**不对怎么办**：数字小于 8 就先去做第 3 步，把 `musu.ko` 按 KMI 命名拷进这个目录，再回来。
+
+然后编译 ksud。复制这一整段，粘到终端，回车：
 
 ```bash
 cd /workspace/MuSuNext/userspace/ksud
 rustup target add aarch64-linux-android
 cargo ndk -t arm64-v8a build --release
 cd /workspace/MuSuNext
-mkdir -p manager/app/src/main/jniLibs/arm64-v8a
-cp userspace/ksud/target/aarch64-linux-android/release/ksud manager/app/src/main/jniLibs/arm64-v8a/libksud.so
+mkdir -p target/aarch64-linux-android/release
+cp userspace/ksud/target/aarch64-linux-android/release/ksud target/aarch64-linux-android/release/ksud
 ```
 
 **看到什么算成功**：最后一行命令敲完，屏幕没有任何提示（安静就是成功）。
 **不对怎么办**：如果看到 `command not found`，说明缺工具，把报错整段复制给我。
+
+> 这里编出来的 ksud 已经把 `userspace/ksud/bin/aarch64/` 里的 8 个模块压进了二进制。
+> 下一步会把它塞进 APK，所以最终安装包自带全部 KMI。
 
 ---
 
@@ -70,21 +83,41 @@ cd /workspace/MuSuNext/manager
   -PKEY_PASSWORD=你的密码
 ```
 
-**看到什么算成功**：最后出现 `BUILD SUCCESSFUL`，并且日志里**没有** `fallbacks to use debug signature` 这行警告。有这行就说明没签上，装了内核也不认。
+**看到什么算成功**：最后出现 `BUILD SUCCESSFUL`。
+> 这一步产出的只是"壳"，里面还没有 ksud。下面把它塞进去，顺便签名。
 
-**做好的文件在这里**（记住这个位置）：
+```bash
+cd /workspace/MuSuNext
+python3 repack_apk.py repack \
+  -b release -t release -a arm64-v8a \
+  -K manager/key.jks -A musu \
+  -P 你的密码 -S 你的密码 \
+  --strip
 ```
-/workspace/MuSuNext/manager/app/build/outputs/apk/release/MuSu_Next_0.0.1_1-release.apk
+
+**看到什么算成功**：出现 `dist/` 下的 APK 文件名。
+**最终产物在**：`/workspace/MuSuNext/dist/`（这个才是能发出去的）。
+
+**检查模块有没有真的打进去**（关键）：
+
+```bash
+python3 scripts/verify_apk_lkm.py dist/*.apk
 ```
+
+**看到什么算成功**：`arm64-v8a 8/8 OK`，最后一行"内置完整"。
+**不对怎么办**：显示 `0/8` 说明第 1 步的模块没进 ksud，回到第 1 步检查 `bin/aarch64/` 里是不是 8 个文件，重新编。
 
 **验证签名对不对**（输出里的 SHA-256 必须等于内核里的 `KSU_EXPECTED_HASH`）：
 ```bash
-apksigner verify --print-certs /workspace/MuSuNext/manager/app/build/outputs/apk/release/MuSu_Next_0.0.1_1-release.apk
+apksigner verify --print-certs dist/*.apk
 ```
 
 ---
 
-## 第 3 步：做出内核文件
+## 第 3 步：做出内核文件（只有自己编内核才需要）
+
+> 普通用户拿到第 2 步的 APK 就能用，不需要这一步。
+> 这一步是给"自己编译了内核"或者"要预编译模块放 Release"的人用的。
 
 复制这段，把 `/path/to/你的内核源码` 换成你内核源码的实际位置，然后回车：
 
@@ -128,7 +161,7 @@ git remote add origin https://github.com/bilibiliHaoziyao/MuSuNext.git
 git push -u origin main
 ```
 
-发出下载链接（这一步会把刚才做的两个文件传上去）：
+发出下载链接（`dist/*.apk` 就是第 2 步做好的安装包，已经内置全部模块）：
 
 ```bash
 git tag v1.0.0
@@ -137,9 +170,10 @@ gh release create v1.0.0 \
   --repo bilibiliHaoziyao/MuSuNext \
   --title "MuSu Next v1.0.0" \
   --notes-file CHANGELOG.md \
-  manager/app/build/outputs/apk/release/app-release.apk \
-  kernel/musu.ko
+  dist/*.apk
 ```
+
+> 想额外附上预编译模块（给自行编内核的人），在最后加一行 `kernel/musu.ko` 即可。
 
 **看到什么算成功**：终端会给出一个网址，打开就能看到下载按钮。
 **不对怎么办**：把报错复制给我。

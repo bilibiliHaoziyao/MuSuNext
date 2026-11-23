@@ -29,6 +29,18 @@ jobs:
       run: |
         cp aarch64-android*-lkm/*_musu.ko ./userspace/ksud/bin/aarch64/
         cp x86_64-android*-lkm/*_musu.ko ./userspace/ksud/bin/x86_64/
+
+        # 少一个 KMI，对应内核的用户修补就必然失败。宁可这里构建红，
+        # 也不要让"弹窗里空空如也"的 APK 发出去。
+        for abi in aarch64 x86_64; do
+          count=$(ls ./userspace/ksud/bin/$abi/*_musu.ko 2>/dev/null | wc -l)
+          if [ "$count" -ne 8 ]; then
+            echo "::error::$abi 只准备了 $count/8 个 musu.ko"
+            ls -l ./userspace/ksud/bin/$abi/
+            exit 1
+          fi
+        done
+        echo "内置模块：$(ls ./userspace/ksud/bin/aarch64/*_musu.ko | wc -l) 个 KMI × 2 个 ABI"
     
     - name: Prepare ksuinit
       if: ${{ inputs.pack_ksuinit }}

@@ -2,6 +2,31 @@
 
 All notable changes to MuSu Next will be documented in this file.
 
+## [0.0.2] - 2026-11-23
+
+### Added
+- 管理器内置全部 8 个 KMI 的 `musu.ko`：装完 APK 直接选 boot 修补，全程无需联网下载模块
+- KMI 选择弹窗：显示内置模块数量，列表按 Android 版本排序，默认选中当前设备的 KMI
+- `scripts/verify_apk_lkm.py`：从 APK 的 `libksud.so` 里检出实际内置的 `musu.ko`，发布前逐个 ABI 校验
+- 官网新增两个在线工具：`/kmi` 内核模块匹配、`/verify` APK 签名校验（浏览器内解析 v2/v3 证书）
+
+### Changed
+- `ksud boot-info supported-kmis` 输出去重并按 Android 版本排序（原为资源遍历顺序）
+- `getSupportedKmis()` 在内置清单读取失败时回退到编译期常量，弹窗不再空白
+- CI 拦截半成品：ksud 打包时 ko 不足 8 个直接失败；repack 后再校验成品 APK
+- 修复 `ddk-lkm.yml` 写死带空格的工作区路径，导致 `git config` 失败、Release 的 LKM 构建全红
+
+## [Unreleased]
+
+### Added
+- 管理器 KMI 弹窗：显示内置模块数量，列表按版本排序，默认选中当前设备的 KMI
+- `scripts/verify_apk_lkm.py`：从 APK 的 `libksud.so` 里检出实际内置的 `musu.ko`，发布前逐个 ABI 校验
+
+### Changed
+- `ksud boot-info supported-kmis` 输出去重并按 Android 版本排序（原为资源遍历顺序）
+- `getSupportedKmis()` 在内置清单读取失败时回退到编译期常量，弹窗不再空白
+- CI 拦截半成品：ksud 打包时 ko 不足 8 个直接失败；repack 后再校验成品 APK
+
 ## [1.1.0] - LKM-Only
 
 ### Removed（移除 GKI 支持）

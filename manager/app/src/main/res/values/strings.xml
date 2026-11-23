@@ -203,6 +203,8 @@
     <string name="install_only_support_ko_file">Only .ko files are supported</string>
     <string name="select_file_tip">%1$s partition image is recommended</string>
     <string name="select_kmi">Select KMI</string>
+    <string name="lkm_not_bundled">No built-in kernel module found. Please reinstall the official APK.</string>
+    <string name="bundled_kmi_count">%1$d KMI modules bundled in this APK</string>
     <string name="settings_uninstall">Uninstall</string>
     <string name="settings_uninstall_temporary">Uninstall temporarily</string>
     <string name="settings_uninstall_permanent">Uninstall permanently</string>

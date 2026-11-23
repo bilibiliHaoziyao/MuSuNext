@@ -36,6 +36,13 @@ export default defineConfig({
 function nav() {
   return [
     { text: '指南', link: '/zh_TW/guide/what-is-kernelsu' },
+    {
+      text: '工具',
+      items: [
+        { text: '內核模組匹配', link: '/zh_TW/kmi' },
+        { text: '簽章校驗', link: '/zh_TW/verify' },
+      ],
+    },
   ]
 }
 

@@ -67,13 +67,30 @@ pub fn get_asset(name: &str) -> Result<Box<dyn AsRef<[u8]>>> {
     Ok(Box::new(asset.data))
 }
 
+/// 把 `android14-6.1` 这样的名字变成可排序的数字三元组。
+/// 排序只影响弹窗里的显示顺序，不影响匹配逻辑。
+fn kmi_sort_key(kmi: &str) -> (u32, u32, u32) {
+    let rest = kmi.strip_prefix("android").unwrap_or(kmi);
+    let mut split = rest.split('-');
+    let sdk = split.next().and_then(|v| v.parse().ok()).unwrap_or(0);
+    let kernel = split.next().unwrap_or_default();
+    let mut ver = kernel.split('.');
+    let major = ver.next().and_then(|v| v.parse().ok()).unwrap_or(0);
+    let minor = ver.next().and_then(|v| v.parse().ok()).unwrap_or(0);
+    (sdk, major, minor)
+}
+
 pub fn list_supported_kmi() -> std::vec::Vec<std::string::String> {
-    let mut list = Vec::new();
-    for file in Asset::iter() {
-        // kmi_name = "xxx_musu.ko"
-        if let Some(kmi) = file.strip_suffix("_musu.ko") {
-            list.push(kmi.to_string());
-        }
-    }
+    let mut list: Vec<String> = Asset::iter()
+        .filter_map(|file| {
+            // 桌面构建的资源根是 bin/，键里带 `aarch64/` 前缀，这里只取文件名。
+            let name = file.rsplit('/').next()?.to_string();
+            name.strip_suffix("_musu.ko").map(str::to_string)
+        })
+        // 只认 androidNN-X.Y，避免把目录名或临时文件当成 KMI。
+        .filter(|kmi| kmi.starts_with("android"))
+        .collect();
+    list.sort_by_key(|kmi| kmi_sort_key(kmi));
+    list.dedup();
     list
 }

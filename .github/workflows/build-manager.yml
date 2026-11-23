@@ -318,6 +318,13 @@ jobs:
             -S "$SIGN_KEY_PASSWORD" \
             --strip
 
+      - name: Verify bundled LKM in APK
+        if: ${{ github.event_name == 'pull_request' || (github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')) || github.ref_type == 'tag' }}
+        run: |
+          # 用户装完 APK 直接选 boot 修补，全程不联网。若 ko 没进 libksud.so，
+          # 弹窗会是空的、修补必然失败 —— 所以在发布前直接拦下来。
+          python3 scripts/verify_apk_lkm.py dist/*.apk
+
       - name: Upload build artifact
         if: ${{ github.event_name == 'pull_request' || (github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')) || github.ref_type == 'tag' }}
         uses: actions/upload-artifact@v7

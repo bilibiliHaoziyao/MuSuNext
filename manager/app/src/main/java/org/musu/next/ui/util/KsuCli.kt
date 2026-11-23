@@ -592,11 +592,48 @@ suspend fun getCurrentKmi(): String = withContext(Dispatchers.IO) {
     ShellUtils.fastCmd(shell, "${getKsuDaemonPath()} $cmd")
 }
 
+/**
+ * 与 `.github/workflows/build-lkm.yml` 的 matrix 保持一致的兜底清单。
+ *
+ * 正常情况下 ksud 会用 `boot-info supported-kmis` 自报内置了哪些 KMI。
+ * 但这条命令要经过 root shell：设备还没 root、su 授权超时、或者某次构建
+ * 漏打包 ko 时都可能返回空。此时弹窗如果跟着空，用户就完全没法继续，
+ * 所以这里必须有一份不依赖运行时的清单兜底。
+ */
+val BUNDLED_KMIS: List<String> = listOf(
+    "android12-5.10",
+    "android13-5.10",
+    "android13-5.15",
+    "android14-5.15",
+    "android14-6.1",
+    "android15-6.6",
+    "android16-6.12",
+    "android17-6.18",
+)
+
+/** `android14-6.1` → `"014.006.001"`，用于把 KMI 按版本排好，而不是字典序。 */
+private fun kmiSortKey(kmi: String): String {
+    val rest = kmi.removePrefix("android")
+    val sdk = rest.substringBefore('-').toIntOrNull() ?: 0
+    val kernel = rest.substringAfter('-', "")
+    val major = kernel.substringBefore('.').toIntOrNull() ?: 0
+    val minor = kernel.substringAfter('.', "").toIntOrNull() ?: 0
+    return "%03d.%03d.%03d".format(sdk, major, minor)
+}
+
+private val KMI_PATTERN = Regex("^android\\d+-\\d+\\.\\d+$")
+
 suspend fun getSupportedKmis(): List<String> = withContext(Dispatchers.IO) {
-    val shell = getRootShell()
-    val cmd = "boot-info supported-kmis"
-    val out = shell.newJob().add("${getKsuDaemonPath()} $cmd").to(ArrayList(), null).exec().out
-    out.filter { it.isNotBlank() }.map { it.trim() }
+    val reported = runCatching {
+        val shell = getRootShell()
+        val cmd = "boot-info supported-kmis"
+        shell.newJob().add("${getKsuDaemonPath()} $cmd").to(ArrayList(), null).exec().out
+            .map { it.trim() }
+            .filter { KMI_PATTERN.matches(it) }
+            .distinct()
+    }.getOrDefault(emptyList())
+
+    (if (reported.isEmpty()) BUNDLED_KMIS else reported).sortedBy { kmiSortKey(it) }
 }
 
 suspend fun isAbDevice(): Boolean = withContext(Dispatchers.IO) {

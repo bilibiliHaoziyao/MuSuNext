@@ -36,6 +36,13 @@ export default defineConfig({
 function nav() {
   return [
     { text: 'ガイド', link: '/ja_JP/guide/what-is-kernelsu' },
+    {
+      text: 'ツール',
+      items: [
+        { text: 'カーネルモジュールの照合', link: '/ja_JP/kmi' },
+        { text: '署名の検証', link: '/ja_JP/verify' },
+      ],
+    },
   ]
 }
 
