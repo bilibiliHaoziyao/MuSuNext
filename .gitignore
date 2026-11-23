@@ -14,3 +14,8 @@ __pycache__
 *.jks
 *.keystore
 signing/
+
+manager/sign.properties
+
+website/deploy/
+website/node_modules/
