@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="home">Home</string>
+    <string name="safety">Security</string>
+    <string name="safety_audit_title">Root access audit</string>
+    <string name="safety_audit_summary">Every root request is recorded into sulog and aggregated by app below</string>
+    <string name="safety_audit_enabled">Audit enabled</string>
+    <string name="safety_audit_disabled">Audit disabled</string>
+    <string name="safety_audit_enable">Enable audit</string>
+    <string name="safety_audit_app_calls">%1$d calls · last %2$s</string>
+    <string name="safety_audit_no_time">%1$d calls</string>
+    <string name="safety_view_full_log">View full SU log</string>
+    <string name="safety_empty">No audit records yet</string>
+    <string name="safety_by_app">By app</string>
     <string name="home_not_installed">Not installed</string>
     <string name="home_click_to_install">Tap to install</string>
     <string name="home_working">Working</string>

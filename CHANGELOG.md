@@ -2,6 +2,15 @@
 
 All notable changes to MuSu Next will be documented in this file.
 
+## [0.0.5] - 2026-11-23
+
+### Added
+- 新增底部「安全」Tab（位于底部栏中间）：Root 访问审计面板
+  - 审计状态卡片：显示 sulog 记录是否启用，未启用时一键开启
+  - 按应用聚合统计：每个应用（comm/exe）的 Root 请求次数、最近调用时间，以及 root execve / sucompat / ioctl 授权三类事件的分类计数
+  - 快捷入口跳转完整 SU 日志页查看逐条记录
+  - Material 与 Miuix 双主题适配；桌面横屏侧边栏同步加入「安全」入口
+
 ## [0.0.4] - 2026-11-23
 
 ### Changed

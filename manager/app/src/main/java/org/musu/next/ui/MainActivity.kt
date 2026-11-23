@@ -87,6 +87,7 @@ import org.musu.next.ui.screen.modulerepo.ModuleRepoScreen
 import org.musu.next.ui.screen.scriptrun.ScriptRunScreen
 import org.musu.next.ui.screen.settings.SettingPager
 import org.musu.next.ui.screen.sulog.SulogScreen
+import org.musu.next.ui.screen.safety.SafetyPager
 import org.musu.next.ui.screen.superuser.SuperUserPager
 import org.musu.next.ui.screen.template.AppProfileTemplateScreen
 import org.musu.next.ui.screen.templateeditor.TemplateEditorScreen
@@ -434,8 +435,9 @@ fun MainScreen(
                     when (page) {
                         0 -> if (contentReady || isCurrentPage) HomePager(navController, bottomInnerPadding, isCurrentPage)
                         1 -> if (contentReady || isCurrentPage) SuperUserPager(navController, bottomInnerPadding, isCurrentPage)
-                        2 -> if (contentReady || isCurrentPage) ModulePager(bottomInnerPadding, isCurrentPage)
-                        3 -> if (contentReady || isCurrentPage) SettingPager(navController, bottomInnerPadding, isCurrentPage)
+                        2 -> if (contentReady || isCurrentPage) SafetyPager(bottomInnerPadding, isCurrentPage)
+                        3 -> if (contentReady || isCurrentPage) ModulePager(bottomInnerPadding, isCurrentPage)
+                        4 -> if (contentReady || isCurrentPage) SettingPager(navController, bottomInnerPadding, isCurrentPage)
                     }
                 }
             }

@@ -95,8 +95,7 @@ internal fun badgeFor(index: Int, state: NavigationBadgeState): NavBadge? = when
     BottomBarDestination.SuperUser.ordinal ->
         state.superuserCount.takeIf { it > 0 }?.let { NavBadge(it, BadgeTone.Accent) }
 
-    BottomBarDestination.Module.ordinal -> when {
-        state.moduleUpdatableCount > 0 -> NavBadge(state.moduleUpdatableCount, BadgeTone.Alert)
+    BottomBarDestination.Module.ordinal -> when {        state.moduleUpdatableCount > 0 -> NavBadge(state.moduleUpdatableCount, BadgeTone.Alert)
         state.moduleEnabledCount > 0 -> NavBadge(state.moduleEnabledCount, BadgeTone.Accent)
         else -> null
     }
