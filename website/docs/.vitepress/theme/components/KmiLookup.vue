@@ -164,7 +164,7 @@ function check() {
 }
 
 function koUrl(kmi, arch) {
-  return `https://github.com/bilibiliHaoziyao/MuSuNext/releases/download/v0.0.1/lkm-${arch}-${kmi}_musu.ko`
+  return `https://github.com/bilibiliHaoziyao/MuSuNext/releases/latest/download/lkm-${arch}-${kmi}_musu.ko`
 }
 </script>
 
