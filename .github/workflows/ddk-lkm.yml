@@ -27,6 +27,32 @@ on:
         required: false
         default: ''
         type: string
+  workflow_dispatch:
+    inputs:
+      kmi:
+        description: 'KMI version (e.g. android14-6.1)'
+        required: true
+        type: string
+      ddk_release:
+        description: 'DDK release version'
+        required: false
+        default: '20260828'
+        type: string
+      package_name:
+        description: 'package name of manager'
+        required: false
+        default: 'org.musu.next'
+        type: string
+      expected_size:
+        description: 'expected signature size'
+        required: false
+        default: '0x0378'
+        type: string
+      expected_hash:
+        description: 'expected signature hash'
+        required: false
+        default: 'eeed9504acee1543f84e57916ef50f88b69bc9abbc72fc80f803a42267a5ead0'
+        type: string
 
 jobs:
   build-musu-ko:
