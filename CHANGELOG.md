@@ -15,7 +15,7 @@ All notable changes to MuSu Next will be documented in this file.
 - `isGKI()` 更名 `isSupportedKernel()`；首页工作模式徽章内置模式显示 `Built-in`
 - 应用语言精简为简体中文 / 繁体中文 / 英语 / 日语（README 与文档站同步）
 - `boot_patch` 分区选择函数移除 `is_replace_kernel` 参数（LKM 注入恒为非替换路径）
-- 修复品牌化误伤的 4 处 git 依赖地址（`KernelSU2/*`）
+- 修复误改的 4 处 git 依赖地址（`KernelSU2/*`）
 
 ### Preserved
 - `ksud boot-patch`（LKM 注入主入口）、`boot-patch-v2`、`boot-restore` 及全部 CLI 命令
@@ -26,11 +26,10 @@ All notable changes to MuSu Next will be documented in this file.
 ## [1.0.0] - Initial Fork
 
 ### Added
-- MuSu Next 独立品牌：应用名、主题、图标文案全面替换为 MuSu Next
-- 独立包名 `org.musu.next`（上游为 `me.weishu.kernelsu`）
-- 自签名证书 CN=MuSu Next（SHA256 `eeed9504…ead0`）
+- 基于 KernelSU 的衍生版本：应用名、主题、图标文案为 MuSu Next
+- 包名 `org.musu.next`（上游为 `me.weishu.kernelsu`）
+- 签名证书 CN=MuSu Next（SHA256 `eeed9504…ead0`）
 - 管理器关于页新增 B 站主页跳转（https://b23.tv/6UtmCB0）
-- BRANDING.md：品牌化与内核兼容性说明
 - RELEASE.md：CLI 构建与发布指南
 
 ### Changed

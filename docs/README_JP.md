@@ -8,7 +8,7 @@ Android におけるカーネルベースの root ソリューションです。
 
 [![Latest release](https://img.shields.io/github/v/release/bilibiliHaoziyao/MuSuNext?label=Release&logo=github)](https://github.com/bilibiliHaoziyao/MuSuNext/releases/latest)
 [![Weblate](https://img.shields.io/badge/Localization-Weblate-teal?logo=weblate)](https://hosted.weblate.org/engage/kernelsu)
-[![Channel](https://img.shields.io/badge/Follow-Telegram-blue.svg?logo=telegram)](https://b23.tv/6UtmCB0)
+[![Bilibili](https://img.shields.io/badge/Follow-Bilibili-blue.svg)](https://b23.tv/6UtmCB0)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-orange.svg?logo=gnu)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 [![GitHub License](https://img.shields.io/github/license/bilibiliHaoziyao/MuSuNext?logo=gnu)](/LICENSE)
 
@@ -41,7 +41,8 @@ MuSu Next をあなたの言語に翻訳するか、既存の翻訳を改善す�
 
 ## ディスカッション
 
-- Telegram: [@MuSu Next](https://b23.tv/6UtmCB0)
+- Bilibili: [@MuSu Next](https://b23.tv/6UtmCB0)
+- QQ チャンネル: [参加する](https://pd.qq.com/s/Na9xis6inx?b=9)
 
 ## ライセンス
 

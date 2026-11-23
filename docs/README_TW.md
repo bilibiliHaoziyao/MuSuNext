@@ -8,7 +8,7 @@
 
 [![最新版本](https://img.shields.io/github/v/release/bilibiliHaoziyao/MuSuNext?label=%e7%99%bc%e8%a1%8c%e7%89%88%e6%9c%ac&logo=github)](https://github.com/bilibiliHaoziyao/MuSuNext/releases/latest)
 [![Weblate](https://img.shields.io/badge/%e6%9c%ac%e5%9c%9f%e5%8c%96%e7%bf%bb%e8%ad%af-Weblate-teal?logo=weblate)](https://hosted.weblate.org/engage/kernelsu)
-[![頻道](https://img.shields.io/badge/%e8%bf%bd%e8%b9%a4-Telegram-blue.svg?logo=telegram)](https://b23.tv/6UtmCB0)
+[![Bilibili](https://img.shields.io/badge/Follow-Bilibili-blue.svg)](https://b23.tv/6UtmCB0)
 [![授權條款：《GPL v2》](https://img.shields.io/badge/%e6%8e%88%e6%ac%8a%e6%a2%9d%e6%ac%be-%E3%80%8AGPL%20v2%E3%80%8B-orange.svg?logo=gnu)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 [![GitHub 授權條款](https://img.shields.io/github/license/bilibiliHaoziyao/MuSuNext?logo=gnu)](/LICENSE)
 
@@ -41,7 +41,8 @@ MuSu Next 以可載入核心模組（LKM）支援採用 Android GKI 2.0 的裝�
 
 ## 綜合討論
 
-- Telegram：[@MuSu Next](https://b23.tv/6UtmCB0)
+- Bilibili：[@慕寒](https://b23.tv/6UtmCB0)
+- QQ 頻道：[加入我們](https://pd.qq.com/s/Na9xis6inx?b=9)
 
 ## 安全政策
 
