@@ -856,10 +856,13 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
                 let now = chrono::Utc::now();
                 format!("musu_patched_{}.img", now.format("%Y%m%d_%H%M%S"))
             });
-            let output_image = output_dir.join(name);
-            std::fs::write(&output_image, &new_boot_bytes).context("write out new boot failed")?;
+            let output_image =
+                write_patched_image(&output_dir, &name, &new_boot_bytes, &boot_image_file)?;
             println!("- Output file is written to");
             println!("- {}", output_image.display().to_string().trim_matches('"'));
+            if output_image.parent() != Some(output_dir.as_path()) {
+                println!("- ({} was not writable)", output_dir.display());
+            }
         }
 
         println!("- Done!");
@@ -871,6 +874,51 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
         println!("- Patch Error: {e}");
     }
     result
+}
+
+/// 把修补好的镜像落盘，首选目录不可写时自动换个位置。
+///
+/// `-o` 基本都是 `/storage/emulated/0/Download`：这条路径走 FUSE，root 进程
+/// （uid 0）不在 media 的 uid 名单里，写进去会被拒；有些机型上这个目录压根
+/// 不存在。镜像已经修补完了，只因为写不进文件就让整个流程失败太亏，所以按
+/// 下面的顺序找第一个能写的地方：
+///
+/// 1. 用户给的目录
+/// 2. FUSE 路径对应的原始路径（`/data/media/0/...`，root 直接写不受 uid 限制）
+/// 3. boot 镜像所在目录（通常是管理器的 cache）
+/// 4. 系统临时目录
+fn write_patched_image(
+    output_dir: &Path,
+    name: &str,
+    data: &[u8],
+    boot_image_file: &Path,
+) -> Result<PathBuf> {
+    let mut candidates: Vec<PathBuf> = vec![output_dir.to_path_buf()];
+
+    // /storage/emulated/0 是 FUSE 视图，/data/media/0 是同一份数据的原始路径。
+    if let Ok(rest) = output_dir.strip_prefix("/storage/emulated/0")
+        && !rest.as_os_str().is_empty()
+    {
+        candidates.push(Path::new("/data/media/0").join(rest));
+    }
+    if let Some(parent) = boot_image_file.parent() {
+        candidates.push(parent.to_path_buf());
+    }
+    candidates.push(std::env::temp_dir());
+
+    let mut tried = Vec::new();
+    for dir in candidates {
+        let target = dir.join(name);
+        if let Some(parent) = target.parent() {
+            let _ = std::fs::create_dir_all(parent);
+        }
+        match std::fs::write(&target, data) {
+            Ok(()) => return Ok(target),
+            Err(e) => tried.push(format!("{}: {e}", target.display())),
+        }
+    }
+
+    bail!("write out new boot failed, tried {}", tried.join("; "))
 }
 
 #[derive(clap::Args, Debug)]
@@ -1153,5 +1201,45 @@ mod block_modules_tests {
         };
         assert!(ok.validate().is_ok());
         assert!(KsuConfigArgs::default().validate().is_ok());
+    }
+}
+
+#[cfg(test)]
+mod output_fallback_tests {
+    use super::write_patched_image;
+    use std::path::Path;
+
+    #[test]
+    fn prefers_the_requested_dir_when_it_is_writable() {
+        let root = std::env::temp_dir().join("musu-out-ok");
+        let _ = std::fs::remove_dir_all(&root);
+        let wanted = root.join("Download");
+        std::fs::create_dir_all(&wanted).unwrap();
+        let boot = root.join("boot.img");
+        std::fs::write(&boot, b"boot").unwrap();
+
+        let out = write_patched_image(&wanted, "a.img", b"data", &boot).unwrap();
+        assert_eq!(out, wanted.join("a.img"));
+        assert_eq!(std::fs::read(&out).unwrap(), b"data");
+
+        std::fs::remove_dir_all(&root).ok();
+    }
+
+    #[test]
+    fn falls_back_when_the_requested_dir_cannot_be_written() {
+        let root = std::env::temp_dir().join("musu-out-blocked");
+        let _ = std::fs::remove_dir_all(&root);
+        std::fs::create_dir_all(&root).unwrap();
+        let boot = root.join("boot.img");
+        std::fs::write(&boot, b"boot").unwrap();
+
+        // /proc 一定写不进去，用它模拟设备上的只读或不可达目录。
+        let blocked = Path::new("/proc/musu-no-such-dir/Download");
+        let out = write_patched_image(blocked, "b.img", b"patched", &boot).unwrap();
+
+        assert_eq!(out, root.join("b.img"), "应回退到 boot 镜像所在目录");
+        assert_eq!(std::fs::read(&out).unwrap(), b"patched");
+
+        std::fs::remove_dir_all(&root).ok();
     }
 }

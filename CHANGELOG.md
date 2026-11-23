@@ -2,6 +2,14 @@
 
 All notable changes to MuSu Next will be documented in this file.
 
+## [0.0.3] - 2026-11-23
+
+### Fixed
+- 「下载 boot 并修补」报 `write out new boot failed`：产物目录写不进去时整个修补白做。现在按顺序自动换位置——原路径 → `/data/media/0` 原始路径（绕开 FUSE 的 uid 限制）→ boot 镜像所在目录 → 临时目录，并把每次失败的路径和 errno 打进日志
+
+### Changed
+- 启动字符画由 `KernelSU` 换成 `MuHan`
+
 ## [0.0.2] - 2026-11-23
 
 ### Added
@@ -15,17 +23,6 @@ All notable changes to MuSu Next will be documented in this file.
 - `getSupportedKmis()` 在内置清单读取失败时回退到编译期常量，弹窗不再空白
 - CI 拦截半成品：ksud 打包时 ko 不足 8 个直接失败；repack 后再校验成品 APK
 - 修复 `ddk-lkm.yml` 写死带空格的工作区路径，导致 `git config` 失败、Release 的 LKM 构建全红
-
-## [Unreleased]
-
-### Added
-- 管理器 KMI 弹窗：显示内置模块数量，列表按版本排序，默认选中当前设备的 KMI
-- `scripts/verify_apk_lkm.py`：从 APK 的 `libksud.so` 里检出实际内置的 `musu.ko`，发布前逐个 ABI 校验
-
-### Changed
-- `ksud boot-info supported-kmis` 输出去重并按 Android 版本排序（原为资源遍历顺序）
-- `getSupportedKmis()` 在内置清单读取失败时回退到编译期常量，弹窗不再空白
-- CI 拦截半成品：ksud 打包时 ko 不足 8 个直接失败；repack 后再校验成品 APK
 
 ## [1.1.0] - LKM-Only
 
