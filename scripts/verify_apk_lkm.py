@@ -14,7 +14,7 @@
   2  输入文件不存在或不是合法 APK
 
 用法：
-  python3 scripts/verify_apk_lkm.py dist/MuSuNext-v0.0.2-release.apk
+  python3 scripts/verify_apk_lkm.py dist/MuSuNext-v0.0.3-release.apk
   python3 scripts/verify_apk_lkm.py --so libksud.so --abi arm64-v8a
 """
 
