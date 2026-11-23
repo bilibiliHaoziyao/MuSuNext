@@ -58,6 +58,9 @@ export default defineConfig( {
         ],
     },
     head: [
+        ['link', { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+        ['link', { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/logo.png' }],
+        ['link', { rel: 'apple-touch-icon', sizes: '192x192', href: '/logo.png' }],
         ['script', {
             async: 'async',
             src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2610070972052494',

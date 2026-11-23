@@ -2,6 +2,12 @@
 
 All notable changes to MuSu Next will be documented in this file.
 
+## [0.0.4] - 2026-11-23
+
+### Changed
+- 应用图标换成新形象，图形内容按画布 80% 居中，四周留出安全边距，圆形/圆角遮罩不再切到主体
+- 官网同步换图标：`logo.png`（分享卡片 192px）与 `favicon.ico`（16/32/48 多尺寸），导航与浏览器标签一致
+
 ## [0.0.3] - 2026-11-23
 
 ### Fixed
