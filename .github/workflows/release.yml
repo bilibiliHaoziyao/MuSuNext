@@ -5,6 +5,10 @@ on:
       - "v*"
   workflow_dispatch:
 
+# 仓库默认 workflow 权限是只读，创建 Release 与上传附件需要写权限。
+permissions:
+  contents: write
+
 jobs:
   build-manager:
     uses: ./.github/workflows/build-manager.yml
