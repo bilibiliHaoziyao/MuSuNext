@@ -55,6 +55,11 @@ sealed interface Route : NavKey, Parcelable {
     @Serializable
     data object AppProfileTemplate : Route
 
+    /** One page per built-in component; [id] is `BuiltinComponentId.wireId`. */
+    @Parcelize
+    @Serializable
+    data class Builtin(val id: String) : Route
+
     @Parcelize
     @Serializable
     data class TemplateEditor(

@@ -24,8 +24,11 @@ import kotlinx.coroutines.withTimeoutOrNull
 import org.musu.next.Natives
 import org.musu.next.R
 import org.musu.next.data.model.Module
+import org.musu.next.data.model.ModuleBlock
 import org.musu.next.data.model.ModuleUpdateInfo
 import org.musu.next.data.registry.UpdateVerification
+import org.musu.next.data.repository.BuiltinRepository
+import org.musu.next.data.repository.BuiltinRepositoryImpl
 import org.musu.next.data.repository.ModuleRepoRepository
 import org.musu.next.data.repository.ModuleRepoRepositoryImpl
 import org.musu.next.data.repository.ModuleRepository
@@ -52,6 +55,7 @@ class ModuleViewModel(
     private val repo: ModuleRepository = ModuleRepositoryImpl(),
     private val settingsRepo: SettingsRepository = SettingsRepositoryImpl(),
     private val registryRepo: ModuleRepoRepository = ModuleRepoRepositoryImpl(),
+    private val builtinRepo: BuiltinRepository = BuiltinRepositoryImpl(),
 ) : ViewModel() {
 
     companion object {
@@ -236,9 +240,23 @@ class ModuleViewModel(
 
     suspend fun loadModuleList(resort: Boolean = true) {
         val parsedModules = withContext(Dispatchers.IO) {
+            // A running built-in component blocks some modules (§6.4); their switch must be grey,
+            // never clickable-but-ineffective.
+            val builtin = builtinRepo.list().getOrNull()
+            val blockedByZygisk = builtin?.blockedModuleIds.orEmpty()
+            val blockedByMetamodule = builtin?.blockedMetamoduleIds.orEmpty()
+
             repo.getModules().getOrElse {
                 Log.e(TAG, "fetchModuleList: ", it)
                 emptyList()
+            }.map { module ->
+                module.copy(
+                    blockedBy = when {
+                        module.id in blockedByZygisk -> ModuleBlock.MuZygisk
+                        module.id in blockedByMetamodule -> ModuleBlock.Metamodule
+                        else -> ModuleBlock.None
+                    }
+                )
             }
         }
 

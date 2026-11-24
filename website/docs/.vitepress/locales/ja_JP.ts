@@ -77,6 +77,8 @@ function sidebarFeatures() {
       text: '特色機能',
       items: [
         { text: 'Root アクセス監査', link: '/ja_JP/features/root-access-audit' },
+        { text: 'MuZygisk（内蔵 Zygisk）', link: '/ja_JP/features/muzygisk' },
+        { text: 'MuMount（内蔵メタモジュール）', link: '/ja_JP/features/mumount' },
       ]
     }
   ]

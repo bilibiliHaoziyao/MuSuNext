@@ -722,6 +722,18 @@ fn install_module_to_system(zip: &str) -> Result<String> {
     // Check if this module is a metamodule
     let is_metamodule = metamodule::is_metamodule(&module_prop);
 
+    // §6.2 ③④: "install == enabled" on MuSu, so checking only `enable_module`
+    // would let the zip bypass mutual exclusion entirely (V-2). `pending_enable`
+    // counts as occupied (Q-1 strict).
+    if let Some(err) = crate::builtin::check_module_install(Path::new(zip), is_metamodule) {
+        println!("\n❌ Installation Blocked");
+        println!("┌────────────────────────────────");
+        println!("│ {}", err.message);
+        println!("│ code: {}", err.code);
+        println!("└─────────────────────────────────\n");
+        bail!("{}", err.message);
+    }
+
     // Check if it's safe to install regular module
     if !is_metamodule && let Err(is_disabled) = metamodule::check_install_safety() {
         println!("\n❌ Installation Blocked");
@@ -754,11 +766,19 @@ fn install_module_to_system(zip: &str) -> Result<String> {
                 .and_then(|m| m.get("id").cloned())
                 .unwrap_or_else(|| "unknown".to_string());
 
+            // The builtin metamodule carries module.prop, so the fallback above
+            // resolves to its id instead of "unknown" (§6.2 ④).
+            let existing_label = if existing_id == defs::BUILTIN_META_ID {
+                "MuMount"
+            } else {
+                &existing_id
+            };
+
             if existing_id != module_id {
                 println!("\n❌ Installation Failed");
                 println!("┌────────────────────────────────");
                 println!("│ A metamodule is already installed");
-                println!("│   Current metamodule: {existing_id}");
+                println!("│   Current metamodule: {existing_label}");
                 println!("│");
                 println!("│ Only one metamodule can be active at a time.");
                 println!("│");
@@ -909,6 +929,13 @@ pub fn enable_module(id: &str) -> Result<()> {
     let module_path = Path::new(defs::MODULE_DIR).join(id);
     ensure!(module_path.exists(), "Module {id} not found");
 
+    // §6.2 ③④: same interception as install, so a module that was installed
+    // before the builtin was enabled cannot be turned on afterwards.
+    let props = read_module_prop(&module_path).unwrap_or_default();
+    if let Some(err) = crate::builtin::check_module_enable(&module_path, &props) {
+        bail!("{} (code {})", err.message, err.code);
+    }
+
     let disable_path = module_path.join(defs::DISABLE_FILE_NAME);
     if disable_path.exists() {
         std::fs::remove_file(&disable_path).with_context(|| {
@@ -1054,6 +1081,12 @@ fn list_module(path: &str) -> Vec<HashMap<String, String>> {
 
     let preinit_states = crate::preinit::module_states();
 
+    // §6.4: resolve the blocked id lists once, not once per module (avoids an
+    // avoidable state.json read + modules dir scan for every row).
+    let builtin_state = crate::builtin::State::load();
+    let blocked_zygisk = crate::builtin::blocked_zygisk_ids(&builtin_state);
+    let blocked_meta = crate::builtin::blocked_metamodule_ids(&builtin_state);
+
     // first check enabled modules
     let dir = std::fs::read_dir(path);
     let Ok(dir) = dir else {
@@ -1087,6 +1120,29 @@ fn list_module(path: &str) -> Vec<HashMap<String, String>> {
                 info!("Failed to get module id from dir name");
                 continue;
             }
+        }
+
+        // §6.4: extra fields for the module list page. The manager also gets the
+        // authoritative id lists from `builtin list`; these fields let a client
+        // that only called `module list` still grey out the right switches.
+        let module_id = module_prop_map.get("id").map_or("", String::as_str);
+        let block = if blocked_zygisk.iter().any(|id| id == module_id) {
+            Some((
+                crate::builtin::CONFLICT_ZYGISK_BUILTIN_ON,
+                format!("模块 {module_id} 被 MuZygisk 阻塞"),
+            ))
+        } else if blocked_meta.iter().any(|id| id == module_id) {
+            Some((
+                crate::builtin::CONFLICT_META_BUILTIN_ON,
+                format!("模块 {module_id} 被 MuMount 阻塞"),
+            ))
+        } else {
+            None
+        };
+        if let Some((code, reason)) = block {
+            module_prop_map.insert("builtinBlocked".to_owned(), "true".to_owned());
+            module_prop_map.insert("builtinBlockedCode".to_owned(), code.to_string());
+            module_prop_map.insert("builtinBlockedReason".to_owned(), reason);
         }
 
         // Add enabled, update, remove, web, action flags

@@ -183,4 +183,75 @@
     <string name="profile_flags_desc_no_new_privs">防止在此 Root Profile 的上下文中透過 MuSu Next 進一步提升權限</string>
     <string name="install_force_backup">備份為原廠映像</string>
     <string name="install_force_backup_summary">請確保你選擇的 boot 映像是原廠映像</string>
+
+    <!-- 內建元件：MuZygisk 與 MuMount -->
+    <string name="builtin_group">內建元件</string>
+    <string name="builtin_section_status">狀態</string>
+    <string name="builtin_section_detail">詳細資料</string>
+    <string name="builtin_zygisk_title" translatable="false">MuZygisk</string>
+    <string name="builtin_meta_title">MuMount</string>
+    <string name="builtin_tag_running">運作中</string>
+    <string name="builtin_tag_pending_reboot">待重新啟動</string>
+    <string name="builtin_tag_off">已關閉</string>
+    <string name="builtin_tag_failed">啟動失敗</string>
+    <string name="builtin_tag_blocked">被佔用</string>
+    <string name="builtin_tag_unknown">未知</string>
+    <string name="builtin_tag_unsupported">不支援</string>
+
+    <string name="builtin_zygisk_summary_off">已關閉 · 模組的 Zygisk 腳本不會被執行</string>
+    <string name="builtin_zygisk_summary_pending">已啟用 · 重新啟動後開始接管 Zygisk 模組</string>
+    <string name="builtin_zygisk_summary_active">運作中 · 已接管 %1$d 個 Zygisk 模組</string>
+    <string name="builtin_zygisk_summary_blocked">被「%1$s」佔用 · 需先停用它</string>
+    <string name="builtin_zygisk_summary_unsupported">不支援 · 目前核心缺少 Zygisk 所需介面</string>
+    <string name="builtin_zygisk_summary_pending_disable">已關閉 · 重新啟動後完全停止</string>
+    <string name="builtin_summary_failed">啟動失敗 · 點狀態區查看原因</string>
+    <string name="builtin_summary_unknown">讀不到運作狀態 · 點狀態區重試</string>
+    <string name="builtin_meta_summary_off">已關閉 · 模組檔案不會掛載進系統</string>
+    <string name="builtin_meta_summary_pending">已啟用 · 完整重新啟動後開始掛載</string>
+    <string name="builtin_meta_summary_active">運作中 · 已掛載 %1$d 個模組，%2$d 個失敗</string>
+    <string name="builtin_meta_summary_blocked">被「%1$s」佔用 · 需先停用它</string>
+    <string name="builtin_meta_summary_unsupported">不支援 · 目前核心不支援 overlayfs 掛載</string>
+    <string name="builtin_meta_summary_pending_disable">已關閉 · 完整重新啟動後停止掛載</string>
+
+    <string name="builtin_status_label">運作狀態</string>
+    <string name="builtin_zygisk_inject">注入</string>
+    <string name="builtin_zygisk_inject_ok">已注入 zygote64</string>
+    <string name="builtin_zygisk_inject_none">未注入</string>
+    <string name="builtin_zygisk_inject_error">注入異常</string>
+    <string name="builtin_zygisk_modules">Zygisk 模組</string>
+    <string name="builtin_zygisk_modules_value">%1$d 個已載入，共 %2$d 個</string>
+    <string name="builtin_zygisk_modules_empty">沒有安裝 Zygisk 模組</string>
+    <string name="builtin_meta_mount">掛載</string>
+    <string name="builtin_meta_mount_value">%1$d 個模組已掛載，%2$d 個失敗</string>
+    <string name="builtin_meta_scope">接管範圍</string>
+    <string name="builtin_meta_scope_hint">模組檔案覆蓋同名系統檔案，原始檔案不被修改</string>
+    <string name="builtin_reboot_needed">需要重新啟動</string>
+    <string name="builtin_reboot_needed_full">需要完整重新啟動</string>
+    <string name="builtin_reboot_now">立即重新啟動</string>
+    <string name="builtin_reboot_value_zygisk_enable">是 · 重新啟動後開始接管</string>
+    <string name="builtin_reboot_value_zygisk_disable">是 · 關閉後生效</string>
+    <string name="builtin_reboot_value_meta_enable">是 · 開機掛載未執行</string>
+    <string name="builtin_reboot_value_meta_disable">是 · 已掛載的模組保留到下次重新啟動</string>
+
+    <string name="builtin_conflict_blocked_by">「%1$s %2$s」正在提供 Zygisk 功能，MuZygisk 無法同時運作。要使用 MuZygisk，請先在模組列表停用 %1$s，然後重新啟動裝置。</string>
+    <string name="builtin_conflict_blocking">MuZygisk 正在運作，因此「%1$s」在模組列表裡無法啟用。要使用它，請先關閉 MuZygisk 並重新啟動。</string>
+    <string name="builtin_conflict_goto_modules">前往模組列表</string>
+    <string name="builtin_failed">%1$s 啟動失敗（錯誤碼 %2$d）。</string>
+    <string name="builtin_view_log">查看日誌</string>
+    <string name="builtin_read_failed">讀不到運作狀態。</string>
+    <string name="builtin_retry">重試</string>
+    <string name="builtin_probing">正在讀取狀態…</string>
+
+    <string name="builtin_detail_type">類型</string>
+    <string name="builtin_detail_type_value">內建元件 · 不顯示在模組列表</string>
+    <string name="builtin_detail_version">版本</string>
+    <string name="builtin_detail_version_value">%1$s（內建）</string>
+    <string name="builtin_detail_upstream">上游</string>
+    <string name="builtin_detail_license">授權條款</string>
+    <string name="builtin_detail_size">佔用空間</string>
+    <string name="builtin_detail_size_hint">解除安裝或更新時自動清理</string>
+
+    <string name="builtin_module_blocked_zygisk">MuZygisk 正在運作，停用它後才能啟用此模組</string>
+    <string name="builtin_module_blocked_meta">MuMount 正在運作，停用它後才能啟用此模組</string>
+    <string name="builtin_value_missing" translatable="false">—</string>
 </resources>

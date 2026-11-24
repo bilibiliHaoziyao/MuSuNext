@@ -13,14 +13,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.musu.next.Natives
 import org.musu.next.R
+import org.musu.next.data.repository.BuiltinRepository
+import org.musu.next.data.repository.BuiltinRepositoryImpl
 import org.musu.next.data.repository.SettingsRepository
 import org.musu.next.data.repository.SettingsRepositoryImpl
 import org.musu.next.ksuApp
+import org.musu.next.ui.screen.builtin.BuiltinUiState
 import org.musu.next.ui.screen.settings.SettingsUiState
 import org.musu.next.ui.theme.ColorMode
 
 class SettingsViewModel(
-    private val repo: SettingsRepository = SettingsRepositoryImpl()
+    private val repo: SettingsRepository = SettingsRepositoryImpl(),
+    private val builtinRepo: BuiltinRepository = BuiltinRepositoryImpl(),
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -92,6 +96,12 @@ class SettingsViewModel(
             val useSoftReboot = repo.useSoftReboot
             val isLateLoadMode = Natives.isLateLoadMode
 
+            // Two arrow entries: they only carry a state prefix, the switches live on their own pages.
+            val builtin = builtinRepo.list().fold(
+                onSuccess = { BuiltinUiState(snapshot = it) },
+                onFailure = { BuiltinUiState(loadFailed = true) },
+            )
+
             _uiState.update {
                 it.copy(
                     uiMode = uiMode,
@@ -130,6 +140,7 @@ class SettingsViewModel(
                     autoJailbreak = autoJailbreak,
                     useSoftReboot = useSoftReboot,
                     isLateLoadMode = isLateLoadMode,
+                    builtin = builtin,
                 )
             }
         }

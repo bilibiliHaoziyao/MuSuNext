@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.musu.next.data.model.BuiltinComponentId
 import org.musu.next.ui.LocalUiMode
 import org.musu.next.ui.UiMode
 import org.musu.next.ui.navigation3.Navigator
@@ -61,6 +62,8 @@ fun SettingPager(
         onSetAutoJailbreak = viewModel::setAutoJailbreak,
         onSetUseSoftReboot = viewModel::setUseSoftReboot,
         onOpenAbout = { navigator.push(Route.About) },
+        onOpenBuiltinZygisk = { navigator.push(Route.Builtin(BuiltinComponentId.Zygisk.wireId)) },
+        onOpenBuiltinMetamodule = { navigator.push(Route.Builtin(BuiltinComponentId.Metamodule.wireId)) },
     )
 
     when (LocalUiMode.current) {

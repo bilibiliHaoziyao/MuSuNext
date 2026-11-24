@@ -49,6 +49,12 @@ pub fn on_post_fs_data() -> Result<()> {
 
     assets::ensure_binaries(true).with_context(|| "Failed to extract bin assets")?;
 
+    // Builtin payloads are embedded separately (§5.1 row 4); failure must not
+    // stop the ordinary binary extraction above or the boot sequence below.
+    if let Err(e) = crate::builtin::ensure_payloads() {
+        warn!("ensure builtin payloads failed: {e}");
+    }
+
     crate::hot_install::clean_trash();
 
     // if we are in safe mode, we should disable all modules
@@ -56,6 +62,10 @@ pub fn on_post_fs_data() -> Result<()> {
         warn!("safe mode, skip post-fs-data scripts and disable all modules!");
         if let Err(e) = crate::module::disable_all_modules() {
             warn!("disable all modules failed: {e}");
+        }
+        // Safe mode must not be taken over by an already-linked builtin mounter.
+        if let Err(e) = crate::builtin::safe_mode_detach() {
+            warn!("detach builtin metamodule in safe mode failed: {e}");
         }
         return Ok(());
     }
@@ -84,6 +94,11 @@ pub fn on_post_fs_data() -> Result<()> {
         warn!("load sepolicy.rule failed");
     }
 
+    // Builtin MuZygisk rules live with their payload, not in MODULE_DIR (§7.2).
+    if let Err(e) = crate::builtin::load_sepolicy() {
+        warn!("load builtin sepolicy failed: {e}");
+    }
+
     if let Err(e) = crate::profile::apply_sepolies() {
         warn!("apply root profile sepolicy failed: {e}");
     }
@@ -97,6 +112,11 @@ pub fn on_post_fs_data() -> Result<()> {
         warn!("init features failed: {e}");
     }
 
+    // MuZygisk temporarily owns kernel_umount (§8.4).
+    if let Err(e) = crate::builtin::apply_feature_overrides() {
+        warn!("apply builtin feature overrides failed: {e}");
+    }
+
     // execute metamodule post-fs-data script first (priority)
     if let Err(e) = metamodule::exec_stage_script("post-fs-data", wait) {
         warn!("exec metamodule post-fs-data script failed: {e}");
@@ -105,6 +125,12 @@ pub fn on_post_fs_data() -> Result<()> {
     // exec modules post-fs-data scripts
     if let Err(e) = crate::module::exec_stage_script("post-fs-data", wait) {
         warn!("exec post-fs-data scripts failed: {e}");
+    }
+
+    // §5.1 row 15: consistency check, boot guard, detached monitor. Last so
+    // module scripts have run, still before load_system_prop and metamount.
+    if let Err(e) = crate::builtin::apply() {
+        warn!("builtin apply failed: {e}");
     }
 
     // load system.prop
@@ -182,6 +208,11 @@ pub fn on_boot_completed() {
 
     ksucalls::report_boot_complete();
     info!("on_boot_completed triggered!");
+
+    // §5.1 row 19: confirm runtime evidence and reset/bump boot counters.
+    if let Err(e) = crate::builtin::on_boot_completed() {
+        warn!("builtin boot completion check failed: {e}");
+    }
 
     crate::preinit::on_boot_completed();
 

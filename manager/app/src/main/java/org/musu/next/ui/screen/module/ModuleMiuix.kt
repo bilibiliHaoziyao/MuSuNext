@@ -776,6 +776,7 @@ fun ModuleItem(
     val textDecoration = if (module.remove) TextDecoration.LineThrough else null
     val hasDescription = module.description.isNotBlank()
     val maxLinesLimit = LocalModuleDescriptionMaxLines.current
+    val blockedReason = module.blockedReason()
     var expanded by rememberSaveable(module.id) { mutableStateOf(false) }
 
     Card(
@@ -860,6 +861,16 @@ fun ModuleItem(
                     color = colorScheme.onSurfaceVariantSummary,
                     textDecoration = textDecoration
                 )
+                blockedReason?.let {
+                    Text(
+                        text = it,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(bottom = 1.dp),
+                        fontWeight = FontWeight(550),
+                        color = colorScheme.onSurfaceVariantSummary,
+                        textDecoration = textDecoration
+                    )
+                }
                 module.preinitWarning()?.let {
                     Text(
                         text = stringResource(it),
@@ -871,7 +882,7 @@ fun ModuleItem(
                 }
             }
             Switch(
-                enabled = !module.update,
+                enabled = !module.update && blockedReason == null,
                 checked = module.enabled,
                 onCheckedChange = {
                     if (it != module.enabled) onCheckChanged(it)

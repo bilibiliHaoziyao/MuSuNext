@@ -208,4 +208,75 @@
     <string name="profile_flags_desc_no_new_privs">この root プロファイルのコンテキスト内で、MuSu Next を介したさらなる権限昇格を防止します。</string>
     <string name="install_force_backup">純正イメージとしてバックアップ</string>
     <string name="install_force_backup_summary">選択した boot イメージが純正イメージであることを確認してください</string>
+
+    <!-- ビルトインコンポーネント：MuZygisk と MuMount -->
+    <string name="builtin_group">ビルトインコンポーネント</string>
+    <string name="builtin_section_status">状態</string>
+    <string name="builtin_section_detail">詳細</string>
+    <string name="builtin_zygisk_title" translatable="false">MuZygisk</string>
+    <string name="builtin_meta_title">MuMount</string>
+    <string name="builtin_tag_running">動作中</string>
+    <string name="builtin_tag_pending_reboot">再起動待ち</string>
+    <string name="builtin_tag_off">オフ</string>
+    <string name="builtin_tag_failed">起動失敗</string>
+    <string name="builtin_tag_blocked">使用中</string>
+    <string name="builtin_tag_unknown">不明</string>
+    <string name="builtin_tag_unsupported">非対応</string>
+
+    <string name="builtin_zygisk_summary_off">オフ · モジュールの Zygisk スクリプトは実行されません</string>
+    <string name="builtin_zygisk_summary_pending">オン · 再起動後に Zygisk モジュールを引き継ぎます</string>
+    <string name="builtin_zygisk_summary_active">動作中 · %1$d 個の Zygisk モジュールを引き継ぎ中</string>
+    <string name="builtin_zygisk_summary_blocked">「%1$s」が使用中 · 先に無効化してください</string>
+    <string name="builtin_zygisk_summary_unsupported">非対応 · 現在のカーネルに Zygisk に必要なインターフェースがありません</string>
+    <string name="builtin_zygisk_summary_pending_disable">オフ · 再起動後に完全に停止します</string>
+    <string name="builtin_summary_failed">起動失敗 · 状態を開いて原因を確認してください</string>
+    <string name="builtin_summary_unknown">状態を取得できません · 状態を開いて再試行してください</string>
+    <string name="builtin_meta_summary_off">オフ · モジュールのファイルはシステムにマウントされません</string>
+    <string name="builtin_meta_summary_pending">オン · 完全再起動後にマウントを開始します</string>
+    <string name="builtin_meta_summary_active">動作中 · %1$d 個のモジュールをマウント、%2$d 個失敗</string>
+    <string name="builtin_meta_summary_blocked">「%1$s」が使用中 · 先に無効化してください</string>
+    <string name="builtin_meta_summary_unsupported">非対応 · 現在のカーネルは overlayfs マウントに対応していません</string>
+    <string name="builtin_meta_summary_pending_disable">オフ · 完全再起動後にマウントを停止します</string>
+
+    <string name="builtin_status_label">実行状態</string>
+    <string name="builtin_zygisk_inject">インジェクション</string>
+    <string name="builtin_zygisk_inject_ok">zygote64 に注入済み</string>
+    <string name="builtin_zygisk_inject_none">未注入</string>
+    <string name="builtin_zygisk_inject_error">注入エラー</string>
+    <string name="builtin_zygisk_modules">Zygisk モジュール</string>
+    <string name="builtin_zygisk_modules_value">%2$d 個中 %1$d 個を読み込み済み</string>
+    <string name="builtin_zygisk_modules_empty">Zygisk モジュールはインストールされていません</string>
+    <string name="builtin_meta_mount">マウント</string>
+    <string name="builtin_meta_mount_value">%1$d 個マウント済み、%2$d 個失敗</string>
+    <string name="builtin_meta_scope">対象範囲</string>
+    <string name="builtin_meta_scope_hint">モジュールのファイルは同名のシステムファイルを上書きし、元のファイルは変更されません</string>
+    <string name="builtin_reboot_needed">再起動が必要</string>
+    <string name="builtin_reboot_needed_full">完全再起動が必要</string>
+    <string name="builtin_reboot_now">今すぐ再起動</string>
+    <string name="builtin_reboot_value_zygisk_enable">はい · 再起動後に引き継ぎます</string>
+    <string name="builtin_reboot_value_zygisk_disable">はい · 停止は再起動後です</string>
+    <string name="builtin_reboot_value_meta_enable">はい · 起動時のマウントは未実行です</string>
+    <string name="builtin_reboot_value_meta_disable">はい · マウントは次回の完全再起動まで残ります</string>
+
+    <string name="builtin_conflict_blocked_by">「%1$s %2$s」が Zygisk 機能を提供しているため、MuZygisk は同時に動作できません。MuZygisk を使うには、モジュールリストで %1$s を無効化してから端末を再起動してください。</string>
+    <string name="builtin_conflict_blocking">MuZygisk が動作中のため、モジュールリストで「%1$s」を有効化できません。使用するには MuZygisk をオフにして再起動してください。</string>
+    <string name="builtin_conflict_goto_modules">モジュールリストを開く</string>
+    <string name="builtin_failed">%1$s の起動に失敗しました（エラーコード %2$d）。</string>
+    <string name="builtin_view_log">ログを表示</string>
+    <string name="builtin_read_failed">実行状態を取得できません。</string>
+    <string name="builtin_retry">再試行</string>
+    <string name="builtin_probing">状態を読み込み中…</string>
+
+    <string name="builtin_detail_type">種類</string>
+    <string name="builtin_detail_type_value">ビルトイン · モジュールリストには表示されません</string>
+    <string name="builtin_detail_version">バージョン</string>
+    <string name="builtin_detail_version_value">%1$s（ビルトイン）</string>
+    <string name="builtin_detail_upstream">上流</string>
+    <string name="builtin_detail_license">ライセンス</string>
+    <string name="builtin_detail_size">使用容量</string>
+    <string name="builtin_detail_size_hint">アンインストールまたは更新時に自動で削除されます</string>
+
+    <string name="builtin_module_blocked_zygisk">MuZygisk が動作中です。オフにするとこのモジュールを有効化できます</string>
+    <string name="builtin_module_blocked_meta">MuMount が動作中です。オフにするとこのモジュールを有効化できます</string>
+    <string name="builtin_value_missing" translatable="false">—</string>
 </resources>

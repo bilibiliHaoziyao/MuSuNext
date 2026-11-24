@@ -385,4 +385,80 @@
     <string name="script_param_below_min">Must be at least %d</string>
     <string name="script_param_above_max">Must be at most %d</string>
     <string name="script_param_invalid">Invalid value</string>
+
+    <!-- Built-in components: MuZygisk and MuMount -->
+    <string name="builtin_group">Built-in components</string>
+    <string name="builtin_section_status">Status</string>
+    <string name="builtin_section_detail">Details</string>
+    <string name="builtin_zygisk_title" translatable="false">MuZygisk</string>
+    <string name="builtin_meta_title">MuMount</string>
+    <string name="builtin_tag_running">Running</string>
+    <string name="builtin_tag_pending_reboot">Reboot needed</string>
+    <string name="builtin_tag_off">Off</string>
+    <string name="builtin_tag_failed">Failed</string>
+    <string name="builtin_tag_blocked">In use</string>
+    <string name="builtin_tag_unknown">Unknown</string>
+    <string name="builtin_tag_unsupported">Unsupported</string>
+
+    <!-- Entry / switch area summaries, one prefix per state -->
+    <string name="builtin_zygisk_summary_off">Off · Zygisk scripts in modules will not run</string>
+    <string name="builtin_zygisk_summary_pending">On · Takes over Zygisk modules after reboot</string>
+    <string name="builtin_zygisk_summary_active">Running · %1$d Zygisk modules loaded</string>
+    <string name="builtin_zygisk_summary_blocked">In use by \"%1$s\" · Disable it first</string>
+    <string name="builtin_zygisk_summary_unsupported">Unsupported · Kernel lacks the required Zygisk interfaces</string>
+    <string name="builtin_zygisk_summary_pending_disable">Off · Stops completely after a reboot</string>
+    <string name="builtin_summary_failed">Failed · Open status for details</string>
+    <string name="builtin_summary_unknown">Status unavailable · Open status to retry</string>
+    <string name="builtin_meta_summary_off">Off · Module files are not mounted into the system</string>
+    <string name="builtin_meta_summary_pending">On · Mounting starts after a full reboot</string>
+    <string name="builtin_meta_summary_active">Running · %1$d modules mounted, %2$d failed</string>
+    <string name="builtin_meta_summary_blocked">In use by \"%1$s\" · Disable it first</string>
+    <string name="builtin_meta_summary_unsupported">Unsupported · Kernel does not support overlayfs mounts</string>
+    <string name="builtin_meta_summary_pending_disable">Off · Mounting stops after a full reboot</string>
+
+    <!-- Status section -->
+    <string name="builtin_status_label">Status</string>
+    <string name="builtin_zygisk_inject">Injection</string>
+    <string name="builtin_zygisk_inject_ok">Injected into zygote64</string>
+    <string name="builtin_zygisk_inject_none">Not injected</string>
+    <string name="builtin_zygisk_inject_error">Injection error</string>
+    <string name="builtin_zygisk_modules">Zygisk modules</string>
+    <string name="builtin_zygisk_modules_value">%1$d of %2$d loaded</string>
+    <string name="builtin_zygisk_modules_empty">No Zygisk modules installed</string>
+    <string name="builtin_meta_mount">Mounts</string>
+    <string name="builtin_meta_mount_value">%1$d mounted, %2$d failed</string>
+    <string name="builtin_meta_scope">Scope</string>
+    <string name="builtin_meta_scope_hint">Module files shadow system files; originals are untouched</string>
+    <string name="builtin_reboot_needed">Reboot needed</string>
+    <string name="builtin_reboot_needed_full">Full reboot needed</string>
+    <string name="builtin_reboot_now">Reboot now</string>
+    <string name="builtin_reboot_value_zygisk_enable">Yes · Takes over after a reboot</string>
+    <string name="builtin_reboot_value_zygisk_disable">Yes · Stops after a reboot</string>
+    <string name="builtin_reboot_value_meta_enable">Yes · Boot-time mounting has not run</string>
+    <string name="builtin_reboot_value_meta_disable">Yes · Mounts stay until a full reboot</string>
+
+    <!-- Conflict and error cards -->
+    <string name="builtin_conflict_blocked_by">\"%1$s %2$s\" already provides Zygisk. MuZygisk cannot run at the same time. Disable %1$s in the module list, then reboot.</string>
+    <string name="builtin_conflict_blocking">MuZygisk is running, so \"%1$s\" cannot be enabled in the module list. Turn MuZygisk off and reboot to use it.</string>
+    <string name="builtin_conflict_goto_modules">Open module list</string>
+    <string name="builtin_failed">%1$s failed to start (error %2$d).</string>
+    <string name="builtin_view_log">View log</string>
+    <string name="builtin_read_failed">Status unavailable.</string>
+    <string name="builtin_retry">Retry</string>
+    <string name="builtin_probing">Reading status…</string>
+
+    <!-- Detail section -->
+    <string name="builtin_detail_type">Type</string>
+    <string name="builtin_detail_type_value">Built-in · Hidden from the module list</string>
+    <string name="builtin_detail_version">Version</string>
+    <string name="builtin_detail_version_value">%1$s (built-in)</string>
+    <string name="builtin_detail_upstream">Upstream</string>
+    <string name="builtin_detail_license">License</string>
+    <string name="builtin_detail_size">Disk usage</string>
+    <string name="builtin_detail_size_hint">Removed automatically on uninstall or update</string>
+
+    <!-- Module list: a module blocked by a running built-in component -->
+    <string name="builtin_module_blocked_zygisk">MuZygisk is running. Turn it off to enable this module.</string>
+    <string name="builtin_module_blocked_meta">MuMount is running. Turn it off to enable this module.</string>
+    <string name="builtin_value_missing" translatable="false">—</string>
 </resources>

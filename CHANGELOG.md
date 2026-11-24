@@ -2,6 +2,20 @@
 
 All notable changes to MuSu Next will be documented in this file.
 
+## [0.0.6] - 2026-11-24
+
+### Added
+- 内建 MuZygisk：基于 ReZygisk fork 的内建 Zygisk 实现，默认禁用
+  - 不在模块列表显示，仅在「设置 → MuZygisk」中用原生界面（非 WebUI）管理，页面顶部为总开关
+  - 与设备上的其他 Zygisk 实现硬互斥：已有其他实现时开关置灰并点名冲突对象；MuZygisk 开启后其他实现也无法启用
+  - 开启后需完整重启生效；以 AGPL-3.0-or-later 单独授权，见 `muzygisk/`
+- 内建 MuMount：基于 Hybrid Mount 的内建元模块，默认禁用
+  - 同样不在模块列表显示，在「设置 → MuMount」中用原生界面管理，顶部总开关
+  - 与其他元模块互斥，规则与 MuZygisk 一致；可与 MuZygisk 同时开启
+  - 打包上游完整载荷（overlay / magic / vfs 三后端及内核模块），GPL-3.0-only
+- ksud 新增 `builtin` 子系统与 `ksud builtin list/status/enable/disable/detect/reset/apply` 命令：状态唯一真源、幂等载荷解压、互斥探测、开机编排与失败降级
+- 官网「特色功能」新增 MuZygisk 与 MuMount 四语言文档
+
 ## [0.0.5] - 2026-11-23
 
 ### Added

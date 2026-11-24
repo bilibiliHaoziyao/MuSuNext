@@ -23,7 +23,9 @@ import androidx.compose.material.icons.filled.DeveloperMode
 import androidx.compose.material.icons.filled.DisplaySettings
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.LayersClear
+import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Security
@@ -49,6 +51,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.musu.next.R
+import org.musu.next.data.model.BuiltinComponentId
 import org.musu.next.ui.UiMode
 import org.musu.next.ui.component.KsuIsValid
 import org.musu.next.ui.component.material.ExpressiveScaffold
@@ -59,6 +62,7 @@ import org.musu.next.ui.component.material.SegmentedSwitchItem
 import org.musu.next.ui.component.material.SendLogBottomSheet
 import org.musu.next.ui.component.material.SnackBarHost
 import org.musu.next.ui.component.material.expressiveTopAppBarColors
+import org.musu.next.ui.screen.builtin.builtinSummaryText
 import org.musu.next.ui.component.uninstalldialog.UninstallDialog
 
 /**
@@ -290,6 +294,39 @@ fun SettingPagerMaterial(
                         },
                     )
                 )
+
+                // Built-in components: its own group, after Security and before the module switches,
+                // because these two replace an implementation layer instead of hiding a behaviour (§3.1).
+                val builtinGroup = stringResource(id = R.string.builtin_group)
+                SegmentedColumn(
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
+                    title = builtinGroup,
+                ) {
+                    item("builtin_zygisk") {
+                        val zygisk = uiState.builtin.component(BuiltinComponentId.Zygisk)
+                        SegmentedListItem(
+                            onClick = actions.onOpenBuiltinZygisk,
+                            headlineContent = { Text(stringResource(id = R.string.builtin_zygisk_title)) },
+                            supportingContent = { Text(builtinSummaryText(zygisk)) },
+                            leadingContent = { Icon(Icons.Filled.Memory, null) },
+                            trailingContent = {
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null)
+                            },
+                        )
+                    }
+                    item("builtin_metamodule") {
+                        val metamodule = uiState.builtin.component(BuiltinComponentId.Metamodule)
+                        SegmentedListItem(
+                            onClick = actions.onOpenBuiltinMetamodule,
+                            headlineContent = { Text(stringResource(id = R.string.builtin_meta_title)) },
+                            supportingContent = { Text(builtinSummaryText(metamodule)) },
+                            leadingContent = { Icon(Icons.Filled.Layers, null) },
+                            trailingContent = {
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null)
+                            },
+                        )
+                    }
+                }
 
                 SegmentedColumn(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 13.dp),

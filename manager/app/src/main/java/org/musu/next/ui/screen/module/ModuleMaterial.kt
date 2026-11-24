@@ -709,6 +709,7 @@ private fun ModuleItem(
     var expanded by rememberSaveable(module.id) { mutableStateOf(false) }
     var descriptionCanExpand by rememberSaveable(module.id) { mutableStateOf(true) }
     val canOpenWebUi = module.hasWebUi && !module.remove && module.enabled
+    val blockedReason = module.blockedReason()
     val cardInteractionSource = remember { MutableInteractionSource() }
     val descriptionInteractionSource = remember { MutableInteractionSource() }
 
@@ -761,6 +762,16 @@ private fun ModuleItem(
                         style = MaterialTheme.typography.bodySmall,
                         textDecoration = textDecoration
                     )
+
+                    // §6.3: a running built-in component blocks this module, say so in place.
+                    blockedReason?.let {
+                        Text(
+                            text = it,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall,
+                            textDecoration = textDecoration
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -770,7 +781,7 @@ private fun ModuleItem(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     ExpressiveSwitch(
-                        enabled = !module.update,
+                        enabled = !module.update && blockedReason == null,
                         checked = module.enabled,
                         onCheckedChange = {
                             haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)

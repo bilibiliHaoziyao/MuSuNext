@@ -80,6 +80,8 @@ function sidebarFeatures() {
       text: '特色功能',
       items: [
         { text: 'Root 存取稽核', link: '/zh_TW/features/root-access-audit' },
+        { text: 'MuZygisk（內建 Zygisk）', link: '/zh_TW/features/muzygisk' },
+        { text: 'MuMount（內建元模組）', link: '/zh_TW/features/mumount' },
       ]
     }
   ]

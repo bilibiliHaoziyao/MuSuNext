@@ -14,6 +14,8 @@
 mod apk_sign;
 mod assets;
 mod boot_patch;
+// The implementation modules are Android-only; builtin::mod is type-checked on host too.
+mod builtin;
 #[cfg(target_os = "android")]
 mod cli;
 #[cfg(not(target_os = "android"))]

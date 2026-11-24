@@ -1,0 +1,9 @@
+MuZygisk — a fork of ReZygisk
+Modifications Copyright (C) 2026 MuSu Next
+
+Based on ReZygisk, Copyright (C) 2026 The PerformanC Organization
+Upstream: https://github.com/PerformanC/ReZygisk
+Upstream commit: bfa54ef5bb55a3dfd43c6309db950ef1327a6553
+
+This product is licensed under the GNU Affero General Public License v3.0
+or later (AGPL-3.0-or-later). See the LICENSE file for the full text.

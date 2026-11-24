@@ -76,6 +76,7 @@ import org.musu.next.ui.navigation3.Route
 import org.musu.next.ui.navigation3.rememberNavigator
 import org.musu.next.ui.screen.about.AboutScreen
 import org.musu.next.ui.screen.appprofile.AppProfileScreen
+import org.musu.next.ui.screen.builtin.BuiltinScreen
 import org.musu.next.ui.screen.colorpalette.ColorPaletteScreen
 import org.musu.next.ui.screen.executemoduleaction.ExecuteModuleActionScreen
 import org.musu.next.ui.screen.flash.FlashScreen
@@ -242,6 +243,7 @@ class MainActivity : ComponentActivity() {
                             entry<Route.Sulog>(swipeDismiss = swipeDismiss) { SulogScreen() }
                             entry<Route.ColorPalette>(swipeDismiss = swipeDismiss) { ColorPaletteScreen() }
                             entry<Route.AppProfileTemplate>(swipeDismiss = swipeDismiss) { AppProfileTemplateScreen() }
+                            entry<Route.Builtin>(swipeDismiss = swipeDismiss) { key -> BuiltinScreen(key.id) }
                             entry<Route.TemplateEditor>(swipeDismiss = swipeDismiss) { key -> TemplateEditorScreen(key.template, key.readOnly) }
                             entry<Route.AppProfile>(swipeDismiss = swipeDismiss) { key -> AppProfileScreen(key.uid) }
                             entry<Route.ModuleRepo>(swipeDismiss = swipeDismiss) { ModuleRepoScreen() }

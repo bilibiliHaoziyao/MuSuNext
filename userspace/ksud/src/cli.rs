@@ -29,6 +29,12 @@ enum Commands {
         command: Module,
     },
 
+    /// Manage built-in components (MuZygisk / MuMount)
+    Builtin {
+        #[command(subcommand)]
+        command: Builtin,
+    },
+
     /// Trigger `post-fs-data` event
     PostFsData,
 
@@ -153,6 +159,38 @@ enum Commands {
         #[command(subcommand)]
         command: Initrc,
     },
+}
+
+/// `ksud builtin ...` — stdout is exactly one JSON object; logs go to logd.
+#[derive(clap::Subcommand, Debug)]
+enum Builtin {
+    /// Full state of both components (the manager's only read entry)
+    List,
+    /// Detail of one component (id: zygisk|muz|metamodule|meta)
+    Status {
+        /// component id
+        id: String,
+    },
+    /// Enable one component; needs a full reboot to take effect
+    Enable {
+        /// component id
+        id: String,
+    },
+    /// Disable one component; needs a full reboot to take effect
+    Disable {
+        /// component id
+        id: String,
+    },
+    /// Probe conflicts without changing state
+    Detect {
+        /// component id
+        id: String,
+    },
+    /// Clear builtin payloads and state (keeps user configuration)
+    Reset,
+    /// Internal: post-fs-data orchestration
+    #[command(hide = true)]
+    Apply,
 }
 
 #[derive(clap::Subcommand, Debug)]
@@ -829,6 +867,42 @@ pub fn run() -> Result<()> {
                 Ok(())
             }
         },
+        Commands::Builtin { command } => {
+            use crate::builtin::{self, CommandOutput};
+            let outcome: builtin::BResult<CommandOutput> = match command {
+                Builtin::List => builtin::cmd_list(),
+                Builtin::Status { id } => builtin::cmd_status(&id),
+                Builtin::Enable { id } => builtin::cmd_enable(&id),
+                Builtin::Disable { id } => builtin::cmd_disable(&id),
+                Builtin::Detect { id } => builtin::cmd_detect(&id),
+                Builtin::Reset => builtin::cmd_reset(),
+                Builtin::Apply => builtin::cmd_apply(),
+            };
+            match outcome {
+                // `anyhow::Ok` is imported at the top of this file, so the variant
+                // must be named explicitly here.
+                std::result::Result::Ok(output) => {
+                    println!("{}", output.json);
+                    let _ = std::io::Write::flush(&mut std::io::stdout());
+                    // Logical failures (conflict / unsupported) still print their
+                    // JSON; scripts see the parallel process exit code (§4.1).
+                    std::process::exit(builtin::exit_code(output.code));
+                }
+                Err(err) => {
+                    log::warn!("builtin command failed: {err}");
+                    println!(
+                        "{}",
+                        serde_json::json!({
+                            "ok": false,
+                            "code": err.code,
+                            "message": err.message,
+                        })
+                    );
+                    let _ = std::io::Write::flush(&mut std::io::stdout());
+                    std::process::exit(builtin::exit_code(err.code));
+                }
+            }
+        }
         Commands::Initrc { command } => match command {
             Initrc::Refresh => regenerate_preinit(),
         },

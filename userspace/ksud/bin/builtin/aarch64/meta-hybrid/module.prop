@@ -1,0 +1,7 @@
+id=musu_builtin_metamodule
+name=MuMount
+version=6.2.6
+versionCode=602006999
+author=MuSu Next (based on Hybrid Mount by Hybrid Mount Developers)
+description=MuMount — built-in metamodule for MuSu Next, based on Hybrid Mount. Managed by ksud, hidden from the module list.
+metamodule=1

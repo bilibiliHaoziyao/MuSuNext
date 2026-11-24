@@ -1,0 +1,2 @@
+# Placeholder: replaced by the MuZygisk payload sepolicy.rule.
+# Keep the real ReZygisk rule set here; ksud only forwards it to sepolicy::apply_file.

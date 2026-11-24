@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import org.musu.next.ui.UiMode
+import org.musu.next.ui.screen.builtin.BuiltinUiState
 
 @Immutable
 data class SettingsUiState(
@@ -61,7 +62,10 @@ data class SettingsUiState(
     val autoJailbreak: Boolean = false,
 
     // Soft Reboot
-    val useSoftReboot: Boolean = false
+    val useSoftReboot: Boolean = false,
+
+    // Built-in components: the group only shows state, the switches live on their own pages
+    val builtin: BuiltinUiState = BuiltinUiState()
 )
 
 @Immutable
@@ -82,4 +86,6 @@ data class SettingsScreenActions(
     val onSetAutoJailbreak: (Boolean) -> Unit,
     val onSetUseSoftReboot: (Boolean) -> Unit,
     val onOpenAbout: () -> Unit,
+    val onOpenBuiltinZygisk: () -> Unit,
+    val onOpenBuiltinMetamodule: () -> Unit,
 )

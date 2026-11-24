@@ -1,0 +1,5 @@
+upstream=ReZygisk
+upstream_url=https://github.com/PerformanC/ReZygisk
+upstream_commit=bfa54ef5
+license=AGPL-3.0-or-later
+note=MuZygisk fork: paths redirected to /data/adb/musu, binaries renamed muz-*, WebUI/install scripts removed.

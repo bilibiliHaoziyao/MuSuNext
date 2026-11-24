@@ -25,7 +25,9 @@ import androidx.compose.material.icons.rounded.DeveloperMode
 import androidx.compose.material.icons.rounded.DisplaySettings
 import androidx.compose.material.icons.rounded.FlashOn
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Layers
 import androidx.compose.material.icons.rounded.LayersClear
+import androidx.compose.material.icons.rounded.Memory
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.Security
@@ -42,10 +44,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.musu.next.R
+import org.musu.next.data.model.BuiltinComponentId
 import org.musu.next.ui.UiMode
 import org.musu.next.ui.component.KsuIsValid
 import org.musu.next.ui.component.dialog.rememberLoadingDialog
 import org.musu.next.ui.component.miuix.SendLogDialog
+import org.musu.next.ui.screen.builtin.builtinSummaryText
 import org.musu.next.ui.component.uninstalldialog.UninstallDialog
 import org.musu.next.ui.theme.LocalEnableBlur
 import org.musu.next.ui.util.BlurredBar
@@ -54,6 +58,7 @@ import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.Scaffold
+import top.yukonga.miuix.kmp.basic.SmallTitle
 import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.preference.ArrowPreference
@@ -360,6 +365,48 @@ fun SettingPagerMiuix(
                                 enabled = !uiState.isLateLoadMode,
                                 checked = uiState.isLateLoadMode || uiState.useSoftReboot,
                                 onCheckedChange = actions.onSetUseSoftReboot
+                            )
+                        }
+
+                        // Built-in components: state only, both switches live on their own pages (§3.2).
+                        SmallTitle(
+                            text = stringResource(id = R.string.builtin_group),
+                            modifier = Modifier.padding(top = 12.dp),
+                        )
+                        Card(
+                            modifier = Modifier
+                                .padding(top = 8.dp)
+                                .fillMaxWidth(),
+                        ) {
+                            val zygiskTitle = stringResource(id = R.string.builtin_zygisk_title)
+                            val zygisk = uiState.builtin.component(BuiltinComponentId.Zygisk)
+                            ArrowPreference(
+                                title = zygiskTitle,
+                                summary = builtinSummaryText(zygisk),
+                                startAction = {
+                                    Icon(
+                                        Icons.Rounded.Memory,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = zygiskTitle,
+                                        tint = colorScheme.onBackground,
+                                    )
+                                },
+                                onClick = actions.onOpenBuiltinZygisk,
+                            )
+                            val metamoduleTitle = stringResource(id = R.string.builtin_meta_title)
+                            val metamodule = uiState.builtin.component(BuiltinComponentId.Metamodule)
+                            ArrowPreference(
+                                title = metamoduleTitle,
+                                summary = builtinSummaryText(metamodule),
+                                startAction = {
+                                    Icon(
+                                        Icons.Rounded.Layers,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = metamoduleTitle,
+                                        tint = colorScheme.onBackground,
+                                    )
+                                },
+                                onClick = actions.onOpenBuiltinMetamodule,
                             )
                         }
 

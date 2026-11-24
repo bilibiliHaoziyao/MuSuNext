@@ -117,6 +117,33 @@ fun execKsud(args: String, newShell: Boolean = false, globalMnt: Boolean = false
     }
 }
 
+/**
+ * Like [execKsud], but hands back stdout. Commands such as `builtin list` answer with a single JSON
+ * object and there is no other way to read it: the exit code alone cannot carry the reason.
+ */
+fun execKsudForResult(args: String, newShell: Boolean = false, globalMnt: Boolean = false): Result<String> {
+    val cmd = "${getKsuDaemonPath()} $args"
+    val out = ArrayList<String>()
+    val result = if (newShell) {
+        withNewRootShell(globalMnt = globalMnt) { newJob().add(cmd).to(out, null).exec() }
+    } else {
+        getRootShell(globalMnt).newJob().add(cmd).to(out, null).exec()
+    }
+    return if (result.isSuccess) {
+        Result.success(out.joinToString("\n"))
+    } else {
+        val detail = result.err.joinToString(" ").trim()
+        Result.failure(
+            IOException(
+                buildString {
+                    append("ksud $args exited with ${result.code}")
+                    if (detail.isNotEmpty()) append(": ").append(detail)
+                }
+            )
+        )
+    }
+}
+
 suspend fun getFeatureStatus(feature: String): String = withContext(Dispatchers.IO) {
     val shell = getRootShell()
     val out = shell.newJob()

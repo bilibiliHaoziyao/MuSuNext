@@ -1,0 +1,173 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+#
+# Built-in integration of the Hybrid Mount VFS kernel subsystem.
+#
+# Run this from the root of a kernel tree:
+#
+#   curl -LSs "https://raw.githubusercontent.com/Hybrid-Mount/meta-hybrid_mount/dev/module/vfs/setup.sh" | bash
+#   curl -LSs "https://raw.githubusercontent.com/Hybrid-Mount/meta-hybrid_mount/dev/module/vfs/setup.sh" | bash -s -- --cleanup
+#
+# It copies src/ into fs/hybridmount/ and wires up that directory's Kconfig and
+# Makefile. The script refuses to touch a tree that already integrates NoMount:
+# both implementations hijack inode operations, and the kernel will not stop them
+# from coexisting because they register different key types.
+
+set -eu
+
+KERNEL_ROOT=$(pwd)
+# A piped script has no adjacent checkout. Only use local sources when invoked
+# through a file path; otherwise fetch them before modifying the kernel tree.
+SRC_DIR=""
+case "$0" in
+    */*)
+        SELF_DIR=$(cd -- "$(dirname -- "$0")" && pwd)
+        if [ -f "$SELF_DIR/src/hybridmount.c" ]; then
+            SRC_DIR="$SELF_DIR/src"
+        fi
+        ;;
+esac
+DOWNLOAD_DIR=""
+cleanup_download() {
+    if [ -n "$DOWNLOAD_DIR" ]; then
+        rm -rf "$DOWNLOAD_DIR"
+    fi
+}
+trap cleanup_download EXIT
+trap 'exit 1' HUP INT TERM
+
+resolve_sources() {
+    [ -n "$SRC_DIR" ] && return 0
+    DOWNLOAD_DIR=$(mktemp -d)
+    SRC_DIR="$DOWNLOAD_DIR"
+    source_url="https://raw.githubusercontent.com/Hybrid-Mount/meta-hybrid_mount/dev/module/vfs/src"
+    for source_file in hybridmount.c hybridmount.h Kconfig LICENSE; do
+        curl -fLSs "$source_url/$source_file" -o "$SRC_DIR/$source_file"
+        if [ ! -s "$SRC_DIR/$source_file" ]; then
+            echo "[ERROR] downloaded source is empty: $source_file" >&2
+            exit 1
+        fi
+    done
+}
+DIR_NAME="hybridmount"
+# The make and Kconfig syntax below must stay literal: it is compared with grep -F
+# and appended verbatim.
+# shellcheck disable=SC2016
+MAKEFILE_LINE='obj-$(CONFIG_HYBRIDMOUNT) += hybridmount/'
+KCONFIG_LINE='source "fs/hybridmount/Kconfig"'
+
+usage() {
+    cat <<'EOF'
+Usage: setup.sh [--cleanup | --help]
+
+  (no args)  Integrate the Hybrid Mount VFS subsystem into the kernel tree at $PWD.
+  --cleanup  Revert the files and the Kconfig/Makefile edits this script made.
+  --help     Show this message.
+EOF
+}
+
+resolve_fs_dir() {
+    if [ -d "$KERNEL_ROOT/fs" ]; then
+        FS_DIR="$KERNEL_ROOT/fs"
+    elif [ -d "$KERNEL_ROOT/common/fs" ]; then
+        FS_DIR="$KERNEL_ROOT/common/fs"
+    else
+        echo "[ERROR] no fs/ directory here; run this from a kernel tree root" >&2
+        exit 1
+    fi
+    FS_MAKEFILE="$FS_DIR/Makefile"
+    FS_KCONFIG="$FS_DIR/Kconfig"
+}
+
+has_nomount() {
+    [ -d "$FS_DIR/nomount" ] && return 0
+    if [ -f "$KERNEL_ROOT/.config" ] && grep -q '^CONFIG_NOMOUNT=' "$KERNEL_ROOT/.config"; then
+        return 0
+    fi
+    if [ -f "$FS_MAKEFILE" ] && grep -q 'nomount' "$FS_MAKEFILE"; then
+        return 0
+    fi
+    if [ -f "$FS_KCONFIG" ] && grep -q 'fs/nomount/Kconfig' "$FS_KCONFIG"; then
+        return 0
+    fi
+    return 1
+}
+
+remove_line() {
+    target=$1
+    line=$2
+    if [ -f "$target" ] && grep -qF "$line" "$target"; then
+        grep -vF "$line" "$target" > "$target.tmp"
+        mv "$target.tmp" "$target"
+        echo "[-] reverted $target"
+    fi
+}
+
+do_cleanup() {
+    if [ -d "$FS_DIR/$DIR_NAME" ]; then
+        rm -rf "${FS_DIR:?}/$DIR_NAME"
+        echo "[-] removed fs/$DIR_NAME"
+    fi
+    remove_line "$FS_MAKEFILE" "$MAKEFILE_LINE"
+    remove_line "$FS_KCONFIG" "$KCONFIG_LINE"
+    echo "[+] cleanup complete"
+}
+
+do_setup() {
+    if has_nomount; then
+        echo "[ERROR] this kernel tree already integrates NoMount." >&2
+        echo "        Both implementations hijack inode operations and must not" >&2
+        echo "        coexist; remove NoMount before integrating this subsystem." >&2
+        exit 1
+    fi
+
+    if [ -d "$FS_DIR/$DIR_NAME" ]; then
+        echo "[ERROR] fs/$DIR_NAME already exists; run --cleanup first" >&2
+        exit 1
+    fi
+
+    resolve_sources
+    mkdir -p "$FS_DIR/$DIR_NAME"
+    cp -f "$SRC_DIR"/*.c "$SRC_DIR"/*.h "$SRC_DIR/Kconfig" "$SRC_DIR/LICENSE" "$FS_DIR/$DIR_NAME/"
+    # The out-of-tree Makefile targets a DDK build; in-tree Kbuild needs the
+    # CONFIG_HYBRIDMOUNT form instead.
+    # shellcheck disable=SC2016
+    # -std=gnu11 matters: kernels before 5.18 default to gnu89 and the sources use
+    # C99 declarations.
+    printf '%s\n' \
+        'obj-$(CONFIG_HYBRIDMOUNT) += hybridmount.o' \
+        'ccflags-y += -std=gnu11 -Wno-declaration-after-statement' \
+        'ccflags-y += $(shell grep -qs "static inline void vm_flags_clear" "$(srctree)/include/linux/mm.h" && echo -DHM_HAVE_VM_FLAGS_CLEAR)' \
+        'ccflags-y += $(shell test -r "$(srctree)/include/linux/xattr.h" && tr "\n" " " < "$(srctree)/include/linux/xattr.h" | grep -qE "\([[:space:]]*\*[[:space:]]*__get[[:space:]]*\)" && echo -DHM_HAVE_XATTR__GET)' \
+        > "$FS_DIR/$DIR_NAME/Makefile"
+    echo "[+] copied sources into fs/$DIR_NAME"
+
+    if ! grep -qF "$MAKEFILE_LINE" "$FS_MAKEFILE"; then
+        printf '\n%s\n' "$MAKEFILE_LINE" >> "$FS_MAKEFILE"
+        echo "[+] updated fs/Makefile"
+    fi
+
+    if ! grep -qF "$KCONFIG_LINE" "$FS_KCONFIG"; then
+        awk '
+            /^endmenu/ { last = NR }
+            { lines[NR] = $0 }
+            END {
+                for (i = 1; i <= NR; i++) {
+                    if (i == last) print "source \"fs/hybridmount/Kconfig\""
+                    print lines[i]
+                }
+            }
+        ' "$FS_KCONFIG" > "$FS_KCONFIG.tmp"
+        mv "$FS_KCONFIG.tmp" "$FS_KCONFIG"
+        echo "[+] updated fs/Kconfig"
+    fi
+
+    echo "[+] done; enable CONFIG_HYBRIDMOUNT=y (built-in) or =m (module) and build"
+}
+
+case "${1-}" in
+    --cleanup) resolve_fs_dir; do_cleanup ;;
+    --help|-h) usage ;;
+    "") resolve_fs_dir; do_setup ;;
+    *) usage; exit 1 ;;
+esac

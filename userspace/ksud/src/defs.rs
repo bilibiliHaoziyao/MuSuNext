@@ -64,6 +64,23 @@ mod android {
     pub const PERSIST_CONFIG_NAME: &str = "persist.config";
     pub const TEMP_CONFIG_NAME: &str = "tmp.config";
 
+    // Built-in components (MuZygisk / MuMount), see docs/specs/builtin-components.md
+    pub const BUILTIN_DIR: &str = concatcp!(ADB_DIR, "musu/");
+    pub const BUILTIN_STATE_PATH: &str = concatcp!(BUILTIN_DIR, "state.json");
+    pub const BUILTIN_LOCK_PATH: &str = concatcp!(BUILTIN_DIR, ".lock");
+    pub const BUILTIN_RUN_DIR: &str = concatcp!(BUILTIN_DIR, "run/");
+    pub const BUILTIN_RUN_ZYGISK_DIR: &str = concatcp!(BUILTIN_RUN_DIR, "zygisk/");
+    pub const BUILTIN_RUN_ZYGISK_STATE: &str = concatcp!(BUILTIN_RUN_ZYGISK_DIR, "state.json");
+    pub const BUILTIN_ZYGISK_LOG_PATH: &str = concatcp!(LOG_DIR, "zygisk.log");
+    pub const BUILTIN_META_ATTEMPTS_PATH: &str = concatcp!(BUILTIN_RUN_DIR, "meta_boot_attempts");
+    pub const BUILTIN_ZYGISK_ATTEMPTS_PATH: &str = concatcp!(BUILTIN_RUN_DIR, "zygisk_boot_attempts");
+    pub const BUILTIN_META_ID: &str = "musu_builtin_metamodule";
+
+    // Hybrid Mount runtime, owned by the built-in metamodule payload
+    pub const HYBRID_MOUNT_DIR: &str = concatcp!(ADB_DIR, "hybrid-mount/");
+    pub const HYBRID_MOUNT_CONFIG_PATH: &str = concatcp!(HYBRID_MOUNT_DIR, "config.toml");
+    pub const HYBRID_MOUNT_STATE_PATH: &str = concatcp!(HYBRID_MOUNT_DIR, "run/state.json");
+
     // Metamodule support
     pub const METAMODULE_MOUNT_SCRIPT: &str = "metamount.sh";
     pub const METAMODULE_METAINSTALL_SCRIPT: &str = "metainstall.sh";
