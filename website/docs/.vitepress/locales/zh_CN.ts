@@ -14,7 +14,8 @@ export default defineConfig({
     lastUpdatedText: '最后更新',
 
     sidebar: {
-      '/zh_CN/guide/': sidebarGuide()
+      '/zh_CN/guide/': sidebarGuide(),
+      '/zh_CN/features/': sidebarFeatures()
     },
 
     socialLinks: [
@@ -35,6 +36,7 @@ export default defineConfig({
 
 function nav() {
   return [
+    { text: '特色功能', link: '/zh_CN/features/root-access-audit' },
     { text: '指南', link: '/zh_CN/guide/what-is-kernelsu' },
     {
       text: '工具',
@@ -67,6 +69,18 @@ function sidebarGuide() {
           { text: '常见问题', link: '/zh_CN/guide/faq' },
           { text: '隐藏功能', link: '/zh_CN/guide/hidden-features' },
         ]
+    }
+  ]
+}
+
+
+function sidebarFeatures() {
+  return [
+    {
+      text: '特色功能',
+      items: [
+        { text: 'Root 访问审计', link: '/zh_CN/features/root-access-audit' },
+      ]
     }
   ]
 }

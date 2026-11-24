@@ -14,7 +14,8 @@ export default defineConfig({
     lastUpdatedText: '最終更新',
 
     sidebar: {
-      '/ja_JP/guide/': sidebarGuide()
+      '/ja_JP/guide/': sidebarGuide(),
+      '/ja_JP/features/': sidebarFeatures()
     },
 
     socialLinks: [
@@ -35,6 +36,7 @@ export default defineConfig({
 
 function nav() {
   return [
+    { text: '特色機能', link: '/ja_JP/features/root-access-audit' },
     { text: 'ガイド', link: '/ja_JP/guide/what-is-kernelsu' },
     {
       text: 'ツール',
@@ -63,6 +65,18 @@ function sidebarGuide() {
         { text: 'x86_64 サポート', link: '/ja_JP/guide/x86_64-support' },
         { text: 'よくある質問', link: '/ja_JP/guide/faq' },
         { text: '隠し機能', link: '/ja_JP/guide/hidden-features' },
+      ]
+    }
+  ]
+}
+
+
+function sidebarFeatures() {
+  return [
+    {
+      text: '特色機能',
+      items: [
+        { text: 'Root アクセス監査', link: '/ja_JP/features/root-access-audit' },
       ]
     }
   ]

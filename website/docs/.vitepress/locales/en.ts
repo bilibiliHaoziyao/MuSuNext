@@ -14,7 +14,8 @@ export default defineConfig({
     lastUpdatedText: 'Last updated',
 
     sidebar: {
-      '/guide/': sidebarGuide()
+      '/guide/': sidebarGuide(),
+      '/features/': sidebarFeatures()
     },
 
     socialLinks: [
@@ -35,6 +36,7 @@ export default defineConfig({
 
 function nav() {
   return [
+    { text: 'Features', link: '/features/root-access-audit' },
     { text: 'Guide', link: '/guide/what-is-kernelsu' },
     {
       text: 'Tools',
@@ -67,6 +69,18 @@ function sidebarGuide() {
           { text: 'FAQ', link: '/guide/faq' },
           { text: 'Hidden features', link: '/guide/hidden-features' },
         ]
+    }
+  ]
+}
+
+
+function sidebarFeatures() {
+  return [
+    {
+      text: 'Features',
+      items: [
+        { text: 'Root Access Audit', link: '/features/root-access-audit' },
+      ]
     }
   ]
 }
