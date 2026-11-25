@@ -82,6 +82,8 @@ function sidebarFeatures() {
         { text: 'Root Access Audit', link: '/features/root-access-audit' },
         { text: 'MuZygisk (Built-in Zygisk)', link: '/features/muzygisk' },
         { text: 'MuMount (Built-in Metamodule)', link: '/features/mumount' },
+        { text: 'Snapshot Backup & Restore', link: '/features/snapshot-backup' },
+        { text: 'Environment Check', link: '/features/environment-check' },
       ]
     }
   ]

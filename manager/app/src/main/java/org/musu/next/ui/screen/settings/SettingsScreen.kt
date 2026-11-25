@@ -64,6 +64,7 @@ fun SettingPager(
         onOpenAbout = { navigator.push(Route.About) },
         onOpenBuiltinZygisk = { navigator.push(Route.Builtin(BuiltinComponentId.Zygisk.wireId)) },
         onOpenBuiltinMetamodule = { navigator.push(Route.Builtin(BuiltinComponentId.Metamodule.wireId)) },
+        onOpenSnapshot = { navigator.push(Route.Snapshot) },
     )
 
     when (LocalUiMode.current) {

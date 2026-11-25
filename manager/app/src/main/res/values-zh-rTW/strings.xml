@@ -254,4 +254,66 @@
     <string name="builtin_module_blocked_zygisk">MuZygisk 正在運作，停用它後才能啟用此模組</string>
     <string name="builtin_module_blocked_meta">MuMount 正在運作，停用它後才能啟用此模組</string>
     <string name="builtin_value_missing" translatable="false">—</string>
+    <!-- 安全入口頁 -->
+    <string name="safety_entry_desc">管理 Root 存取記錄與偵測暴露面</string>
+    <string name="safety_entry_audit_title">Root 稽核面板</string>
+    <string name="safety_entry_audit_summary">依應用程式檢視 Root 呼叫記錄與來源</string>
+    <string name="safety_entry_audit_status">已記錄 %1$d 次呼叫</string>
+    <string name="safety_entry_audit_status_empty">尚無稽核記錄</string>
+    <string name="safety_entry_env_title">環境偵測</string>
+    <string name="safety_entry_env_summary">以未授權應用程式視角偵測暴露面</string>
+    <string name="safety_entry_env_status_exposed">上次偵測：%1$d 項暴露</string>
+    <string name="safety_entry_env_status_safe">上次偵測：未發現暴露項</string>
+    <string name="safety_entry_env_status_error">偵測失敗：%1$s</string>
+    <string name="safety_entry_env_status_pending">尚未偵測</string>
+
+    <!-- 環境偵測 -->
+    <string name="envcheck_title">環境偵測</string>
+    <string name="envcheck_intro">以下結果以未授權應用程式視角偵測，反映偵測方實際能看到內容</string>
+    <string name="envcheck_start">開始偵測</string>
+    <string name="envcheck_checking">正在偵測…</string>
+    <string name="envcheck_exposed">已暴露</string>
+    <string name="envcheck_safe">未暴露</string>
+    <string name="envcheck_unknown">未驗證</string>
+    <string name="envcheck_error_title">偵測未能完成</string>
+    <string name="envcheck_error_detail">%1$s</string>
+    <string name="envcheck_error_unknown">後端未提供錯誤原因</string>
+    <string name="envcheck_partial_title">已完成的部分結果</string>
+    <string name="envcheck_view">偵測視角：%1$s</string>
+    <string name="envcheck_view_with_uid">偵測視角：%1$s（UID %2$d）</string>
+    <string name="envcheck_view_unauthorized">未授權應用程式</string>
+    <string name="envcheck_exposed_count">暴露項：%1$d 項</string>
+    <string name="envcheck_checked_at">偵測時間：%1$s</string>
+    <string name="envcheck_empty">偵測完成，但未返回任何偵測項</string>
+
+    <!-- 快照備份與還原 -->
+    <string name="snapshot_title">快照備份與還原</string>
+    <string name="snapshot_intro">快照會儲存模組開關、授權名單與內建元件設定，需要時可一鍵還原</string>
+    <string name="snapshot_create">建立快照</string>
+    <string name="snapshot_creating">正在建立快照…</string>
+    <string name="snapshot_created_hint">已建立：%1$s</string>
+    <string name="snapshot_loading">正在載入快照…</string>
+    <string name="snapshot_list_title">現有快照</string>
+    <string name="snapshot_list_empty">尚無快照，先建立一份吧</string>
+    <string name="snapshot_error">操作失敗：%1$s</string>
+    <string name="snapshot_retry">重試</string>
+    <string name="snapshot_unknown_time">時間未知</string>
+    <string name="snapshot_counts">模組 %1$d 項 · 授權 %2$d 項</string>
+    <string name="snapshot_size">大小 %1$s</string>
+    <string name="snapshot_size_bytes">%1$d B</string>
+    <string name="snapshot_size_kb">%1.1f KB</string>
+    <string name="snapshot_size_mb">%1.1f MB</string>
+    <string name="snapshot_restore">還原</string>
+    <string name="snapshot_delete">刪除</string>
+    <string name="snapshot_restore_confirm_title">確認還原這份快照？</string>
+    <string name="snapshot_restore_confirm_text">將覆蓋目前模組開關、授權名單與內建元件設定；還原前會自動建立一份快照。</string>
+    <string name="snapshot_restore_confirm">確認還原</string>
+    <string name="snapshot_restoring">正在還原…</string>
+    <string name="snapshot_deleting">正在刪除…</string>
+    <string name="snapshot_restore_success">快照已還原</string>
+    <string name="snapshot_restore_success_detail">儲存的設定已生效。</string>
+    <string name="snapshot_need_reboot">需要完整重新開機</string>
+    <string name="snapshot_settings_group">備份與還原</string>
+    <string name="snapshot_settings_entry">快照備份與還原</string>
+    <string name="snapshot_settings_entry_summary">建立設定快照，或還原現有快照</string>
 </resources>

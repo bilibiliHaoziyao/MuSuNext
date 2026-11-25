@@ -82,6 +82,8 @@ function sidebarFeatures() {
         { text: 'Root 访问审计', link: '/zh_CN/features/root-access-audit' },
         { text: 'MuZygisk（内建 Zygisk）', link: '/zh_CN/features/muzygisk' },
         { text: 'MuMount（内建元模块）', link: '/zh_CN/features/mumount' },
+        { text: '快照备份与恢复', link: '/zh_CN/features/snapshot-backup' },
+        { text: '环境检测', link: '/zh_CN/features/environment-check' },
       ]
     }
   ]

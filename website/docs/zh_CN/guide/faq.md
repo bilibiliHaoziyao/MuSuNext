@@ -12,15 +12,15 @@
 
 ## MuSu Next 是否支持模块？
 
-支持。但是，如果您的模块需要修改 `/system` 文件，则需要安装 [metamodule](metamodule.md)（例如 `meta-overlayfs`）。其他模块功能无需 metamodule。请查阅 [模块](module.md)。
+支持。如果您的模块需要修改 `/system` 文件，则需要元模块。MuSu Next 已内建 [MuMount](../features/mumount.md)（基于 Hybrid Mount），默认禁用，在「设置 → MuMount」中开启即可；也可以自行安装第三方元模块（如 `meta-overlayfs`），二者互斥。其他模块功能无需元模块。请查阅 [模块](module.md)。
 
 ## MuSu Next 是否支持 Xposed？
 
-支持。LSPosed 可以在 [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) 的支持下正常运行。
+支持。LSPosed 可以使用 MuSu Next 内建的 [MuZygisk](../features/muzygisk.md)，也可以使用第三方实现 [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext)，二者互斥，任选其一。MuZygisk 默认禁用，在「设置 → MuZygisk」中开启。
 
 ## MuSu Next 支持 Zygisk 吗？
 
-MuSu Next 本体不支持 Zygisk，但是你可以用 [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) 来使用 Zygisk 模块。
+支持。MuSu Next 已内建 [MuZygisk](../features/muzygisk.md)（源自 ReZygisk），默认禁用，在「设置 → MuZygisk」中开启后即可使用 Zygisk 模块，内容与 Magisk 完全相同。也可以使用第三方实现 [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext)，二者互斥，只能启用其一。
 
 ## MuSu Next 与 Magisk 兼容吗？
 
@@ -66,9 +66,9 @@ GKI1 跟 GKI2 完全是两个东西，所以你需要自行编译内核。
 
 ## 为什么全新安装后模块不工作？
 
-如果您的模块需要修改 `/system` 文件，您需要安装 [metamodule](metamodule.md) 来挂载 `system` 目录。其他模块功能（脚本、sepolicy、system.prop）无需 metamodule 即可工作。
+如果您的模块需要修改 `/system` 文件，需要元模块来挂载 `system` 目录。MuSu Next 已内建元模块 [MuMount](../features/mumount.md)，默认禁用，在「设置 → MuMount」中开启即可；也可以安装第三方元模块（如 `meta-overlayfs`），二者互斥。其他模块功能（脚本、sepolicy、system.prop）无需元模块即可工作。
 
-**解决方案**：参阅 [Metamodule 指南](metamodule.md) 获取安装说明。
+**解决方案**：在「设置 → MuMount」中开启内建的 [MuMount](../features/mumount.md)，或参阅 [Metamodule 指南](metamodule.md) 安装第三方元模块。
 
 ## 什么是 metamodule，为什么需要它？
 

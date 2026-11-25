@@ -35,6 +35,15 @@ enum Commands {
         command: Builtin,
     },
 
+    /// Backup and restore module states, root grants and builtin switches
+    Snapshot {
+        #[command(subcommand)]
+        command: Snapshot,
+    },
+
+    /// Detect what an unauthorized app can see (drops privileges before probing)
+    Envcheck,
+
     /// Trigger `post-fs-data` event
     PostFsData,
 
@@ -191,6 +200,25 @@ enum Builtin {
     /// Internal: post-fs-data orchestration
     #[command(hide = true)]
     Apply,
+}
+
+/// `ksud snapshot ...` — stdout is exactly one JSON object; logs go to logd.
+#[derive(clap::Subcommand, Debug)]
+enum Snapshot {
+    /// Create a new snapshot archive
+    Create,
+    /// List stored snapshots
+    List,
+    /// Restore from a snapshot (writes a pre-restore snapshot first)
+    Restore {
+        /// snapshot archive path
+        path: String,
+    },
+    /// Delete a snapshot archive
+    Delete {
+        /// snapshot archive path
+        path: String,
+    },
 }
 
 #[derive(clap::Subcommand, Debug)]
@@ -566,6 +594,17 @@ pub fn run() -> Result<()> {
     log::info!("command: {:?}", cli.command);
 
     let result = match cli.command {
+        Commands::Snapshot { command } => {
+            use crate::jsoncmd::emit;
+            match command {
+                Snapshot::Create => emit(&crate::snapshot::cmd_create()),
+                Snapshot::List => emit(&crate::snapshot::cmd_list()),
+                Snapshot::Restore { path } => emit(&crate::snapshot::cmd_restore(&path)),
+                Snapshot::Delete { path } => emit(&crate::snapshot::cmd_delete(&path)),
+            }
+        }
+        Commands::Envcheck => crate::jsoncmd::emit(&crate::envcheck::run()),
+
         Commands::PostFsData => init_event::on_post_fs_data(),
         Commands::BootCompleted => {
             init_event::on_boot_completed();

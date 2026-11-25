@@ -279,4 +279,66 @@
     <string name="builtin_module_blocked_zygisk">MuZygisk が動作中です。オフにするとこのモジュールを有効化できます</string>
     <string name="builtin_module_blocked_meta">MuMount が動作中です。オフにするとこのモジュールを有効化できます</string>
     <string name="builtin_value_missing" translatable="false">—</string>
+    <!-- セキュリティ入口ページ -->
+    <string name="safety_entry_desc">Root アクセス記録の管理と露出面の検出</string>
+    <string name="safety_entry_audit_title">Root 監査パネル</string>
+    <string name="safety_entry_audit_summary">アプリごとの Root 呼び出し記録と発生元を確認</string>
+    <string name="safety_entry_audit_status">%1$d 件の呼び出しを記録</string>
+    <string name="safety_entry_audit_status_empty">監査記録はまだありません</string>
+    <string name="safety_entry_env_title">環境検出</string>
+    <string name="safety_entry_env_summary">未承認アプリの視点で露出面を検出</string>
+    <string name="safety_entry_env_status_exposed">前回の検出：%1$d 件が露出</string>
+    <string name="safety_entry_env_status_safe">前回の検出：露出項目なし</string>
+    <string name="safety_entry_env_status_error">検出に失敗：%1$s</string>
+    <string name="safety_entry_env_status_pending">まだ検出していません</string>
+
+    <!-- 環境検出 -->
+    <string name="envcheck_title">環境検出</string>
+    <string name="envcheck_intro">以下の結果は未承認アプリの視点で検出しています。検出側が実際に確認できる内容のみが表示されます</string>
+    <string name="envcheck_start">検出を開始</string>
+    <string name="envcheck_checking">検出中…</string>
+    <string name="envcheck_exposed">露出</string>
+    <string name="envcheck_safe">非露出</string>
+    <string name="envcheck_unknown">未検証</string>
+    <string name="envcheck_error_title">検出が完了しませんでした</string>
+    <string name="envcheck_error_detail">%1$s</string>
+    <string name="envcheck_error_unknown">バックエンドからエラー理由が返されませんでした</string>
+    <string name="envcheck_partial_title">完了した一部の結果</string>
+    <string name="envcheck_view">検出視点：%1$s</string>
+    <string name="envcheck_view_with_uid">検出視点：%1$s（UID %2$d）</string>
+    <string name="envcheck_view_unauthorized">未承認アプリ</string>
+    <string name="envcheck_exposed_count">露出項目：%1$d 件</string>
+    <string name="envcheck_checked_at">検出時刻：%1$s</string>
+    <string name="envcheck_empty">検出は完了しましたが項目が返されませんでした</string>
+
+    <!-- スナップショットのバックアップと復元 -->
+    <string name="snapshot_title">スナップショットのバックアップと復元</string>
+    <string name="snapshot_intro">スナップショットにはモジュールの切り替え、承認リスト、内蔵コンポーネントの設定が保存され、必要時に復元できます</string>
+    <string name="snapshot_create">スナップショットを作成</string>
+    <string name="snapshot_creating">スナップショットを作成中…</string>
+    <string name="snapshot_created_hint">作成済み：%1$s</string>
+    <string name="snapshot_loading">スナップショットを読み込み中…</string>
+    <string name="snapshot_list_title">保存済みスナップショット</string>
+    <string name="snapshot_list_empty">スナップショットはまだありません</string>
+    <string name="snapshot_error">操作に失敗：%1$s</string>
+    <string name="snapshot_retry">再試行</string>
+    <string name="snapshot_unknown_time">時刻不明</string>
+    <string name="snapshot_counts">モジュール %1$d 件 · 承認 %2$d 件</string>
+    <string name="snapshot_size">サイズ %1$s</string>
+    <string name="snapshot_size_bytes">%1$d B</string>
+    <string name="snapshot_size_kb">%1.1f KB</string>
+    <string name="snapshot_size_mb">%1.1f MB</string>
+    <string name="snapshot_restore">復元</string>
+    <string name="snapshot_delete">削除</string>
+    <string name="snapshot_restore_confirm_title">このスナップショットを復元しますか？</string>
+    <string name="snapshot_restore_confirm_text">現在のモジュール切り替え、承認リスト、内蔵コンポーネント設定を上書きします。復元前に現在の状態のスナップショットが自動作成されます。</string>
+    <string name="snapshot_restore_confirm">復元する</string>
+    <string name="snapshot_restoring">復元中…</string>
+    <string name="snapshot_deleting">削除中…</string>
+    <string name="snapshot_restore_success">スナップショットを復元しました</string>
+    <string name="snapshot_restore_success_detail">保存された設定が適用されました。</string>
+    <string name="snapshot_need_reboot">完全な再起動が必要です</string>
+    <string name="snapshot_settings_group">バックアップと復元</string>
+    <string name="snapshot_settings_entry">スナップショットのバックアップと復元</string>
+    <string name="snapshot_settings_entry_summary">設定のスナップショットを作成、または既存のものを復元</string>
 </resources>

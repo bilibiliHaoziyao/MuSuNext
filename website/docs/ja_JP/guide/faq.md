@@ -12,15 +12,15 @@
 
 ## MuSu Next はモジュールに対応していますか?
 
-はい。ほとんどの Magisk モジュールは MuSu Next で動作します。ただし、モジュールが `/system` ファイルを変更する必要がある場合は、[metamodule](metamodule.md) (`meta-overlayfs`など) をインストールする必要があります。他のモジュール機能は metamodule なしで動作します。詳細は [モジュールガイド](module.md) をご覧ください。
+はい。ほとんどの Magisk モジュールは MuSu Next で動作します。モジュールが `/system` ファイルを変更する必要がある場合はメタモジュールが必要です。MuSu Next は内蔵のメタモジュール [MuMount](../features/mumount.md)（Hybrid Mount ベース）を備えており、既定では無効なので「設定 → MuMount」で有効にします。代わりにサードパーティ製のメタモジュール（`meta-overlayfs` など）をインストールすることもでき、両者は排他関係です。他のモジュール機能はメタモジュールなしで動作します。詳細は [モジュールガイド](module.md) をご覧ください。
 
 ## MuSu Next は Xposed に対応していますか?
 
-はい。[Dreamland](https://github.com/canyie/Dreamland) や [TaiChi](https://taichi.cool) が動作します。LSPosed については、[ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) を使うと動作するようにできます。
+はい。[Dreamland](https://github.com/canyie/Dreamland) や [TaiChi](https://taichi.cool) が動作します。LSPosed は内蔵の [MuZygisk](../features/muzygisk.md) でも、サードパーティ製の [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) でも動作します。両者は排他関係なのでどちらか一方を選んでください。MuZygisk は既定で無効、「設定 → MuZygisk」で有効にします。
 
 ## MuSu Next は Zygisk に対応していますか?
 
-MuSu Next は Zygisk サポートを内蔵していません。[ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) を使ってください。
+はい。MuSu Next は Zygisk 実装 [MuZygisk](../features/muzygisk.md)（ReZygisk 由来）を内蔵しており、既定では無効です。「設定 → MuZygisk」で有効にすると Zygisk モジュールを使えます。代わりに [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) などのサードパーティ製実装を使うこともできますが、両者は排他関係にあり、どちらか一方のみ有効にできます。
 
 ## MuSu Next は Magisk と互換性がありますか?
 
@@ -65,9 +65,9 @@ GKI1 は GKI2 と全く異なるため、カーネルは自分でビルドする
 
 ## 新規インストール後にモジュールが動作しないのはなぜですか？
 
-モジュールが `/system` ファイルを変更する必要がある場合は、`system` ディレクトリをマウントするために [metamodule](metamodule.md) をインストールする必要があります。他のモジュール機能（スクリプト、sepolicy、system.prop）は metamodule なしで動作します。
+モジュールが `/system` ファイルを変更する必要がある場合は、`system` ディレクトリをマウントするためのメタモジュールが必要です。MuSu Next は内蔵の [MuMount](../features/mumount.md) を備えており、既定では無効なので「設定 → MuMount」で有効にします。代わりにサードパーティ製のメタモジュール（`meta-overlayfs` など）をインストールすることもでき、両者は排他関係です。他のモジュール機能（スクリプト、sepolicy、system.prop）はメタモジュールなしで動作します。
 
-**解決策**：インストール手順については [Metamodule ガイド](metamodule.md) をご覧ください。
+**解決策**：内蔵の [MuMount](../features/mumount.md) を「設定 → MuMount」で有効にするか、サードパーティ製メタモジュールのインストール手順については [Metamodule ガイド](metamodule.md) をご覧ください。
 
 ## metamodule とは何ですか？なぜ必要なのですか？
 

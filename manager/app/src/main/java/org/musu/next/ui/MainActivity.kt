@@ -88,7 +88,10 @@ import org.musu.next.ui.screen.modulerepo.ModuleRepoScreen
 import org.musu.next.ui.screen.scriptrun.ScriptRunScreen
 import org.musu.next.ui.screen.settings.SettingPager
 import org.musu.next.ui.screen.sulog.SulogScreen
+import org.musu.next.ui.screen.safety.SafetyAuditScreen
 import org.musu.next.ui.screen.safety.SafetyPager
+import org.musu.next.ui.screen.envcheck.EnvCheckScreen
+import org.musu.next.ui.screen.snapshot.SnapshotScreen
 import org.musu.next.ui.screen.superuser.SuperUserPager
 import org.musu.next.ui.screen.template.AppProfileTemplateScreen
 import org.musu.next.ui.screen.templateeditor.TemplateEditorScreen
@@ -241,6 +244,9 @@ class MainActivity : ComponentActivity() {
                             entry<Route.Main>(swipeDismiss = swipeDismiss) { mainScreenEntry() }
                             entry<Route.About>(swipeDismiss = swipeDismiss) { AboutScreen() }
                             entry<Route.Sulog>(swipeDismiss = swipeDismiss) { SulogScreen() }
+                            entry<Route.SafetyAudit>(swipeDismiss = swipeDismiss) { SafetyAuditScreen() }
+                            entry<Route.EnvCheck>(swipeDismiss = swipeDismiss) { EnvCheckScreen() }
+                            entry<Route.Snapshot>(swipeDismiss = swipeDismiss) { SnapshotScreen() }
                             entry<Route.ColorPalette>(swipeDismiss = swipeDismiss) { ColorPaletteScreen() }
                             entry<Route.AppProfileTemplate>(swipeDismiss = swipeDismiss) { AppProfileTemplateScreen() }
                             entry<Route.Builtin>(swipeDismiss = swipeDismiss) { key -> BuiltinScreen(key.id) }

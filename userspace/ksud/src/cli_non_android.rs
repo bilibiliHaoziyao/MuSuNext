@@ -34,6 +34,33 @@ enum Commands {
 
     /// show supported kmi versions
     SupportedKmis,
+
+    /// Backup and restore module states, root grants and builtin switches
+    Snapshot {
+        #[command(subcommand)]
+        command: Snapshot,
+    },
+
+    /// Detect what an unauthorized app can see (drops privileges before probing)
+    Envcheck,
+}
+
+#[derive(clap::Subcommand, Debug)]
+enum Snapshot {
+    /// Create a new snapshot archive
+    Create,
+    /// List stored snapshots
+    List,
+    /// Restore from a snapshot (writes a pre-restore snapshot first)
+    Restore {
+        /// snapshot archive path
+        path: String,
+    },
+    /// Delete a snapshot archive
+    Delete {
+        /// snapshot archive path
+        path: String,
+    },
 }
 
 pub fn run() -> Result<()> {
@@ -63,6 +90,16 @@ pub fn run() -> Result<()> {
             }
             Ok(())
         }
+        Commands::Snapshot { command } => {
+            use crate::jsoncmd::emit;
+            match command {
+                Snapshot::Create => emit(&crate::snapshot::cmd_create()),
+                Snapshot::List => emit(&crate::snapshot::cmd_list()),
+                Snapshot::Restore { path } => emit(&crate::snapshot::cmd_restore(&path)),
+                Snapshot::Delete { path } => emit(&crate::snapshot::cmd_delete(&path)),
+            }
+        }
+        Commands::Envcheck => crate::jsoncmd::emit(&crate::envcheck::run()),
     };
 
     if let Err(e) = &result {

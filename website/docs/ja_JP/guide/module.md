@@ -5,7 +5,7 @@ MuSu Next はシステムパーティションの整合性を維持しながら�
 MuSu Next のモジュール機構は、Magisk とほぼ同じです。Magisk のモジュール開発に慣れている方であれば、MuSu Next のモジュール開発も簡単でしょう。その場合は以下のモジュールの紹介は読み飛ばして、[Magisk との違い](difference-with-magisk.md)の内容だけ読めばOKです。
 
 ::: warning METAMODULE はシステムファイル変更時のみ必要
-MuSu Next は [metamodule](metamodule.md) アーキテクチャを使用して `system` ディレクトリをマウントします。**モジュールが `/system` ファイルを変更する必要がある場合のみ**（`system` ディレクトリ経由で）、metamodule ([meta-overlayfs](https://github.com/bilibiliHaoziyao/MuSuNext/releases)など) をインストールする必要があります。スクリプト、sepolicy ルール、system.propなどの他のモジュール機能は metamodule なしで動作します。
+MuSu Next は [metamodule](metamodule.md) アーキテクチャを使用して `system` ディレクトリをマウントします。内蔵のメタモジュール [MuMount](../features/mumount.md) を備えており、既定では無効なので「設定 → MuMount」で有効にします。**モジュールが `/system` ファイルを変更する必要がある場合のみ**（`system` ディレクトリ経由で）メタモジュールが必要です。代わりにサードパーティ製のメタモジュール（`meta-overlayfs` など）をインストールすることもでき、両者は排他関係です。スクリプト、sepolicy ルール、system.propなどの他のモジュール機能はメタモジュールなしで動作します。
 :::
 
 ## WebUI
@@ -96,7 +96,7 @@ MuSu Next モジュールは、`/data/adb/modules` に配置された以下の�
 ```
 
 ::: tip Magisk との違い
-MuSu Next は Zygisk をビルトインでサポートしていないため、モジュール内に Zygisk に関連するコンテンツは存在しません。 しかし、[ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) をインストールすれば Zygisk モジュールを使えます。その場合の Zygisk モジュールのコンテンツは Magisk と同じです。
+MuSu Next は Zygisk 実装 [MuZygisk](../features/muzygisk.md) を内蔵しています（ReZygisk 由来）。既定では無効で、マネージャーの「設定 → MuZygisk」からネイティブ UI で有効にすると Zygisk モジュールを使えるようになり、その内容は Magisk と同じです。MuZygisk は [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) などのサードパーティ製 Zygisk 実装と排他関係にあり、どちらか一方のみ有効にできます。
 :::
 
 ### module.prop

@@ -20,8 +20,8 @@
 以下是一些不同之處：
 
 1. MuSu Next 的模組無法在 Recovery 中安裝。
-2. MuSu Next 的模組沒有內建的 Zygisk 支援 (但您可以透過 [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) 來使用 Zygisk 模組)。
-3. **模組掛載架構**：MuSu Next 使用 [metamodule 系統](metamodule.md)，將掛載委託給可插拔的 metamodule(例如 `meta-overlayfs`)，而 Magisk 將掛載內建於其核心中。MuSu Next 需要安裝 metamodule 才能啟用模組掛載。
+2. MuSu Next 已內建 [MuZygisk](../features/muzygisk.md)（源自 ReZygisk），預設停用，在「設定 → MuZygisk」中開啟後即可使用 Zygisk 模組；也可使用第三方實作 [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext)，兩者互斥。
+3. **模組掛載架構**：MuSu Next 使用 [metamodule 系統](metamodule.md)，掛載由元模組負責（內建的 [MuMount](../features/mumount.md)，基於 Hybrid Mount，或第三方元模組如 `meta-overlayfs`），而 Magisk 將掛載內建於其核心中。MuSu Next 已內建元模組，預設停用，在「設定 → MuMount」中開啟；也可安裝第三方元模組，兩者互斥。
 4. MuSu Next 模組取代或刪除檔案與 Magisk 完全不同。MuSu Next 不支援 `.replace` 方法，相反，您需要透過 `mknod filename c 0 0` 建立相同名稱的資料夾以刪除對應檔案。
 5. BusyBox 的目錄不同。MuSu Next 內建的 BusyBox 在 `/data/adb/ksu/bin/busybox`，而 Magisk 在 `/data/adb/magisk/busybox`。**注意此為 MuSu Next 內部行為，未來可能會變更！**
 6. MuSu Next 不支援 `.replace` 檔案；但 MuSu Next 支援 `REPLACE` 和 `REMOVE` 變數以移除或取代檔案與資料夾。

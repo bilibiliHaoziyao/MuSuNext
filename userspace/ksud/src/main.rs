@@ -23,6 +23,7 @@ mod cli_non_android;
 #[cfg(target_os = "android")]
 mod debug;
 mod defs;
+mod envcheck;
 #[cfg(target_os = "android")]
 mod feature;
 mod feature_id;
@@ -30,6 +31,7 @@ mod feature_id;
 mod hot_install;
 #[cfg(target_os = "android")]
 mod init_event;
+mod jsoncmd;
 #[cfg(target_os = "android")]
 mod ksucalls;
 #[cfg(target_os = "android")]
@@ -54,6 +56,7 @@ mod resetprop;
 mod restorecon;
 #[cfg(target_os = "android")]
 mod sepolicy;
+mod snapshot;
 #[cfg(target_os = "android")]
 mod soft_reboot;
 #[cfg(target_os = "android")]

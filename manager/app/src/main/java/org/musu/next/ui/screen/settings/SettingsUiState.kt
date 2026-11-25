@@ -88,4 +88,5 @@ data class SettingsScreenActions(
     val onOpenAbout: () -> Unit,
     val onOpenBuiltinZygisk: () -> Unit,
     val onOpenBuiltinMetamodule: () -> Unit,
+    val onOpenSnapshot: () -> Unit,
 )

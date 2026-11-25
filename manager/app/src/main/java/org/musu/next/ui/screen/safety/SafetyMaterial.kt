@@ -16,11 +16,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.HealthAndSafety
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTopAppBarState
@@ -38,16 +40,137 @@ import org.musu.next.ui.component.material.ExpressiveScaffold
 import org.musu.next.ui.component.material.SegmentedColumn
 import org.musu.next.ui.component.material.SegmentedListItem
 import org.musu.next.ui.component.material.TonalCard
+import org.musu.next.ui.component.material.TopBarBackButton
 import org.musu.next.ui.component.material.expressiveTopAppBarColors
 import org.musu.next.ui.component.statustag.StatusTag
 import org.musu.next.ui.viewmodel.SulogUiState
-import androidx.compose.material3.TopAppBar
 
 @Composable
-fun SafetyPagerMaterial(
+fun SafetyEntryMaterial(
+    auditStatus: String,
+    envStatus: String,
+    actions: SafetyEntryActions,
+    bottomInnerPadding: Dp,
+) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+
+    ExpressiveScaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.safety)) },
+                colors = expressiveTopAppBarColors(),
+                scrollBehavior = scrollBehavior,
+            )
+        },
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
+            contentPadding = PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                top = padding.calculateTopPadding() + 8.dp,
+                bottom = padding.calculateBottomPadding() + bottomInnerPadding + 24.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            item(key = "intro") {
+                Text(
+                    text = stringResource(R.string.safety_entry_desc),
+                    style = typography.bodyMedium,
+                    color = colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = 4.dp),
+                )
+            }
+
+            item(key = "audit") {
+                TonalCard(onClick = actions.onOpenAudit) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.History,
+                            contentDescription = null,
+                            tint = colorScheme.primary,
+                            modifier = Modifier.size(28.dp),
+                        )
+                        Spacer(Modifier.size(16.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.safety_entry_audit_title),
+                                style = typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Text(
+                                text = stringResource(R.string.safety_entry_audit_summary),
+                                style = typography.bodySmall,
+                                color = colorScheme.onSurfaceVariant,
+                            )
+                            Spacer(Modifier.height(6.dp))
+                            Text(
+                                text = auditStatus,
+                                style = typography.labelMedium,
+                                color = colorScheme.primary,
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            tint = colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+
+            item(key = "envcheck") {
+                TonalCard(onClick = actions.onOpenEnvCheck) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.VisibilityOff,
+                            contentDescription = null,
+                            tint = colorScheme.primary,
+                            modifier = Modifier.size(28.dp),
+                        )
+                        Spacer(Modifier.size(16.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.safety_entry_env_title),
+                                style = typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Text(
+                                text = stringResource(R.string.safety_entry_env_summary),
+                                style = typography.bodySmall,
+                                color = colorScheme.onSurfaceVariant,
+                            )
+                            Spacer(Modifier.height(6.dp))
+                            Text(
+                                text = envStatus,
+                                style = typography.labelMedium,
+                                color = colorScheme.primary,
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            tint = colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SafetyAuditMaterial(
     uiState: SulogUiState,
     actions: SafetyActions,
-    bottomInnerPadding: Dp,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val listState = rememberLazyListState()
@@ -56,7 +179,8 @@ fun SafetyPagerMaterial(
     ExpressiveScaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.safety)) },
+                title = { Text(stringResource(R.string.safety_audit_title)) },
+                navigationIcon = { TopBarBackButton(onClick = actions.onBack) },
                 colors = expressiveTopAppBarColors(),
                 scrollBehavior = scrollBehavior,
             )
@@ -76,7 +200,7 @@ fun SafetyPagerMaterial(
                     start = 16.dp,
                     end = 16.dp,
                     top = padding.calculateTopPadding() + 8.dp,
-                    bottom = padding.calculateBottomPadding() + bottomInnerPadding + 24.dp,
+                    bottom = padding.calculateBottomPadding() + 24.dp,
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {

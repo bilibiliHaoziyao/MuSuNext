@@ -12,15 +12,15 @@
 
 ## MuSu Next 是否支援模組？
 
-支援，大多數 Magisk 模組都可以在 MuSu Next 上運作。但是，如果您的模組需要修改 `/system` 檔案，您需要安裝 [metamodule](metamodule.md)(如 `meta-overlayfs`)。其他模組功能無需 metamodule 即可運作。請參閱 [模組指南](module.md) 以獲取更多資訊。
+支援，大多數 Magisk 模組都可以在 MuSu Next 上運作。如果您的模組需要修改 `/system` 檔案，需要元模組。MuSu Next 已內建元模組 [MuMount](../features/mumount.md)（基於 Hybrid Mount），預設停用，在「設定 → MuMount」中開啟即可；也可以自行安裝第三方元模組（如 `meta-overlayfs`），兩者互斥。其他模組功能無需元模組即可運作。請參閱 [模組指南](module.md) 以獲取更多資訊。
 
 ## MuSu Next 是否支援 Xposed ？
 
-支援。[Dreamland](https://github.com/canyie/Dreamland) 和 [TaiChi](https://taichi.cool) 可以正常運作。LSPosed 可以在 [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) 的支援下正常運作。
+支援。[Dreamland](https://github.com/canyie/Dreamland) 和 [TaiChi](https://taichi.cool) 可以正常運作。LSPosed 可以使用 MuSu Next 內建的 [MuZygisk](../features/muzygisk.md)，也可以使用第三方實作 [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext)，兩者互斥，任選其一。MuZygisk 預設停用，在「設定 → MuZygisk」中開啟。
 
 ## MuSu Next 支援 Zygisk 嗎？
 
-MuSu Next 沒有內建 Zygisk 支援，但是您可以用 [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) 來使用 Zygisk 模組。
+支援。MuSu Next 已內建 [MuZygisk](../features/muzygisk.md)（源自 ReZygisk），預設停用，在「設定 → MuZygisk」中開啟後即可使用 Zygisk 模組，內容與 Magisk 完全相同。也可以使用第三方實作 [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext)，兩者互斥，只能啟用其一。
 
 ## MuSu Next 與 Magisk 相容嗎？
 
@@ -68,9 +68,9 @@ GKI1 與 GKI2 完全不同，所以您需要自行編譯核心。
 
 ## 為什麼全新安裝後模組不工作？
 
-如果您的模組需要修改 `/system` 檔案，您需要安裝 [metamodule](metamodule.md) 來掛載 `system` 目錄。其他模組功能(腳本、sepolicy、system.prop)無需 metamodule 即可運作。
+如果您的模組需要修改 `/system` 檔案，需要元模組來掛載 `system` 目錄。MuSu Next 已內建元模組 [MuMount](../features/mumount.md)，預設停用，在「設定 → MuMount」中開啟即可；也可以安裝第三方元模組（如 `meta-overlayfs`），兩者互斥。其他模組功能(腳本、sepolicy、system.prop)無需元模組即可運作。
 
-**解決方案**：參閱 [Metamodule 指南](metamodule.md) 獲取安裝說明。
+**解決方案**：在「設定 → MuMount」中開啟內建的 [MuMount](../features/mumount.md)，或參閱 [Metamodule 指南](metamodule.md) 安裝第三方元模組。
 
 ## 什麼是 metamodule，為什麼需要它？
 

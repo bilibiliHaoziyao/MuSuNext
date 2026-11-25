@@ -79,6 +79,8 @@ function sidebarFeatures() {
         { text: 'Root アクセス監査', link: '/ja_JP/features/root-access-audit' },
         { text: 'MuZygisk（内蔵 Zygisk）', link: '/ja_JP/features/muzygisk' },
         { text: 'MuMount（内蔵メタモジュール）', link: '/ja_JP/features/mumount' },
+        { text: 'スナップショットのバックアップと復元', link: '/ja_JP/features/snapshot-backup' },
+        { text: '環境チェック', link: '/ja_JP/features/environment-check' },
       ]
     }
   ]

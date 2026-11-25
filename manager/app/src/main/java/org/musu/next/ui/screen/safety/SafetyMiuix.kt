@@ -15,9 +15,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.filled.HealthAndSafety
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -25,13 +26,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.Dp
 import org.musu.next.R
 import org.musu.next.ui.component.statustag.StatusTag
 import org.musu.next.ui.theme.LocalEnableBlur
@@ -40,19 +42,155 @@ import org.musu.next.ui.util.rememberBlurBackdrop
 import org.musu.next.ui.viewmodel.SulogUiState
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.Icon
+import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
+import top.yukonga.miuix.kmp.icon.MiuixIcons
+import top.yukonga.miuix.kmp.icon.extended.Back
 import top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
 
 @Composable
-fun SafetyPagerMiuix(
+fun SafetyEntryMiuix(
+    auditStatus: String,
+    envStatus: String,
+    actions: SafetyEntryActions,
+    bottomInnerPadding: Dp,
+) {
+    val enableBlur = LocalEnableBlur.current
+    val scrollBehavior = MiuixScrollBehavior()
+    val dynamicTopPadding by remember {
+        derivedStateOf { 12.dp * (1f - scrollBehavior.state.collapsedFraction) }
+    }
+    val backdrop = rememberBlurBackdrop(enableBlur)
+    val blurActive = backdrop != null
+    val barColor = if (blurActive) Color.Transparent else colorScheme.surface
+    val layoutDirection = LocalLayoutDirection.current
+
+    Scaffold(
+        topBar = {
+            BlurredBar(backdrop) {
+                TopAppBar(
+                    color = barColor,
+                    title = stringResource(R.string.safety),
+                    scrollBehavior = scrollBehavior,
+                )
+            }
+        },
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                start = padding.calculateStartPadding(layoutDirection) + 12.dp,
+                end = padding.calculateEndPadding(layoutDirection) + 12.dp,
+                top = padding.calculateTopPadding() + dynamicTopPadding + 8.dp,
+                bottom = padding.calculateBottomPadding() + bottomInnerPadding + 24.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            item(key = "intro") {
+                Text(
+                    text = stringResource(R.string.safety_entry_desc),
+                    color = colorScheme.onSurfaceVariantSummary,
+                    fontSize = 13.sp,
+                    modifier = Modifier.padding(start = 4.dp),
+                )
+            }
+
+            item(key = "audit") {
+                Card(onClick = actions.onOpenAudit) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.History,
+                            contentDescription = null,
+                            tint = colorScheme.primary,
+                            modifier = Modifier.size(28.dp),
+                        )
+                        Spacer(Modifier.size(16.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.safety_entry_audit_title),
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = colorScheme.onSurface,
+                            )
+                            Text(
+                                text = stringResource(R.string.safety_entry_audit_summary),
+                                fontSize = 13.sp,
+                                color = colorScheme.onSurfaceVariantSummary,
+                            )
+                            Spacer(Modifier.height(6.dp))
+                            Text(
+                                text = auditStatus,
+                                fontSize = 13.sp,
+                                color = colorScheme.primary,
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
+                            contentDescription = null,
+                            tint = colorScheme.onSurfaceVariantSummary,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
+                }
+            }
+
+            item(key = "envcheck") {
+                Card(onClick = actions.onOpenEnvCheck) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.VisibilityOff,
+                            contentDescription = null,
+                            tint = colorScheme.primary,
+                            modifier = Modifier.size(28.dp),
+                        )
+                        Spacer(Modifier.size(16.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.safety_entry_env_title),
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = colorScheme.onSurface,
+                            )
+                            Text(
+                                text = stringResource(R.string.safety_entry_env_summary),
+                                fontSize = 13.sp,
+                                color = colorScheme.onSurfaceVariantSummary,
+                            )
+                            Spacer(Modifier.height(6.dp))
+                            Text(
+                                text = envStatus,
+                                fontSize = 13.sp,
+                                color = colorScheme.primary,
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
+                            contentDescription = null,
+                            tint = colorScheme.onSurfaceVariantSummary,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SafetyAuditMiuix(
     uiState: SulogUiState,
     actions: SafetyActions,
-    bottomInnerPadding: Dp,
 ) {
     val enableBlur = LocalEnableBlur.current
     val scrollBehavior = MiuixScrollBehavior()
@@ -70,7 +208,20 @@ fun SafetyPagerMiuix(
             BlurredBar(backdrop) {
                 TopAppBar(
                     color = barColor,
-                    title = stringResource(R.string.safety),
+                    title = stringResource(R.string.safety_audit_title),
+                    navigationIcon = {
+                        IconButton(onClick = actions.onBack) {
+                            val direction = LocalLayoutDirection.current
+                            Icon(
+                                modifier = Modifier.graphicsLayer {
+                                    if (direction == LayoutDirection.Rtl) scaleX = -1f
+                                },
+                                imageVector = MiuixIcons.Back,
+                                contentDescription = null,
+                                tint = colorScheme.onSurface,
+                            )
+                        }
+                    },
                     scrollBehavior = scrollBehavior,
                 )
             }
@@ -78,12 +229,11 @@ fun SafetyPagerMiuix(
     ) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            state = rememberLazyListState(),
             contentPadding = PaddingValues(
                 start = padding.calculateStartPadding(layoutDirection) + 12.dp,
                 end = padding.calculateEndPadding(layoutDirection) + 12.dp,
                 top = padding.calculateTopPadding() + dynamicTopPadding + 8.dp,
-                bottom = padding.calculateBottomPadding() + bottomInnerPadding + 24.dp,
+                bottom = padding.calculateBottomPadding() + 24.dp,
             ),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {

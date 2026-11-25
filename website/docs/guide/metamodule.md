@@ -44,7 +44,7 @@ Traditional root solutions bake mounting logic into their core, making them easi
 - **Customization**: Create specialized solutions for specific devices or use cases
 
 ::: warning IMPORTANT
-Without a metamodule installed, modules will **NOT** be mounted. Fresh MuSu Next installations require installing a metamodule (such as `meta-overlayfs`) for modules to function.
+Mounting requires a metamodule. MuSu Next ships with a built-in metamodule, [MuMount](../features/mumount.md), based on Hybrid Mount and **disabled by default** — enable it in **Settings → MuMount**. Alternatively, you can install a third-party metamodule (such as `meta-overlayfs`); the built-in MuMount and third-party metamodules are mutually exclusive.
 :::
 
 ## For Users
@@ -68,7 +68,7 @@ You can check which metamodule is currently active in the MuSu Next Manager app'
 ### Uninstalling a Metamodule
 
 ::: danger WARNING
-Uninstalling a metamodule will affect **ALL** modules. After removal, modules will no longer be mounted until you install another metamodule.
+Uninstalling a metamodule will affect **ALL** modules. After removal, modules will no longer be mounted until you enable the built-in MuMount or install another metamodule.
 :::
 
 To uninstall:
@@ -79,7 +79,7 @@ To uninstall:
 4. Confirm the action
 5. Reboot your device
 
-After uninstalling, you should install another metamodule if you want modules to continue working.
+After uninstalling, enable the built-in MuMount or install another metamodule if you want modules to continue working.
 
 ### Single Metamodule Constraint
 
@@ -96,15 +96,15 @@ To switch metamodules:
 
 ## For Module Developers
 
-If you're developing regular MuSu Next modules, you don't need to worry much about metamodules. Your modules will work as long as users have a compatible metamodule installed (like `meta-overlayfs`).
+If you're developing regular MuSu Next modules, you don't need to worry much about metamodules. Your modules will work as long as users have a metamodule providing mounting — either the built-in MuMount or a compatible third-party one (like `meta-overlayfs`).
 
 **What you need to know:**
 
-- **Mounting requires a metamodule**: The `system` directory in your module will only be mounted if the user has a metamodule installed that provides mounting functionality
+- **Mounting requires a metamodule**: The `system` directory in your module will only be mounted if the user has a metamodule enabled that provides mounting functionality — the built-in MuMount or an installed third-party one.
 - **No code changes needed**: Existing modules continue to work without modification
 
 ::: tip
-If you're familiar with Magisk module development, your modules will work the same way in MuSu Next when metamodule is installed, as it provides Magisk-compatible mounting.
+If you're familiar with Magisk module development, your modules will work the same way in MuSu Next when a metamodule is enabled (the built-in MuMount or an installed one), as it provides Magisk-compatible mounting.
 :::
 
 ## For Metamodule Developers
@@ -412,9 +412,9 @@ Before releasing:
 
 ### Do I need a metamodule?
 
-**For users**: Only if you want to use modules that require mounting. If you only use modules that run scripts without modifying system files, you don't need a metamodule.
+**For users**: MuSu Next has a built-in metamodule, [MuMount](../features/mumount.md), disabled by default; enable it in **Settings → MuMount** only if you use modules that require mounting. If you only use modules that run scripts without modifying system files, you don't need to enable it. You may instead install a third-party metamodule.
 
-**For module developers**: No, you develop modules normally. Users need a metamodule only if your module requires mounting.
+**For module developers**: No, you develop modules normally. Users need to enable a metamodule (the built-in MuMount or a third-party one) only if your module requires mounting.
 
 **For advanced users**: Only if you want to customize mounting behavior or create alternative mounting implementations.
 
@@ -424,11 +424,11 @@ No. Only one metamodule can be installed at a time. This prevents conflicts and 
 
 ### What happens if I uninstall my only metamodule?
 
-Modules will no longer be mounted. Your device will boot normally, but module modifications won't apply until you install another metamodule.
+Modules will no longer be mounted. Your device will boot normally, but module modifications won't apply until you enable the built-in MuMount or install another metamodule.
 
 ### Is meta-overlayfs required?
 
-No. It provides standard overlayfs mounting compatible with most modules. You can create your own metamodule if you need different behavior.
+No. MuSu Next has a built-in metamodule, [MuMount](../features/mumount.md); `meta-overlayfs` is a third-party option that provides standard overlayfs mounting compatible with most modules. You can also create your own metamodule if you need different behavior.
 
 ## See Also
 

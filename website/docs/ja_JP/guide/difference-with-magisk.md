@@ -20,8 +20,8 @@ MuSu Next モジュールと Magisk モジュールには多くの共通点が�
 以下は違いです：
 
 - MuSu Next モジュールは、リカバリーモードではインストールできません。
-- MuSu Next モジュールには Zygisk のサポートが組み込まれていません（ただし[ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext)を使うと Zygisk モジュールを使用できます）。
-- **モジュールマウントアーキテクチャ**：MuSu Next は [metamodule システム](metamodule.md) を使用し、マウントをプラグ可能な metamodule (`meta-overlayfs`など) に委任します。一方、Magisk はマウントをコアに組み込んでいます。MuSu Next はモジュールマウントを有効にするために metamodule のインストールが必要です。
+- MuSu Next は Zygisk 実装 [MuZygisk](../features/muzygisk.md)（ReZygisk 由来）を内蔵しており、既定では無効。「設定 → MuZygisk」で有効にすると Zygisk モジュールを使えます。代わりに [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) などのサードパーティ製実装を使うこともでき、両者は排他関係です。
+- **モジュールマウントアーキテクチャ**：MuSu Next は [metamodule システム](metamodule.md) を使用し、マウントをメタモジュール（内蔵の [MuMount](../features/mumount.md)、Hybrid Mount ベース、または `meta-overlayfs` などのサードパーティ製）に委任します。一方、Magisk はマウントをコアに組み込んでいます。MuSu Next は内蔵のメタモジュールを備えており、既定では無効で「設定 → MuMount」で有効にします。サードパーティ製メタモジュールをインストールすることもでき、両者は排他関係です。
 - MuSu Next モジュールにおけるファイルの置換や削除の方法は、Magisk とは全く異なります。MuSu Next は `.replace` メソッドをサポートしていません。その代わり、`mknod filename c 0 0` で同名のファイルを作成し、対応するファイルを削除する必要があります。
 - BusyBox 用のディレクトリが違います。MuSu Next の組み込み BusyBox は `/data/adb/ksu/bin/busybox` に、Magisk では `/data/adb/magisk/busybox` に配置されます。**これは MuSu Next の内部動作であり、将来的に変更される可能性があることに注意してください!**
 - MuSu Next は `.replace` ファイルをサポートしていません。しかし、MuSu Next はファイルやフォルダを削除したり置き換えたりするための `REMOVE` と `REPLACE` 変数をサポートしています。

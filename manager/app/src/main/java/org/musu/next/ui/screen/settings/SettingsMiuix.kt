@@ -18,6 +18,7 @@ import androidx.compose.material.icons.automirrored.rounded.Article
 import androidx.compose.material.icons.automirrored.rounded.Rule
 import androidx.compose.material.icons.rounded.Adb
 import androidx.compose.material.icons.rounded.AdminPanelSettings
+import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.BugReport
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Description
@@ -407,6 +408,31 @@ fun SettingPagerMiuix(
                                     )
                                 },
                                 onClick = actions.onOpenBuiltinMetamodule,
+                            )
+                        }
+
+                        SmallTitle(
+                            text = stringResource(id = R.string.snapshot_settings_group),
+                            modifier = Modifier.padding(top = 12.dp),
+                        )
+                        Card(
+                            modifier = Modifier
+                                .padding(top = 8.dp)
+                                .fillMaxWidth(),
+                        ) {
+                            val snapshotTitle = stringResource(id = R.string.snapshot_settings_entry)
+                            ArrowPreference(
+                                title = snapshotTitle,
+                                summary = stringResource(id = R.string.snapshot_settings_entry_summary),
+                                startAction = {
+                                    Icon(
+                                        Icons.Rounded.Backup,
+                                        modifier = Modifier.padding(end = 6.dp),
+                                        contentDescription = snapshotTitle,
+                                        tint = colorScheme.onBackground,
+                                    )
+                                },
+                                onClick = actions.onOpenSnapshot,
                             )
                         }
 

@@ -24,8 +24,8 @@ Before understanding the differences, it's important to know how to identify whe
 Here are some differences:
 
 - MuSu Next modules cannot be installed in Recovery mode.
-- MuSu Next modules don't have built-in support for Zygisk, but you can use Zygisk modules through [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext).
-- **Module mounting architecture**: MuSu Next uses a [metamodule system](metamodule.md) where mounting is delegated to pluggable metamodules (e.g., `meta-overlayfs`), while Magisk has mounting built into its core. MuSu Next requires installing a metamodule to enable module mounting.
+- MuSu Next has a built-in Zygisk implementation, [MuZygisk](../features/muzygisk.md), forked from ReZygisk and disabled by default; enable it in **Settings → MuZygisk** to use Zygisk modules. Alternatively, use a third-party implementation such as [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) — the two are mutually exclusive.
+- **Module mounting architecture**: MuSu Next uses a [metamodule system](metamodule.md) where mounting is handled by a metamodule (the built-in [MuMount](../features/mumount.md), based on Hybrid Mount, or a third-party one such as `meta-overlayfs`), while Magisk has mounting built into its core. MuSu Next has a built-in metamodule, disabled by default and enabled in **Settings → MuMount**; alternatively, install a third-party metamodule — the two are mutually exclusive.
 - The method for replacing or deleting files in MuSu Next modules is completely different from Magisk. MuSu Next doesn't support the `.replace` method. Instead, you need to create a same-named file with `mknod filename c 0 0` to delete the corresponding file.
 - The directories for BusyBox are different. The built-in BusyBox in MuSu Next is located at `/data/adb/ksu/bin/busybox`, while in Magisk it is at `/data/adb/magisk/busybox`. **Note that this is an internal behavior of MuSu Next and may change in the future!**
 - MuSu Next doesn't support `.replace` files, but it supports the `REMOVE` and `REPLACE` variables to remove or replace files and folders.

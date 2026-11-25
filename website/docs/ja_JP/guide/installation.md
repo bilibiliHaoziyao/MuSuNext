@@ -131,7 +131,7 @@ ksud boot-patch -b <boot.img> --kmi android13-5.10
 ## インストール後：モジュールサポート {#post-installation}
 
 ::: warning システムファイル変更用の METAMODULE
-`/system` ファイルを変更するモジュールを使用したい場合は、MuSu Next インストール後に **metamodule** をインストールする必要があります。スクリプト、sepolicy、または system.prop のみを使用するモジュールは metamodule なしで動作します。
+`/system` ファイルを変更するモジュールを使う場合は、「設定 → MuMount」で MuSu Next 内蔵の [MuMount](../features/mumount.md)（既定では無効）を有効にするか、`meta-overlayfs` などのサードパーティ製 metamodule をインストールします。両者は排他関係です。スクリプト、sepolicy、system.prop のみを使うモジュールは metamodule なしで動作します。
 :::
 
 **`/system` 変更サポートが必要な場合**、[Metamodule ガイド](metamodule.md)を参照して：

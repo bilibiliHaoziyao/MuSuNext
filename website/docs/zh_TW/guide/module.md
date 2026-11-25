@@ -5,7 +5,7 @@ MuSu Next 提供了一個模組機制，它可以在保持系統分割區完整�
 MuSu Next 的模組運作機制與 Magisk 幾乎相同，如果您熟悉 Magisk 模組的開發，那麼開發 MuSu Next 的模組大同小異，您可以跳過下列有關模組的介紹，只需要瞭解 [MuSu Next 模組與 Magisk 模組的差異](difference-with-magisk.md)。
 
 ::: warning METAMODULE 僅在修改系統檔案時需要
-MuSu Next 使用 [metamodule](metamodule.md) 架構來掛載 `system` 目錄。**僅當您的模組需要修改 `/system` 檔案時**(透過 `system` 目錄)，您才需要安裝 metamodule(如 [meta-overlayfs](https://github.com/bilibiliHaoziyao/MuSuNext/releases))。其他模組功能如腳本、sepolicy 規則和 system.prop 無需 metamodule 即可運作。
+MuSu Next 使用 [metamodule](metamodule.md) 架構來掛載 `system` 目錄，並已內建元模組 [MuMount](../features/mumount.md)，預設停用，在「設定 → MuMount」中開啟即可。**僅當您的模組需要修改 `/system` 檔案時**(透過 `system` 目錄)，才需要元模組；也可以安裝第三方元模組(如 [meta-overlayfs](https://github.com/bilibiliHaoziyao/MuSuNext/releases))，兩者互斥。其他模組功能如腳本、sepolicy 規則和 system.prop 無需元模組即可運作。
 :::
 
 ## WebUI
@@ -101,7 +101,7 @@ MuSu Next 模組是一個放置於 `/data/adb/modules` 且滿足下列結構的�
 ```
 
 ::: tip 與 Magisk 的差異
-MuSu Next 沒有內建的針對 Zygisk 的支援，因此模組中沒有與 Zygisk 相關的內容，但您可以透過安裝 [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) 以支援 Zygisk 模組，此時 Zygisk 模組的內容與 Magisk 所支援的 Zygisk 完全相同。
+MuSu Next 已內建 [MuZygisk](../features/muzygisk.md)（源自 ReZygisk），預設停用，在管理員的「設定 → MuZygisk」中以原生介面開啟後即可使用 Zygisk 模組，此時 Zygisk 模組的內容與 Magisk 所支援的 Zygisk 完全相同。MuZygisk 與 [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) 等第三方 Zygisk 實作互斥，兩者只能啟用其一。
 :::
 
 ### module.prop

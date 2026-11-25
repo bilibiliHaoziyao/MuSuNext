@@ -130,7 +130,7 @@ ksud boot-patch -b <boot.img> --kmi android13-5.10
 ## 安裝後：模組支援 {#post-installation}
 
 ::: warning 用於系統檔案修改的 METAMODULE
-如果您想使用修改 `/system` 檔案的模組，您需要在安裝 MuSu Next 後安裝 **metamodule**。僅使用腳本、sepolicy 或 system.prop 的模組無需 metamodule 即可運作。
+如果您想使用修改 `/system` 檔案的模組，可在「設定 → MuMount」中開啟 MuSu Next 內建的 [MuMount](../features/mumount.md)（預設停用），或安裝第三方元模組（如 `meta-overlayfs`），兩者互斥。僅使用腳本、sepolicy 或 system.prop 的模組無需元模組即可運作。
 :::
 
 **若需 `/system` 修改支援**，請參閱 [Metamodule 指南](metamodule.md)以：

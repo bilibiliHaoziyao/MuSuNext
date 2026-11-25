@@ -20,15 +20,15 @@ Yes. MuSu Next requires an unlocked bootloader.
 
 ## Does MuSu Next support modules?
 
-Yes, most Magisk modules work on MuSu Next. However, if your module needs to modify `/system` files, you need to install a [metamodule](metamodule.md) (such as `meta-overlayfs`). Other module features work without a metamodule. Check [Module guide](module.md) for more info.
+Yes, most Magisk modules work on MuSu Next. If your module needs to modify `/system` files, you need a metamodule. MuSu Next has a built-in metamodule, [MuMount](../features/mumount.md), disabled by default — enable it in **Settings → MuMount**. Alternatively, install a third-party metamodule such as `meta-overlayfs`; the two are mutually exclusive. Other module features work without a metamodule. Check [Module guide](module.md) for more info.
 
 ## Does MuSu Next support Xposed?
 
-Yes, you can use LSPosed (or other modern Xposed derivative) with [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext).
+Yes. You can use LSPosed (or other modern Xposed derivatives) with MuSu Next's built-in [MuZygisk](../features/muzygisk.md), or with a third-party implementation such as [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext). MuZygisk is disabled by default — enable it in **Settings → MuZygisk**. The two are mutually exclusive, so choose one.
 
 ## Does MuSu Next support Zygisk?
 
-MuSu Next has no built-in Zygisk support, but you can use a module like [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) to support it.
+Yes. MuSu Next has a built-in Zygisk implementation, [MuZygisk](../features/muzygisk.md), forked from ReZygisk and disabled by default. Enable it in **Settings → MuZygisk** to use Zygisk modules; the content is identical to Magisk's. Alternatively, you can use a third-party implementation such as [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext). The two are mutually exclusive — enable only one.
 
 ## Is MuSu Next compatible with Magisk?
 
@@ -74,9 +74,9 @@ Of course. But MuSu Next doesn't have built-in hosts support, you can install a 
 
 ## Why aren't my modules working after fresh install?
 
-If your modules need to modify `/system` files, you need to install a [metamodule](metamodule.md) to mount the `system` directory. Other module features (scripts, sepolicy, system.prop) work without a metamodule.
+If your modules need to modify `/system` files, you need a metamodule to mount the `system` directory. MuSu Next has a built-in one, [MuMount](../features/mumount.md), disabled by default — enable it in **Settings → MuMount**. Alternatively, install a third-party metamodule such as `meta-overlayfs`; the two are mutually exclusive. Other module features (scripts, sepolicy, system.prop) work without a metamodule.
 
-**Solution**: See the [Metamodule Guide](metamodule.md) for installation instructions.
+**Solution**: Enable the built-in [MuMount](../features/mumount.md) in **Settings → MuMount**, or see the [Metamodule Guide](metamodule.md) to install a third-party metamodule.
 
 ## What is a metamodule and why do I need one?
 

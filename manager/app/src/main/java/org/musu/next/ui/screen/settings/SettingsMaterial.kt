@@ -16,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Rule
 import androidx.compose.material.icons.filled.Adb
 import androidx.compose.material.icons.filled.AdminPanelSettings
+import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Description
@@ -327,6 +328,22 @@ fun SettingPagerMaterial(
                         )
                     }
                 }
+
+                SegmentedColumn(
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 13.dp),
+                    title = stringResource(id = R.string.snapshot_settings_group),
+                    content = listOf {
+                        SegmentedListItem(
+                            onClick = actions.onOpenSnapshot,
+                            headlineContent = { Text(stringResource(id = R.string.snapshot_settings_entry)) },
+                            supportingContent = { Text(stringResource(id = R.string.snapshot_settings_entry_summary)) },
+                            leadingContent = { Icon(Icons.Filled.Backup, null) },
+                            trailingContent = {
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, null)
+                            },
+                        )
+                    }
+                )
 
                 SegmentedColumn(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 13.dp),

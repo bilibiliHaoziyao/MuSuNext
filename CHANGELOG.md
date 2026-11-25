@@ -2,6 +2,25 @@
 
 All notable changes to MuSu Next will be documented in this file.
 
+## [0.0.7] - 2026-11-24
+
+### Added
+-快照备份与恢复：一键备份模块开关、Root 授权名单与内建组件状态，换机/刷机后可恢复
+  - `ksud snapshot create/list/restore/delete`，tar.gz 归档存于 `/data/adb/ksu/snapshot/`
+  - 恢复前自动创建 `.pre-restore` 快照，二次确认 + 提示完整重启
+- 环境检测（「安全」Tab）：以**未授权 UID 视角**探测检测方实际能看到的 root 痕迹
+  - 降权 fork 探针，检查 su 二进制、/data/adb 可见性、模块挂载、进程、SELinux、property 等
+  - 三态结果（已暴露/干净/未验证），降权失败明确报错，绝不返回伪造的"全部安全"
+  - 只覆盖本地静态痕迹，不保证通过 Play Integrity 或服务端风控
+- 「安全」Tab 重构为入口页，下设「Root 审计面板」与「环境检测」两个子页
+- 官网新增快照备份、环境检测四语言文档
+
+### Fixed
+- 官网四语言文档修正过期表述：旧文沿用上游「MuSu Next 没有内置 Zygisk」「必须安装元模块才能挂载」的说法，与 0.0.6 起已内建 MuZygisk / MuMount 的事实矛盾；现统一改为「内建但默认禁用、在设置中开启、与第三方实现互斥」，涵盖 FAQ、模块/安装/元模块/与 Magisk 对比指南
+
+### Changed
+- 版本号升至 0.0.7 (code 7)
+
 ## [0.0.6] - 2026-11-24
 
 ### Added

@@ -9,7 +9,7 @@ MuSu Next provides a module mechanism that achieves the effect of modifying the 
 The module mechanism of MuSu Next is almost the same as that of Magisk. If you're familiar with Magisk module development, developing MuSu Next modules is very similar. You can skip the introduction of modules below and just read [Difference with Magisk](difference-with-magisk.md).
 
 ::: warning METAMODULE ONLY NEEDED FOR SYSTEM FILE MODIFICATION
-MuSu Next uses a [metamodule](metamodule.md) architecture for mounting the `system` directory. **Only if your module needs to modify `/system` files** (via the `system` directory) do you need to install a metamodule (such as [meta-overlayfs](https://github.com/bilibiliHaoziyao/MuSuNext/releases)). Other module features like scripts, sepolicy rules, and system.prop work without a metamodule.
+MuSu Next uses a [metamodule](metamodule.md) architecture for mounting the `system` directory and ships with a built-in metamodule, [MuMount](../features/mumount.md), which is disabled by default — enable it in **Settings → MuMount**. **Only if your module needs to modify `/system` files** (via the `system` directory) do you need a metamodule; alternatively, install a third-party one such as [meta-overlayfs](https://github.com/bilibiliHaoziyao/MuSuNext/releases) (the two are mutually exclusive). Other module features like scripts, sepolicy rules, and system.prop work without a metamodule.
 :::
 
 ## WebUI
@@ -103,7 +103,7 @@ A MuSu Next module is a folder placed in `/data/adb/modules` with the structure 
 ```
 
 ::: tip DIFFERENCE WITH MAGISK
-MuSu Next doesn't have built-in support for Zygisk, so there is no content related to Zygisk in the module. However, you can use [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) to support Zygisk modules. In this case, the content of the Zygisk module is identical to that supported by Magisk.
+MuSu Next has a built-in Zygisk implementation, [MuZygisk](../features/muzygisk.md), forked from ReZygisk. It is disabled by default; enable it from **Settings → MuZygisk** in the manager, then Zygisk modules will work with content identical to Magisk's. MuZygisk is mutually exclusive with third-party Zygisk implementations such as [ZygiskNext](https://github.com/Dr-TSNG/ZygiskNext) — enable only one of the two.
 :::
 
 ### module.prop
