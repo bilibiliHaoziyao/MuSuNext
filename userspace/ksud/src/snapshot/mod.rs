@@ -1,14 +1,26 @@
 //! `ksud snapshot ...` — backup and restore of module states, root grants and
 //! built-in component switches. One JSON object on stdout, nothing else.
 
+// The on-disk data sources and archive plumbing rely on Unix paths, modes and
+// flock. Non-Unix builds keep the CLI surface with an explicit error stub.
+#[cfg(unix)]
 pub mod allowlist;
+#[cfg(unix)]
 pub mod data;
 
-use crate::jsoncmd::{JsonOutcome, error};
+use crate::jsoncmd::JsonOutcome;
+#[cfg(unix)]
+use crate::jsoncmd::error;
+#[cfg(unix)]
 use anyhow::{Context, Result, bail};
+#[cfg(unix)]
 use chrono::Local;
+#[cfg(unix)]
 use flate2::{Compression, read::GzDecoder, write::GzEncoder};
-use serde_json::{Value, json};
+#[cfg(unix)]
+use serde_json::Value;
+use serde_json::json;
+#[cfg(unix)]
 use std::{
     collections::HashMap,
     fs::{self, File, OpenOptions},
@@ -17,9 +29,12 @@ use std::{
     path::{Component, Path, PathBuf},
 };
 
+#[cfg(unix)]
 const SCHEMA: u32 = 1;
+#[cfg(unix)]
 const ARCHIVE_VERSION: &str = "0.0.7";
 
+#[cfg(unix)]
 struct Manifest {
     created: String,
     stamp: String,
@@ -29,6 +44,7 @@ struct Manifest {
     builtins: usize,
 }
 
+#[cfg(unix)]
 impl Manifest {
     fn to_json(&self) -> Value {
         json!({
@@ -45,6 +61,7 @@ impl Manifest {
     }
 }
 
+#[cfg(unix)]
 struct SnapshotData {
     manifest: Manifest,
     modules: Vec<Value>,
@@ -52,6 +69,7 @@ struct SnapshotData {
     builtins: Vec<Value>,
 }
 
+#[cfg(unix)]
 fn clock() -> (String, String, i64) {
     let now = Local::now();
     (
@@ -61,6 +79,7 @@ fn clock() -> (String, String, i64) {
     )
 }
 
+#[cfg(unix)]
 fn append_part(builder: &mut tar::Builder<GzEncoder<File>>, name: &str, body: &[u8], mtime: u64) -> Result<()> {
     let mut header = tar::Header::new_gnu();
     header.set_size(body.len() as u64);
@@ -77,6 +96,7 @@ fn append_part(builder: &mut tar::Builder<GzEncoder<File>>, name: &str, body: &[
 
 /// Create a snapshot. `pre_restore` selects the `.pre-restore` suffix used for
 /// the automatic safety copy taken immediately before a destructive restore.
+#[cfg(unix)]
 fn build_snapshot(pre_restore: bool) -> Result<(PathBuf, Manifest, u64)> {
     let modules = data::read_modules()?;
     let profiles = data::read_profiles()?;
@@ -112,6 +132,7 @@ fn build_snapshot(pre_restore: bool) -> Result<(PathBuf, Manifest, u64)> {
     Ok((path, manifest, bytes))
 }
 
+#[cfg(unix)]
 fn parse_snapshot(path: &Path) -> Result<SnapshotData> {
     let file = File::open(path)?;
     let mut archive = tar::Archive::new(GzDecoder::new(file));
@@ -170,6 +191,7 @@ fn parse_snapshot(path: &Path) -> Result<SnapshotData> {
 }
 
 /// Reject traversal and symlinks before handing a manager-supplied path to fs.
+#[cfg(unix)]
 fn checked_path(raw: &str) -> Result<PathBuf> {
     let base = Path::new(data::SNAPSHOT_DIR).canonicalize()?;
     let candidate = Path::new(raw);
@@ -191,6 +213,7 @@ fn checked_path(raw: &str) -> Result<PathBuf> {
     Ok(canonical)
 }
 
+#[cfg(unix)]
 pub fn cmd_create() -> JsonOutcome {
     match build_snapshot(false) {
         Ok((path, manifest, bytes)) => JsonOutcome::ok(json!({
@@ -208,6 +231,7 @@ pub fn cmd_create() -> JsonOutcome {
     }
 }
 
+#[cfg(unix)]
 pub fn cmd_list() -> JsonOutcome {
     let entries = match fs::read_dir(data::SNAPSHOT_DIR) {
         Ok(entries) => entries,
@@ -241,6 +265,7 @@ pub fn cmd_list() -> JsonOutcome {
     JsonOutcome::ok(json!({"ok": true, "snapshots": snapshots}))
 }
 
+#[cfg(unix)]
 pub fn cmd_restore(raw_path: &str) -> JsonOutcome {
     let outcome = (|| -> Result<Value> {
         let path = checked_path(raw_path)?;
@@ -276,6 +301,7 @@ pub fn cmd_restore(raw_path: &str) -> JsonOutcome {
     }
 }
 
+#[cfg(unix)]
 pub fn cmd_delete(raw_path: &str) -> JsonOutcome {
     match checked_path(raw_path) {
         Ok(path) => match fs::remove_file(&path) {
@@ -286,5 +312,35 @@ pub fn cmd_delete(raw_path: &str) -> JsonOutcome {
     }
 }
 
-#[cfg(test)]
+/// Non-Unix targets keep all four subcommands in the CLI, but report the
+/// unsupported platform as a structured error so the manager can show it.
+#[cfg(not(unix))]
+fn unsupported() -> JsonOutcome {
+    JsonOutcome::fail(json!({
+        "ok": false,
+        "error": "snapshot is not supported on this platform",
+    }))
+}
+
+#[cfg(not(unix))]
+pub fn cmd_create() -> JsonOutcome {
+    unsupported()
+}
+
+#[cfg(not(unix))]
+pub fn cmd_list() -> JsonOutcome {
+    unsupported()
+}
+
+#[cfg(not(unix))]
+pub fn cmd_restore(_raw_path: &str) -> JsonOutcome {
+    unsupported()
+}
+
+#[cfg(not(unix))]
+pub fn cmd_delete(_raw_path: &str) -> JsonOutcome {
+    unsupported()
+}
+
+#[cfg(all(test, unix))]
 mod tests;

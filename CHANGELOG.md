@@ -16,6 +16,7 @@ All notable changes to MuSu Next will be documented in this file.
 - 官网新增快照备份、环境检测四语言文档
 
 ### Fixed
+- 修复 ksud 交叉编译失败：snapshot/envcheck 的 Unix 系统 API（flock、fork/setuid、from_raw_fd 等）缺平台隔离，导致 Android/Windows 目标编译报错；现按 cfg(unix) 分流，非 Unix 平台保留子命令并返回结构化「不支持」错误
 - 官网四语言文档修正过期表述：旧文沿用上游「MuSu Next 没有内置 Zygisk」「必须安装元模块才能挂载」的说法，与 0.0.6 起已内建 MuZygisk / MuMount 的事实矛盾；现统一改为「内建但默认禁用、在设置中开启、与第三方实现互斥」，涵盖 FAQ、模块/安装/元模块/与 Magisk 对比指南
 
 ### Changed

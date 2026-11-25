@@ -5,19 +5,20 @@
 //! untrusted_app SELinux domain. Results go back over a pipe; the child's
 //! stdout is /dev/null so the manager always sees exactly one JSON object.
 
-use crate::{
-    jsoncmd::{JsonOutcome, error},
-    snapshot::data,
-};
+use crate::jsoncmd::JsonOutcome;
+#[cfg(unix)]
+use crate::{jsoncmd::error, snapshot::data};
+#[cfg(unix)]
 use anyhow::{Result, bail};
+#[cfg(unix)]
 use chrono::Local;
-use serde_json::{Value, json};
-use std::{
-    fs::File,
-    io::Read,
-    os::fd::FromRawFd,
-};
+#[cfg(unix)]
+use serde_json::Value;
+use serde_json::json;
+#[cfg(unix)]
+use std::{fs::File, io::Read, os::fd::FromRawFd};
 
+#[cfg(unix)]
 const PROBES: &[(&str, &str)] = &[
     ("su_binary", "su 可执行文件"),
     ("adb_dir", "/data/adb 目录可列出"),
@@ -32,6 +33,7 @@ const PROBES: &[(&str, &str)] = &[
 
 /// Pick a UID that is definitely not in the root grant list. A high app UID is
 /// preferred; shell (2000) is only used when its profile does not allow su.
+#[cfg(unix)]
 fn select_unauthorized_uid() -> Result<u32> {
     let profiles: Vec<Value> = data::read_profiles()?;
     let allowed = |uid: u32| {
@@ -53,7 +55,9 @@ fn select_unauthorized_uid() -> Result<u32> {
 
 // --- individual probes (read-only) -----------------------------------------
 
+#[cfg(unix)]
 mod probes;
+#[cfg(unix)]
 use probes::{
     probe_adb_dir, probe_debuggable, probe_ksu_dir, probe_magisk_files, probe_module_mounts,
     probe_selinux_status, probe_su_binary, visible_process,
@@ -61,6 +65,7 @@ use probes::{
 
 // --- child / parent plumbing ------------------------------------------------
 
+#[cfg(unix)]
 fn write_line(fd: i32, line: &str) {
     let framed = format!("{line}\n");
     let mut rest = framed.as_bytes();
@@ -77,12 +82,13 @@ fn write_line(fd: i32, line: &str) {
     }
 }
 
+#[cfg(unix)]
 fn try_untrusted_context() -> (bool, String) {
     #[cfg(target_os = "android")]
     {
         let target = "u:r:untrusted_app:s0";
-        let written = fs::write("/proc/thread-self/attr/current", target.as_bytes());
-        let current = fs::read_to_string("/proc/self/attr/current")
+        let written = std::fs::write("/proc/thread-self/attr/current", target.as_bytes());
+        let current = std::fs::read_to_string("/proc/self/attr/current")
             .unwrap_or_default()
             .trim()
             .to_string();
@@ -94,6 +100,7 @@ fn try_untrusted_context() -> (bool, String) {
     }
 }
 
+#[cfg(unix)]
 fn child_main(pipe_fd: i32, uid: u32) {
     // Bound the child so a hanging /proc read cannot stall ksud.
     unsafe { libc::alarm(15) };
@@ -163,6 +170,7 @@ fn child_main(pipe_fd: i32, uid: u32) {
     );
 }
 
+#[cfg(unix)]
 pub fn run() -> JsonOutcome {
     let uid = match select_unauthorized_uid() {
         Ok(uid) => uid,
@@ -264,7 +272,18 @@ pub fn run() -> JsonOutcome {
     }))
 }
 
-#[cfg(test)]
+/// Non-Unix targets (notably Windows) have no fork/setuid/procfs semantics.
+/// Keep the subcommand in the CLI and keep the JSON shape, but make the
+/// unsupported platform an explicit, machine-readable error.
+#[cfg(not(unix))]
+pub fn run() -> JsonOutcome {
+    JsonOutcome::fail(json!({
+        "ok": false,
+        "error": "envcheck is not supported on this platform",
+    }))
+}
+
+#[cfg(all(test, unix))]
 mod tests {
     use super::*;
 
