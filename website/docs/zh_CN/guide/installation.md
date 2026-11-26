@@ -57,7 +57,7 @@ w      .x         .y       -zzz           -k            -something
 
 ## 安装介绍 {#installationintroduction}
 
-自 `0.9.0` 版本以后，在 GKI 设备中，MuSu Next 支持两种运行模式：
+自 `0.0.9` 版本以后，在 GKI 设备中，MuSu Next 支持两种运行模式：
 
 1. `LKM`：使用**可加载内核模块**（LKM）的方式加载到设备内核中，不会替换掉设备原有的内核。
 2. `GKI`：使用**通用内核镜像**（GKI）替换掉设备原有的内核。

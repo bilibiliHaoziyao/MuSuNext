@@ -55,7 +55,7 @@ w      .x         .y       -zzz           -k            -something
 
 ## はじめに
 
-バージョン [0.9.0](https://github.com/bilibiliHaoziyao/MuSuNext/releases/tag/v0.9.0) 以降、MuSu Next は GKI 端末において 2 つの動作モードに対応しています。
+バージョン [0.0.9](https://github.com/bilibiliHaoziyao/MuSuNext/releases/tag/v0.0.9) 以降、MuSu Next は GKI 端末において 2 つの動作モードに対応しています。
 
 1. `LKM`: 端末本来のカーネルを置き換えずに、カーネルに **ローダブルカーネルモジュール** (LKM) を読み込みます。
 2. `GKI`: 端末本来のカーネルを MuSu Next によって提供される **汎用カーネルイメージ** (GKI) で置き換えます。
