@@ -2,6 +2,20 @@
 
 All notable changes to MuSu Next will be documented in this file.
 
+## [0.0.8] - 2026-11-25
+
+### Added
+- 内置 DirtyFrag 一键越狱（CVE-2026-43284 页面缓存漏洞，重启即失效的临时 root）
+  - Home 越狱按钮改为常驻，点击进入原生 Compose 越狱界面，替换原 KernelSU late-load 入口
+  - 界面含 KMI/内核兼容性检测、风险说明（重启即失效 / setenforce permissive / 重复点击内核冲突）、风险二次确认；仅兼容时可一键越狱，70 秒窗口防连点，不显示百分比进度
+  - 锁定版 DirtyFrag 作为**独立 GPL-2.0-only APK** 内置于 assets，首次使用释放安装、无桌面图标，通过进程边界与管理器交互；SU 管理器锁定为 MuSu Next（org.musu.next），一键跑完整漏洞链
+  - ksud 新增 `dirtyfrag stage/detect/run/status` 子命令，stdin/stdout 单 JSON；detect 为兼容性唯一数据源，run 以 client_request_id 去重，状态按 boot 生效
+  - 真源码真载荷：fork 官方 v1.18（commit 3bad3cd6）到独立仓库 `MuSuNext-DirtyFrag`，构建真 APK + 8 个真 ko，SHA256 / ELF / 签名校验通过
+  - GPL 合规：DirtyFrag 独立源码树 + LICENSE/NOTICE/SOURCE.txt/patches，与本体 GPL-3.0 为纯粹聚合，不混合源码（详见 docs/specs/dirtyfrag.md）
+
+### Changed
+- 版本号升至 0.0.8 (code 8)
+
 ## [0.0.7] - 2026-11-24
 
 ### Added

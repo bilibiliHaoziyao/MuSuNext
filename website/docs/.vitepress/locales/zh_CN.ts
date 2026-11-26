@@ -84,6 +84,7 @@ function sidebarFeatures() {
         { text: 'MuMount（内建元模块）', link: '/zh_CN/features/mumount' },
         { text: '快照备份与恢复', link: '/zh_CN/features/snapshot-backup' },
         { text: '环境检测', link: '/zh_CN/features/environment-check' },
+        { text: '内置 DirtyFrag 一键越狱', link: '/zh_CN/features/dirtyfrag-jailbreak' },
       ]
     }
   ]

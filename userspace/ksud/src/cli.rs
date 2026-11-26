@@ -41,6 +41,12 @@ enum Commands {
         command: Snapshot,
     },
 
+    /// DirtyFrag one-tap orchestration (stage / detect / run / status); single JSON in/out
+    Dirtyfrag {
+        #[command(subcommand)]
+        command: Dirtyfrag,
+    },
+
     /// Detect what an unauthorized app can see (drops privileges before probing)
     Envcheck,
 
@@ -200,6 +206,20 @@ enum Builtin {
     /// Internal: post-fs-data orchestration
     #[command(hide = true)]
     Apply,
+}
+
+/// `ksud dirtyfrag ...` — stdout is exactly one JSON object; logs go to logd.
+#[derive(clap::Subcommand, Debug)]
+enum Dirtyfrag {
+    /// Probe kernel / ABI / SELinux compatibility without changing state
+    Detect,
+    /// Execute the one-tap orchestration (requires confirm=true on stdin)
+    Run,
+    /// Current boot's exposed state and last result
+    Status,
+    /// Internal: stage the payload and libksud.so only
+    #[command(hide = true)]
+    Stage,
 }
 
 /// `ksud snapshot ...` — stdout is exactly one JSON object; logs go to logd.
@@ -604,6 +624,17 @@ pub fn run() -> Result<()> {
             }
         }
         Commands::Envcheck => crate::jsoncmd::emit(&crate::envcheck::run()),
+        Commands::Dirtyfrag { command } => {
+            use crate::dirtyfrag::Command as DfCommand;
+            use crate::jsoncmd::emit;
+            let command = match command {
+                Dirtyfrag::Detect => DfCommand::Detect,
+                Dirtyfrag::Run => DfCommand::Run,
+                Dirtyfrag::Status => DfCommand::Status,
+                Dirtyfrag::Stage => DfCommand::Stage,
+            };
+            emit(&crate::dirtyfrag::execute(command))
+        }
 
         Commands::PostFsData => init_event::on_post_fs_data(),
         Commands::BootCompleted => {

@@ -23,6 +23,7 @@ mod cli_non_android;
 #[cfg(target_os = "android")]
 mod debug;
 mod defs;
+mod dirtyfrag;
 mod envcheck;
 #[cfg(target_os = "android")]
 mod feature;

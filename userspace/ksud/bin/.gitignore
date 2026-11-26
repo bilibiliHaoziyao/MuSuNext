@@ -1,2 +1,5 @@
 **/*.ko
 **/ksuinit
+# DirtyFrag payload: the 8 upstream ko are versioned real binaries (see dirtyfrag/README.md),
+# not build-time downloads, so they must be tracked for the RustEmbed payload.
+!dirtyfrag/arm64/ko/*.ko

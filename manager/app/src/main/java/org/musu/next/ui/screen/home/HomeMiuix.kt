@@ -161,6 +161,16 @@ fun HomePagerMiuix(
                             state = state,
                             actions = actions,
                         )
+                        // The jailbreak entry is always present (spec §7.1): it no longer depends on
+                        // install state or SELinux mode.
+                        Card(modifier = Modifier.fillMaxWidth()) {
+                            TextButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = stringResource(R.string.home_jailbreak),
+                                onClick = actions.onJailbreakClick,
+                                colors = ButtonDefaults.textButtonColorsPrimary()
+                            )
+                        }
                         InfoCard(
                             systemInfo = state.systemInfo,
                             modifier = Modifier.fillMaxWidth(),
@@ -384,15 +394,6 @@ private fun StatusCard(
                                     modifier = Modifier.padding(end = 6.dp),
                                     tint = colorScheme.onBackground,
                                 )
-                            },
-                            endActions = {
-                                if (state.isSELinuxPermissive) {
-                                    TextButton(
-                                        text = stringResource(R.string.home_jailbreak),
-                                        onClick = actions.onJailbreakClick,
-                                        colors = ButtonDefaults.textButtonColorsPrimary()
-                                    )
-                                }
                             }
                         )
                     }

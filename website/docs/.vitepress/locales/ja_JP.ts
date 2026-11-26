@@ -81,6 +81,7 @@ function sidebarFeatures() {
         { text: 'MuMount（内蔵メタモジュール）', link: '/ja_JP/features/mumount' },
         { text: 'スナップショットのバックアップと復元', link: '/ja_JP/features/snapshot-backup' },
         { text: '環境チェック', link: '/ja_JP/features/environment-check' },
+        { text: '内蔵 DirtyFrag 脱獄', link: '/ja_JP/features/dirtyfrag-jailbreak' },
       ]
     }
   ]

@@ -43,6 +43,26 @@ enum Commands {
 
     /// Detect what an unauthorized app can see (drops privileges before probing)
     Envcheck,
+
+    /// DirtyFrag one-tap orchestration (stubbed off-device; single JSON in/out)
+    Dirtyfrag {
+        #[command(subcommand)]
+        command: Dirtyfrag,
+    },
+}
+
+/// Kept in lockstep with cli.rs so the CLI enum is complete on every platform.
+#[derive(clap::Subcommand, Debug)]
+enum Dirtyfrag {
+    /// Probe kernel / ABI / SELinux compatibility without changing state
+    Detect,
+    /// Execute the one-tap orchestration (requires confirm=true on stdin)
+    Run,
+    /// Current boot's exposed state and last result
+    Status,
+    /// Internal: stage the payload and libksud.so only
+    #[command(hide = true)]
+    Stage,
 }
 
 #[derive(clap::Subcommand, Debug)]
@@ -100,6 +120,17 @@ pub fn run() -> Result<()> {
             }
         }
         Commands::Envcheck => crate::jsoncmd::emit(&crate::envcheck::run()),
+        Commands::Dirtyfrag { command } => {
+            use crate::dirtyfrag::Command as DfCommand;
+            use crate::jsoncmd::emit;
+            let command = match command {
+                Dirtyfrag::Detect => DfCommand::Detect,
+                Dirtyfrag::Run => DfCommand::Run,
+                Dirtyfrag::Status => DfCommand::Status,
+                Dirtyfrag::Stage => DfCommand::Stage,
+            };
+            emit(&crate::dirtyfrag::execute(command))
+        }
     };
 
     if let Err(e) = &result {

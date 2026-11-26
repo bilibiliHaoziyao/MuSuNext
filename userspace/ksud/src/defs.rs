@@ -76,6 +76,13 @@ mod android {
     pub const BUILTIN_ZYGISK_ATTEMPTS_PATH: &str = concatcp!(BUILTIN_RUN_DIR, "zygisk_boot_attempts");
     pub const BUILTIN_META_ID: &str = "musu_builtin_metamodule";
 
+    // DirtyFrag one-tap orchestration (docs/specs/dirtyfrag.md §3/§5).
+    pub const DIRTYFRAG_DIR: &str = concatcp!(BUILTIN_DIR, "dirtyfrag/");
+    pub const DIRTYFRAG_STATE_PATH: &str = concatcp!(DIRTYFRAG_DIR, "state.json");
+    pub const DIRTYFRAG_LOCK_PATH: &str = concatcp!(DIRTYFRAG_DIR, ".run.lock");
+    pub const DIRTYFRAG_STAGE_DIR: &str = concatcp!(DIRTYFRAG_DIR, "stage/");
+    pub const BOOT_ID_PATH: &str = "/proc/sys/kernel/random/boot_id";
+
     // Hybrid Mount runtime, owned by the built-in metamodule payload
     pub const HYBRID_MOUNT_DIR: &str = concatcp!(ADB_DIR, "hybrid-mount/");
     pub const HYBRID_MOUNT_CONFIG_PATH: &str = concatcp!(HYBRID_MOUNT_DIR, "config.toml");

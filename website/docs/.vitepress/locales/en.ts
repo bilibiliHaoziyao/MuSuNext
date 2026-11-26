@@ -84,6 +84,7 @@ function sidebarFeatures() {
         { text: 'MuMount (Built-in Metamodule)', link: '/features/mumount' },
         { text: 'Snapshot Backup & Restore', link: '/features/snapshot-backup' },
         { text: 'Environment Check', link: '/features/environment-check' },
+        { text: 'DirtyFrag Jailbreak', link: '/features/dirtyfrag-jailbreak' },
       ]
     }
   ]

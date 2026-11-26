@@ -224,16 +224,20 @@ private fun StatusCard(
             }
         } else ""
 
-        val statusTrailing: (@Composable () -> Unit)? = if (ksuActive && workingMode.isNotEmpty()) {
-            {
-                StatusTag(
-                    label = workingMode,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    backgroundColor = MaterialTheme.colorScheme.primary
-                )
-            }
-        } else if (notInstalled && state.isSELinuxPermissive) {
-            {
+        // The jailbreak entry is always present (spec §7.1): it no longer depends on install state
+        // or SELinux mode. The working-mode tag, when present, sits beside it.
+        val statusTrailing: (@Composable () -> Unit) = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (ksuActive && workingMode.isNotEmpty()) {
+                    StatusTag(
+                        label = workingMode,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        backgroundColor = MaterialTheme.colorScheme.primary
+                    )
+                }
                 Button(
                     onClick = actions.onJailbreakClick,
                     colors = ButtonDefaults.buttonColors(
@@ -244,7 +248,7 @@ private fun StatusCard(
                     Text(stringResource(R.string.home_jailbreak))
                 }
             }
-        } else null
+        }
 
         Surface(
             modifier = Modifier.fillMaxWidth(),
