@@ -24,6 +24,7 @@ pub const BUSY: i32 = 2201;
 pub const ENGINE_MISSING: i32 = 2202;
 pub const ENGINE_LAUNCH_FAILED: i32 = 2203;
 pub const STAGE_KSUD_FAILED: i32 = 2204;
+#[allow(dead_code)]
 pub const EXPLOIT_FAILED: i32 = 2300;
 pub const TIMEOUT: i32 = 2301;
 pub const BOOTSTRAP_FAILED: i32 = 2302;
@@ -74,6 +75,7 @@ impl DError {
         }
     }
 
+    #[allow(dead_code)]
     pub fn with_retryable(code: i32, message: impl Into<String>, retryable: bool) -> Self {
         Self {
             code,

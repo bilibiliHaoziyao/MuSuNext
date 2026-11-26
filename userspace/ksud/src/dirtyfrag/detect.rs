@@ -141,7 +141,7 @@ pub fn parse_sha256sums(raw: &str) -> Vec<(String, String)> {
 
 /// Verdict order is significant (§5.3): exposed beats everything; then an
 /// unsupported device; then ready; otherwise unknown.
-pub fn verdict(exposed: bool, supported: bool, verified: bool) -> &'static str {
+pub const fn verdict(exposed: bool, supported: bool, verified: bool) -> &'static str {
     if exposed {
         V_ALREADY_ROOTED
     } else if !supported {

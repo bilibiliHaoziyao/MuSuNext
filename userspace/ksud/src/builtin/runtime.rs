@@ -167,7 +167,7 @@ pub fn load_sepolies(state: &State) -> BResult<()> {
     Ok(())
 }
 
-fn kernel_umount_id() -> u32 {
+const fn kernel_umount_id() -> u32 {
     FeatureId::KernelUmount as u32
 }
 

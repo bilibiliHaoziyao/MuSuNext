@@ -38,9 +38,11 @@ pub const SEV_BLOCKER: &str = "blocker";
 pub const SEV_WARNING: &str = "warning";
 
 // run states (§5.4)
+#[allow(dead_code)]
 pub const S_RUNNING: &str = "running";
 pub const S_SUCCEEDED: &str = "succeeded";
 pub const S_FAILED: &str = "failed";
+#[allow(dead_code)]
 pub const S_TIMEOUT: &str = "timeout";
 pub const S_IDLE: &str = "idle";
 
@@ -62,6 +64,7 @@ pub struct MatchView {
 }
 
 impl MatchView {
+    #[allow(dead_code)]
     pub fn none() -> Self {
         Self::default()
     }
@@ -109,7 +112,7 @@ pub struct StageView {
 }
 
 impl StageView {
-    pub fn new(name: &'static str, ok: bool) -> Self {
+    pub const fn new(name: &'static str, ok: bool) -> Self {
         Self { name, ok }
     }
 }
@@ -178,14 +181,13 @@ impl Default for StatusView {
 }
 
 fn envelope(ok: bool, error: Option<&DError>) -> Value {
-    let error_value = match error {
-        Some(err) => json!({
+    let error_value = error.map_or(Value::Null, |err| {
+        json!({
             "code": err.code,
             "message": err.message,
             "retryable": err.retryable,
-        }),
-        None => Value::Null,
-    };
+        })
+    });
     json!({
         "ok": ok,
         "schema": SCHEMA,
@@ -193,7 +195,7 @@ fn envelope(ok: bool, error: Option<&DError>) -> Value {
     })
 }
 
-fn outcome(code: i32, body: Value) -> JsonOutcome {
+const fn outcome(code: i32, body: Value) -> JsonOutcome {
     let code = exit_code(code);
     let json = body;
     // JsonOutcome.fail sets code 1; we need the parallel exit code, so build
@@ -287,16 +289,15 @@ pub fn status_json(v: &StatusView, error: Option<&DError>) -> JsonOutcome {
     body["state"] = json!(v.state);
     body["boot_id"] = json!(v.boot_id);
     body["active_boot"] = json!(v.active_boot);
-    body["last_attempt"] = match &v.last_attempt {
-        Some(a) => json!({
+    body["last_attempt"] = v.last_attempt.as_ref().map_or(Value::Null, |a| {
+        json!({
             "request_id": a.request_id,
             "result": a.result,
             "code": a.code,
             "started_ms": a.started_ms,
             "finished_ms": a.finished_ms,
-        }),
-        None => Value::Null,
-    };
+        })
+    });
     body["next"] = json!(v.next);
     body["risk_note"] = json!(v.risk_note);
     let code = error.map_or(0, |e| e.code);

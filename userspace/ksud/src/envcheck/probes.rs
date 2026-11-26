@@ -69,10 +69,15 @@ pub(super) fn probe_module_mounts() -> (Option<bool>, String) {
     let hit = text
         .lines()
         .find(|line| line.contains("/data/adb/modules") || line.contains("/data/adb/musu"));
-    match hit {
-        Some(line) => (Some(true), format!("mounts 暴露: {}", line.chars().take(180).collect::<String>())),
-        None => (Some(false), String::from("mounts 中无模块路径")),
-    }
+    hit.map_or_else(
+        || (Some(false), String::from("mounts 中无模块路径")),
+        |line| {
+            (
+                Some(true),
+                format!("mounts 暴露: {}", line.chars().take(180).collect::<String>()),
+            )
+        },
+    )
 }
 
 pub(super) fn visible_process(names: &[&str]) -> (Option<bool>, String) {

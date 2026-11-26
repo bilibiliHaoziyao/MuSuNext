@@ -12,11 +12,11 @@ pub struct JsonOutcome {
 }
 
 impl JsonOutcome {
-    pub fn ok(json: Value) -> Self {
+    pub const fn ok(json: Value) -> Self {
         Self { json, code: 0 }
     }
 
-    pub fn fail(json: Value) -> Self {
+    pub const fn fail(json: Value) -> Self {
         Self { json, code: 1 }
     }
 }

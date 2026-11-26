@@ -538,7 +538,7 @@ mod platform {
         if zygisk.enabled && payload::version_stamp(ComponentId::Zygisk) != defs::VERSION_CODE {
             if let Err(err) = payload::ensure_payload(ComponentId::Zygisk) {
                 warn!("retry payload extraction failed: {err}");
-                zygisk.last_error = Some(ErrorInfo::new(err.code, err.message.clone()));
+                zygisk.last_error = Some(ErrorInfo::new(err.code, err.message));
             }
             state.set_component(ComponentId::Zygisk.as_str(), &zygisk);
         }

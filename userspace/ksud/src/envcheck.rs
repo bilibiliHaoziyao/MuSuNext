@@ -230,17 +230,21 @@ pub fn run() -> JsonOutcome {
         }
     }
 
-    let mut failure = drop_error;
     // SAFETY: status was filled by waitpid above.
-    if !libc::WIFEXITED(status) || libc::WEXITSTATUS(status) != 0 {
-        failure = Some(format!("探针子进程异常退出 (status {status})"));
-    }
-    if done.is_none() {
-        failure = Some(String::from("探针子进程未返回完成标记"));
-    }
-    if let Some(read_error) = read_error {
-        failure = Some(format!("读取探针结果失败: {read_error}"));
-    }
+    let status_error = if !libc::WIFEXITED(status) || libc::WEXITSTATUS(status) != 0 {
+        Some(format!("探针子进程异常退出 (status {status})"))
+    } else {
+        drop_error
+    };
+    let failure = read_error
+        .map(|read_error| format!("读取探针结果失败: {read_error}"))
+        .or_else(|| {
+            if done.is_none() {
+                Some(String::from("探针子进程未返回完成标记"))
+            } else {
+                status_error
+            }
+        });
     if let Some(message) = failure {
         return JsonOutcome::fail(json!({
             "ok": false,

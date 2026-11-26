@@ -12,7 +12,7 @@ data class KernelVersion(val major: Int, val patchLevel: Int, val subLevel: Int)
         return "$major.$patchLevel.$subLevel"
     }
 
-    fun isSupportedKernel(): Boolean {
+    fun isGKI(): Boolean {
 
         // kernel 6.x
         if (major > 5) {

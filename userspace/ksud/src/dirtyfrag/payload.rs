@@ -41,16 +41,18 @@ fn get(rel: &str) -> Option<Vec<u8>> {
 
 #[derive(Debug, Clone)]
 pub struct VerifiedPayload {
+    #[allow(dead_code)]
     pub version: String,
     pub ko_sha256: HashMap<String, String>,
+    #[allow(dead_code)]
     pub apk_sha256: String,
 }
 
 /// Whether this build embeds a DirtyFrag payload at all.
+#[allow(dead_code)]
 pub fn available() -> bool {
     get("VERSION")
-        .map(|b| String::from_utf8_lossy(&b).trim() == EXPECTED_VERSION)
-        .unwrap_or(false)
+        .is_some_and(|b| String::from_utf8_lossy(&b).trim() == EXPECTED_VERSION)
 }
 
 /// Fail-closed authenticity check (§4.4): version → compliance → sha256 →
@@ -101,7 +103,10 @@ pub fn verify() -> DResult<VerifiedPayload> {
         let Some(rel) = path.strip_prefix(&format!("{ARCH}/ko/")) else {
             continue;
         };
-        if !rel.ends_with(".ko") {
+        if !std::path::Path::new(rel)
+            .extension()
+            .is_some_and(|ext| ext.eq_ignore_ascii_case("ko"))
+        {
             continue;
         }
         let bytes = get(&format!("ko/{rel}"))
@@ -152,14 +157,13 @@ fn find_libksud() -> DResult<PathBuf> {
         && output.status.success()
     {
         let apk = String::from_utf8_lossy(&output.stdout).trim().to_string();
-        if let Some(base) = apk.strip_prefix("package:") {
-            if let Some(slash) = base.rfind('/') {
+        if let Some(base) = apk.strip_prefix("package:")
+            && let Some(slash) = base.rfind('/') {
                 candidates.push(
                     Path::new(&base[..slash])
                         .join("lib/arm64/libksud.so"),
                 );
             }
-        }
     }
     candidates
         .into_iter()

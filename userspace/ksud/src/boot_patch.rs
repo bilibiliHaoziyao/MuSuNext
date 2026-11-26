@@ -37,6 +37,36 @@ mod android {
 
     use crate::utils;
 
+    pub(super) fn ensure_gki_kernel() -> Result<()> {
+        let version = get_kernel_version()?;
+        let is_gki = version.0 == 5 && version.1 >= 10 || version.2 > 5;
+        ensure!(is_gki, "only support GKI kernel");
+        Ok(())
+    }
+
+    pub fn get_kernel_version() -> Result<(i32, i32, i32)> {
+        let uname = rustix::system::uname();
+        let version = uname.release().to_string_lossy();
+        let re = Regex::new(r"(\d+)\.(\d+)\.(\d+)")?;
+        if let Some(captures) = re.captures(&version) {
+            let major = captures
+                .get(1)
+                .and_then(|m| m.as_str().parse::<i32>().ok())
+                .ok_or_else(|| anyhow!("Major version parse error"))?;
+            let minor = captures
+                .get(2)
+                .and_then(|m| m.as_str().parse::<i32>().ok())
+                .ok_or_else(|| anyhow!("Minor version parse error"))?;
+            let patch = captures
+                .get(3)
+                .and_then(|m| m.as_str().parse::<i32>().ok())
+                .ok_or_else(|| anyhow!("Patch version parse error"))?;
+            Ok((major, minor, patch))
+        } else {
+            Err(anyhow!("Invalid kernel version string"))
+        }
+    }
+
     fn parse_kmi(version: &str) -> Result<String> {
         let re = Regex::new(r"(.* )?(\d+\.\d+)(\S+)?(android\d+)(.*)")?;
         let cap = re
@@ -189,7 +219,11 @@ mod android {
         Ok(())
     }
 
-    pub fn choose_boot_partition(kmi: &str, partition: &Option<String>) -> String {
+    pub fn choose_boot_partition(
+        kmi: &str,
+        is_replace_kernel: bool,
+        partition: &Option<String>,
+    ) -> String {
         let slot_suffix = get_slot_suffix(false);
         let skip_init_boot = kmi.starts_with("android12-");
         let init_boot_exist =
@@ -204,7 +238,7 @@ mod android {
         }
 
         // if init_boot exists and not skipping it, use it
-        if init_boot_exist && !skip_init_boot {
+        if !is_replace_kernel && init_boot_exist && !skip_init_boot {
             return "init_boot".to_string();
         }
 
@@ -236,10 +270,11 @@ mod android {
     pub(super) fn auto_boot_partition_path(
         kmi: &str,
         ota: bool,
+        is_replace_kernel: bool,
         partition: &Option<String>,
     ) -> PathBuf {
         let slot_suffix = get_slot_suffix(ota);
-        let name = choose_boot_partition(kmi, partition);
+        let name = choose_boot_partition(kmi, is_replace_kernel, partition);
         PathBuf::from(format!("/dev/block/by-name/{name}{slot_suffix}"))
     }
 
@@ -330,6 +365,11 @@ pub fn parse_kmi(buffer: &[u8]) -> Result<String> {
         })
 }
 
+fn parse_kmi_from_kernel(kernel: &Path) -> Result<String> {
+    let data = std::fs::read(kernel).context("Failed to read kernel file")?;
+    parse_kmi(&data)
+}
+
 fn parse_kmi_from_boot(image: &Path) -> Result<String> {
     let data = map_file(image)?;
     let boot = BootImage::parse(&data)?;
@@ -382,6 +422,10 @@ pub struct BootPatchArgs {
     /// boot image path, if not specified, will try to find the boot image automatically
     #[arg(short, long)]
     pub boot: Option<PathBuf>,
+
+    /// kernel image path to replace
+    #[arg(short, long)]
+    pub kernel: Option<PathBuf>,
 
     /// LKM module path to replace, if not specified, will use the builtin one
     #[arg(short, long)]
@@ -585,6 +629,7 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
         let BootPatchArgs {
             boot: image,
             init,
+            kernel,
             module: kmod,
             out,
             kmi,
@@ -613,8 +658,26 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
         let patch_file = image.is_some();
 
         #[cfg(target_os = "android")]
+        if !patch_file {
+            ensure_gki_kernel()?;
+        }
+
+        let is_replace_kernel = kernel.is_some();
+
+        if ramdisk && is_replace_kernel {
+            bail!("incompatiable option: --ramdisk and --kernel")
+        }
+
+        #[cfg(target_os = "android")]
         if ramdisk && flash {
             bail!("incompatiable option: --ramdisk and --flash")
+        }
+
+        if is_replace_kernel {
+            ensure!(
+                init.is_none() && kmod.is_none(),
+                "init and module must not be specified."
+            );
         }
 
         // None means --no-install: preserve the marker for the existing LKM.
@@ -650,6 +713,12 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
                         image_path.display()
                     );
                     parse_kmi_from_boot(image_path)?
+                } else if let Some(kernel_path) = &kernel {
+                    println!(
+                        "- Trying to auto detect KMI version for {}",
+                        kernel_path.display()
+                    );
+                    parse_kmi_from_kernel(kernel_path)?
                 } else {
                     String::new()
                 })
@@ -663,7 +732,7 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
         } else {
             #[cfg(target_os = "android")]
             {
-                auto_boot_partition_path(&kmi, ota, &partition)
+                auto_boot_partition_path(&kmi, ota, is_replace_kernel, &partition)
             }
             #[cfg(not(target_os = "android"))]
             {
@@ -693,6 +762,12 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
         if let Some(cmdline_value) = &cmdline {
             patcher.override_cmdline(cmdline_value.as_bytes());
             println!("- Set cmdline to: {cmdline_value}");
+        }
+
+        if let Some(kernel_path) = kernel {
+            println!("- Adding Kernel");
+            let kernel_data = map_file(&kernel_path)?;
+            patcher.replace_kernel(Box::new(Cursor::new(kernel_data)), false);
         }
 
         let musu_ko: Box<dyn AsRef<[u8]>> = if no_install {
@@ -977,7 +1052,7 @@ pub fn restore(args: BootRestoreArgs) -> Result<()> {
     } else {
         #[cfg(target_os = "android")]
         {
-            auto_boot_partition_path(&kmi, false, &None)
+            auto_boot_partition_path(&kmi, false, false, &None)
         }
         #[cfg(not(target_os = "android"))]
         {

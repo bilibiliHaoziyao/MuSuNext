@@ -19,7 +19,7 @@
     <string name="home_lkm_update_available">内嵌 LKM 有可用更新，点击更新</string>
     <string name="home_lkm_custom">自定义</string>
     <string name="home_unsupported">不支持</string>
-    <string name="home_unsupported_reason">你的设备不受支持，换个 Root 方案试试吧</string>
+    <string name="home_unsupported_reason">MuSu Next 现在只支持 GKI 内核，但是你可以为 GKI 设备补丁镜像</string>
     <string name="home_device_model">设备型号</string>
     <string name="home_kernel">内核版本</string>
     <string name="home_manager_version">管理器版本</string>
@@ -106,6 +106,7 @@
     <string name="home_learn_kernelsu">了解 MuSu Next</string>
     <string name="home_learn_kernelsu_url">https://su.novasync.cn/zh_CN/guide/what-is-kernelsu.html</string>
     <string name="home_click_to_learn_kernelsu">了解如何安装 MuSu Next 以及如何开发模块</string>
+    <string name="home_gki_warning">自 v3.0.0 起 GKI 工作模式将仅用于测试环境，我们不建议用于日常使用，也不再提供镜像文件</string>
     <string name="about_source_code"><![CDATA[在 %1$s 查看源码<br/>关注我们的 %2$s 主页<br/>加入我们的 <b><a href="https://pd.qq.com/s/Na9xis6inx?b=9">QQ</a></b> 频道]]></string>
     <string name="profile_default">默认</string>
     <string name="profile_template">模板</string>
@@ -123,6 +124,7 @@
     <string name="failed_to_update_app_profile">为 %s 更新 App Profile 失败！</string>
     <string name="require_manager_version">需要更新管理器</string>
     <string name="require_kernel_version">需要更新内核，点击此处安装</string>
+    <string name="require_kernel_version_gki">需要更新内核</string>
     <string name="settings_umount_modules_default">默认卸载模块</string>
     <string name="settings_umount_modules_default_summary">App Profile 中「卸载模块」的全局默认值，如果启用，会将未自定义 Profile 的应用移除所有模块针对系统的修改</string>
     <string name="profile_umount_modules_summary">启用该选项后将允许 MuSu Next 为本应用还原被模块修改过的文件</string>
@@ -281,6 +283,7 @@
     <string name="module_shortcut_permission_tip_default">若创建快捷方式失败，请在系统设置中为本应用启用桌面快捷方式权限</string>
     <string name="no_such_module">模块 %s 不存在</string>
     <string name="module_unavailable">模块 %s 被禁用，待更新或待卸载</string>
+    <string name="select_file_tip_nogki">请选择要修补的 GKI 设备镜像文件</string>
     <string name="current_kmi">本设备 KMI 版本：%s</string>
     <string name="current_device_kmi">当前设备的 KMI</string>
     <string name="module_action_success">模块 action 执行成功。</string>

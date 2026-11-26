@@ -2,6 +2,20 @@
 
 All notable changes to MuSu Next will be documented in this file.
 
+## [0.0.9] - 2026-11-26
+
+### Added
+- 恢复 GKI image-mode 支持（从 KernelSU 上游 v3.3.1 经本仓库 082c2b8 完整恢复，非重写）
+  - ksud：加回 `--kernel`/replace-kernel 分支、`ensure_gki_kernel()` 门禁、`parse_kmi_from_kernel()`、`choose_boot_partition(kmi, is_replace_kernel, partition)` 三参签名、`replace_kernel` 调用链
+  - `kernel/setup.sh`：整文件恢复 GKI 源码树集成脚本
+  - manager：恢复 `isGKI()` 判定、GKI 模式警告卡、安装页 GKI 分支及五语言（简中/繁中/繁中HK/英/日）字符串
+  - 官网：四语言恢复 GKI 安装章节与 non-GKI 集成指南
+  - GKI 分支模块名统一为 `musu.ko`，与 0.0.8 现有 LKM 分支及 manager 检测保持一致
+- 只恢复 GKI：被裁剪的其他十余种语言保持删除态，四语言范围不变
+
+### Note
+- 该 GKI 代码源于 MuSuNext 初始 fork（096152e）时的上游 v3.3.1 品牌化产物，与上游逐行仅差品牌文案
+
 ## [0.0.8] - 2026-11-25
 
 ### Added

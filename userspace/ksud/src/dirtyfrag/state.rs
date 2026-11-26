@@ -43,16 +43,15 @@ impl DState {
             "boot_id": self.boot_id,
             "active_boot": self.active_boot,
             "state": self.state,
-            "last_attempt": match &self.last_attempt {
-                Some(a) => json!({
+            "last_attempt": self.last_attempt.as_ref().map_or(Value::Null, |a| {
+                json!({
                     "request_id": a.request_id,
                     "result": a.result,
                     "code": a.code,
                     "started_ms": a.started_ms,
                     "finished_ms": a.finished_ms,
-                }),
-                None => Value::Null,
-            },
+                })
+            }),
         })
     }
 }
@@ -138,13 +137,13 @@ pub enum LoadOutcome {
 /// this and performs the backup/rewrite that the variant calls for; tests call
 /// it directly without touching the filesystem.
 pub fn interpret(bytes: Option<&[u8]>, boot_id: &str) -> LoadOutcome {
-    match bytes {
-        None => LoadOutcome::Fresh(default_state(boot_id)),
-        Some(raw) => match parse_bytes(raw, boot_id) {
+    bytes.map_or_else(
+        || LoadOutcome::Fresh(default_state(boot_id)),
+        |raw| match parse_bytes(raw, boot_id) {
             Ok(state) => LoadOutcome::Loaded(state),
             Err(()) => LoadOutcome::Corrupt(reset_from_corrupt(boot_id)),
         },
-    }
+    )
 }
 
 /// `exposed` is only true in the boot where root was actually confirmed.
@@ -163,7 +162,7 @@ pub enum Dedup {
 
 /// Decide whether a `run` may proceed. Any attempt inside the 70s window, or a
 /// held lock, returns Busy — the engine must never execute twice concurrently.
-pub fn dedup_decision(
+pub const fn dedup_decision(
     now_ms: u64,
     last: Option<&AttemptView>,
     lock_held: bool,

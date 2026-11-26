@@ -54,7 +54,7 @@ pub fn available(id: ComponentId) -> bool {
     BuiltinPayload::get(&format!("{}/VERSION", id.dir_name())).is_some()
 }
 
-fn key_files(id: ComponentId) -> &'static [&'static str] {
+const fn key_files(id: ComponentId) -> &'static [&'static str] {
     match id {
         ComponentId::Zygisk => &[
             "bin/muz-zygiskd64",

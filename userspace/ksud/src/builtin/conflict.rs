@@ -70,7 +70,7 @@ pub struct Detection {
 }
 
 impl Detection {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             conflict: None,
             warnings: Vec::new(),

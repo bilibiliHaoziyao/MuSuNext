@@ -58,17 +58,10 @@ fn verify_exposed() -> bool {
 pub fn cmd_detect(_input: &Value) -> crate::jsoncmd::JsonOutcome {
     let device = detect::probe_device();
     let payload_state = payload::verify();
-    let (verified, payload_sha) = match &payload_state {
-        Ok(info) => {
-            let sha = info
-                .ko_sha256
-                .values()
-                .next()
-                .cloned();
-            (true, sha)
-        }
-        Err(_) => (false, None),
-    };
+    let (verified, payload_sha) = payload_state.as_ref().map_or((false, None), |info| {
+        let sha = info.ko_sha256.values().next().cloned();
+        (true, sha)
+    });
     let mut view: DetectView = detect::classify(device, verified, false);
     view.mat.payload_sha256 = payload_sha;
     view.exposed = state::is_exposed(&state::load());
@@ -82,19 +75,13 @@ pub fn cmd_stage(_input: &Value) -> crate::jsoncmd::JsonOutcome {
         return report::stage_json("", "", Some(&err));
     }
     let device = detect::probe_device();
-    let kmi = match parse_kmi(&device.kernel_release) {
-        Some(kmi) => kmi,
-        None => {
-            let err = fail(KMI_UNKNOWN, "uname 无 androidNN token");
-            return report::stage_json("", "", Some(&err));
-        }
+    let Some(kmi) = parse_kmi(&device.kernel_release) else {
+        let err = fail(KMI_UNKNOWN, "uname 无 androidNN token");
+        return report::stage_json("", "", Some(&err));
     };
-    let ko = match detect::match_payload(&kmi) {
-        Some(ko) => ko,
-        None => {
-            let err = fail(KMI_NO_PAYLOAD, format!("内核 {kmi} 无对应 ko"));
-            return report::stage_json("", "", Some(&err));
-        }
+    let Some(ko) = detect::match_payload(&kmi) else {
+        let err = fail(KMI_NO_PAYLOAD, format!("内核 {kmi} 无对应 ko"));
+        return report::stage_json("", "", Some(&err));
     };
     match payload::stage(&ko) {
         Ok((_, _, lib_sha)) => report::stage_json(&ko, &lib_sha, None),
@@ -170,11 +157,13 @@ fn run_failure(
         finished_ms: state::now_ms(),
     });
     let _ = state::save(&state);
-    let mut view = RunView::default();
-    view.request_id = request_id.to_string();
-    view.state = state.state;
-    view.elapsed_ms = elapsed_ms;
-    view.stages = stages;
+    let view = RunView {
+        request_id: request_id.to_string(),
+        state: state.state,
+        elapsed_ms,
+        stages,
+        ..Default::default()
+    };
     report::run_json(&view, Some(&fail(code, message)))
 }
 
@@ -204,18 +193,18 @@ fn orchestrate(request_id: &str) -> crate::jsoncmd::JsonOutcome {
         return run_failure(request_id, code, msg, stages, elapsed());
     }
     stages[0].ok = true;
-    let kmi = device.kmi.clone();
-    let ko = view.mat.payload.clone().unwrap_or_default();
+    let kmi = device.kmi;
+    let ko = view.mat.payload.unwrap_or_default();
 
     // 2. stage_ksud
     if let Err(err) = check_manager() {
         return run_failure(request_id, err.code, &err.message, stages, elapsed());
     }
-    let staged = match payload::stage(&ko) {
+    let stage_info = match payload::stage(&ko) {
         Ok(info) => info,
         Err(err) => return run_failure(request_id, err.code, &err.message, stages, elapsed()),
     };
-    let lib_sha = staged.2;
+    let lib_sha = stage_info.2;
     stages[1].ok = true;
 
     // 3. engine_exec (separate process / Intent boundary)
@@ -296,9 +285,11 @@ pub fn cmd_run(input: &Value, request_id: &str) -> crate::jsoncmd::JsonOutcome {
         ),
         Dedup::Busy => {
             let err = fail(super::error::BUSY, "70s 窗口内重复调用，引擎不重复执行");
-            let mut view = RunView::default();
-            view.state = "running";
-            view.request_id = request_id.to_string();
+            let view = RunView {
+                state: "running",
+                request_id: request_id.to_string(),
+                ..Default::default()
+            };
             report::run_json(&view, Some(&err))
         }
         Dedup::Proceed => orchestrate(request_id),

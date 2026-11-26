@@ -143,10 +143,7 @@ impl ComponentState {
         );
         map.insert(
             String::from("last_error"),
-            match &self.last_error {
-                Some(err) => err.to_json(),
-                None => Value::Null,
-            },
+            self.last_error.as_ref().map_or(Value::Null, ErrorInfo::to_json),
         );
         let mut over = Map::new();
         over.insert(

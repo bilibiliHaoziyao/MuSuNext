@@ -122,10 +122,9 @@ fn blank_state() -> Value {
 }
 
 fn load_state() -> Value {
-    match fs::read(BUILTIN_STATE_PATH) {
-        Ok(bytes) => serde_json::from_slice::<Value>(&bytes).unwrap_or_else(|_| blank_state()),
-        Err(_) => blank_state(),
-    }
+    fs::read(BUILTIN_STATE_PATH).map_or_else(|_| blank_state(), |bytes| {
+        serde_json::from_slice::<Value>(&bytes).unwrap_or_else(|_| blank_state())
+    })
 }
 
 pub fn read_builtins() -> Vec<Value> {
