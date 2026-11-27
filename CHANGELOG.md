@@ -2,6 +2,21 @@
 
 All notable changes to MuSu Next will be documented in this file.
 
+## [0.0.10] - 2026-11-27
+
+### Added
+- 管理器应用内自更新：更新提示从跳转浏览器改为应用内下载、SHA256 校验并拉起系统安装器
+  - 复用现有模块更新的校验下载链路（URL 白名单 + size + SHA256），校验值直接取自 GitHub Release asset 的 `digest` 字段，无需改动 CI
+  - 新增 `DownloadCompletionAction.INSTALL_APK`，完成后经 FileProvider 转 content Uri 拉起安装器
+  - 校验失败或网络异常时自动回退浏览器手动下载
+  - 补齐 `REQUEST_INSTALL_PACKAGES` 权限与 `files-path` FileProvider 配置
+
+### Fixed
+- 修复版本检测失效：原正则 `v(.+?)_(\d+)-` 匹配上游 APK 命名，与本仓库 `MuSu_Next_0.0.9_9-release.apk` 不符，`hasUpdate` 恒为 false、更新提示从不出现；改为兼容两种命名并提取 sha256/size
+
+### Tests
+- 新增 `ManagerAssetParserTest`（4 项），覆盖 MuSuNext/上游命名、digest 有效/无效
+
 ## [0.0.9] - 2026-11-26
 
 ### Added

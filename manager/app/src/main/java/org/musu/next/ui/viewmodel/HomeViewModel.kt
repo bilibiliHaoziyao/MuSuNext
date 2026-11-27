@@ -20,7 +20,10 @@ import org.musu.next.ksuApp
 import org.musu.next.ui.screen.home.HomeUiState
 import org.musu.next.ui.screen.home.SystemInfo
 import org.musu.next.ui.screen.home.getManagerVersion
+import org.musu.next.data.registry.ExpectedFile
+import org.musu.next.ui.util.DownloadCompletionAction
 import org.musu.next.ui.util.checkNewVersion
+import org.musu.next.ui.util.download
 import org.musu.next.ui.util.getSELinuxStatusRaw
 import org.musu.next.ui.util.module.LatestVersionInfo
 import org.musu.next.ui.util.resolveDeviceName
@@ -41,6 +44,34 @@ class HomeViewModel(
                 val latestVersionInfo = withContext(Dispatchers.IO) { checkNewVersion() }
                 _uiState.update { it.copy(latestVersionInfo = latestVersionInfo) }
             }
+        }
+    }
+
+    /**
+     * Downloads the latest manager APK in-app and hands it to the system installer. Downloads
+     * through the verified path (URL allowlist + SHA-256 from the GitHub release digest) whenever
+     * the release provides size/hash; otherwise falls back to a plain download. Falls back to
+     * opening the URL in a browser if the download cannot be started.
+     */
+    fun updateManager(info: LatestVersionInfo, openFallback: (String) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (!info.isVerifiable) {
+                withContext(Dispatchers.Main) { openFallback(info.downloadUrl) }
+                return@launch
+            }
+            val fileName = info.downloadUrl.substringAfterLast('/')
+                .ifEmpty { "MuSu_Next_${info.versionName}_${info.versionCode}-release.apk" }
+            download(
+                url = info.downloadUrl,
+                fileName = fileName,
+                expected = ExpectedFile(size = info.size, sha256 = info.sha256),
+                completionAction = DownloadCompletionAction.INSTALL_APK,
+                onFailed = {
+                    // download() invokes onFailed on the main thread already.
+                    // Verification/network failure: let the user download manually.
+                    openFallback(info.downloadUrl)
+                },
+            )
         }
     }
 

@@ -158,13 +158,13 @@ private fun UpdateCard(
         enter = fadeIn() + expandVertically(),
         exit = shrinkVertically() + fadeOut()
     ) {
-        val updateDialog = rememberConfirmDialog(onConfirm = { actions.onOpenUrl(newVersion.downloadUrl) })
+        val updateDialog = rememberConfirmDialog(onConfirm = { actions.onUpdateClick() })
         WarningCard(
             message = stringResource(id = R.string.new_version_available, newVersion.versionCode),
             level = WarningLevel.Notice
         ) {
             if (newVersion.changelog.isEmpty()) {
-                actions.onOpenUrl(newVersion.downloadUrl)
+                actions.onUpdateClick()
             } else {
                 updateDialog.showConfirm(
                     title = title,

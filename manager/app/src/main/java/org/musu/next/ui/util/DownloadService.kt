@@ -41,6 +41,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 enum class DownloadCompletionAction {
     INSTALL_MODULE,
+    INSTALL_APK,
     OPEN_FILE,
 }
 
@@ -48,6 +49,18 @@ internal fun resolveDownloadMimeType(fileName: String, providedMimeType: String?
     providedMimeType?.trim()?.takeIf { it.isNotEmpty() }
         ?: URLConnection.guessContentTypeFromName(fileName)
         ?: "application/octet-stream"
+
+/** Convert a verified app-private file:// Uri into a shareable FileProvider content Uri. */
+internal fun Uri.toApkContentUri(context: android.content.Context): Uri =
+    if (scheme == "file" && path != null) {
+        androidx.core.content.FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            java.io.File(path!!),
+        )
+    } else {
+        this
+    }
 
 class DownloadService : Service() {
 
@@ -384,6 +397,17 @@ class DownloadService : Service() {
                     addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 }, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             ).also { builder.addAction(android.R.drawable.ic_menu_save, getString(R.string.download_install), it) }
+            DownloadCompletionAction.INSTALL_APK -> {
+                // Verified downloads live in app-private storage as a file:// Uri. The system
+                // installer cannot read that directly, so expose it through our FileProvider.
+                val contentUri = uri.toApkContentUri(this)
+                PendingIntent.getActivity(
+                    this, id, Intent(Intent.ACTION_VIEW).apply {
+                        setDataAndType(contentUri, "application/vnd.android.package-archive")
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                ).also { builder.addAction(android.R.drawable.ic_menu_save, getString(R.string.download_install), it) }
+            }
             DownloadCompletionAction.OPEN_FILE -> PendingIntent.getActivity(
                 this, id, Intent.createChooser(Intent(Intent.ACTION_VIEW).apply {
                     setDataAndType(uri, resolveDownloadMimeType(fileName, mimeType))
@@ -398,7 +422,11 @@ class DownloadService : Service() {
             action = ACTION_DISMISS_DOWNLOAD
             putExtra(EXTRA_DOWNLOAD_ID, id)
             putExtra(EXTRA_MODULE_URI, uri.toString())
-            putExtra(EXTRA_DELETE_FILE_ON_DISMISS, completionAction == DownloadCompletionAction.INSTALL_MODULE)
+            putExtra(
+                EXTRA_DELETE_FILE_ON_DISMISS,
+                completionAction == DownloadCompletionAction.INSTALL_MODULE ||
+                    completionAction == DownloadCompletionAction.INSTALL_APK
+            )
         }
         val dismissPendingIntent = PendingIntent.getService(
             this,

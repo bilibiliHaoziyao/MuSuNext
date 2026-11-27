@@ -205,7 +205,7 @@ private fun UpdateCard(
     val newVersion = state.latestVersionInfo
     val title = stringResource(id = R.string.module_changelog)
     val updateText = stringResource(id = R.string.module_update)
-    val updateDialog = rememberConfirmDialog(onConfirm = { actions.onOpenUrl(newVersion.downloadUrl) })
+    val updateDialog = rememberConfirmDialog(onConfirm = { actions.onUpdateClick() })
 
     AnimatedVisibility(
         visible = state.hasUpdate,
@@ -217,7 +217,7 @@ private fun UpdateCard(
             level = WarningLevel.Notice,
             onClick = {
                 if (newVersion.changelog.isEmpty()) {
-                    actions.onOpenUrl(newVersion.downloadUrl)
+                    actions.onUpdateClick()
                 } else {
                     updateDialog.showConfirm(
                         title = title,

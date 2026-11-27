@@ -3,4 +3,6 @@
 <paths>
     <cache-path name="cache" path="."/>
     <external-path name="downloads" path="Download"/>
+    <!-- Verified downloads (including the self-update APK) live in app-private files/. -->
+    <files-path name="files" path="."/>
 </paths>
