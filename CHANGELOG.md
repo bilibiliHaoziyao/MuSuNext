@@ -2,6 +2,19 @@
 
 All notable changes to MuSu Next will be documented in this file.
 
+## [0.0.12] - 2026-11-27
+
+### Fixed
+- 移除首页"内嵌 LKM 有可用更新"提示：该判定用内核版本与管理器版本号比较，二者恒不相等导致提示
+  常驻，且点击只跳到安装页并无真正的 LKM 更新流程，属误导提示，直接移除
+- 修复 MuZygisk 实现方误判：`zygisk/<abi>.so` 是所有 Zygisk 模块（LSPosed 等使用方）的通用约定，
+  此前被当作"另一个 Zygisk 实现"而拦截/灰显。现仅当模块使用已知 provider id（zygisksu、
+  rezygisk）或自带 daemon 二进制（zygiskd*/zygisk-ptrace*）才算实现方并拦截；使用方模块放行
+  - 拦截/灰显/安装检查三处判据统一收敛，A3 运行进程判据保留
+- 修复禁用 Zygisk 模块无效（须卸载才生效）：zygiskd 仅在开机读一次模块列表，运行期写入的
+  `disable` 不会被反映。现于 zygote 重启时按 `disable` 剔除模块并重建索引，软重启/zygote 重建后
+  禁用即生效，无需卸载；完整重启路径本就读取 disable，行为不变
+
 ## [0.0.11] - 2026-11-27
 
 ### Fixed

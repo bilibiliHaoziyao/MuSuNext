@@ -110,7 +110,7 @@ fn zygisk_metrics() -> Value {
         "zygote32_injected": injected(&flags, "32"),
         "zygote32_covered": zygote32_covered(),
         "modules_loaded": loaded,
-        "modules_total": conflict::zygisk_provider_ids().len(),
+        "modules_total": conflict::zygisk_module_ids().len(),
     })
 }
 

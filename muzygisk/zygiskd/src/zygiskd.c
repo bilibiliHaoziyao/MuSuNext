@@ -148,6 +148,32 @@ static void load_modules(struct Context *restrict context) {
   closedir(dir);
 }
 
+/* MuSu: honour disable flags set while the daemon is running. load_modules()
+   only runs at boot, so a module disabled later kept being injected and users
+   saw "disable does nothing, only uninstall works". Drop disabled modules from
+   the live list before each request so ReadModules / GetInfo / companion
+   indexes all stay consistent, and a zygote restart picks up the new set. */
+static void sync_disabled_modules(struct Context *restrict context) {
+  size_t kept = 0;
+  for (size_t i = 0; i < context->len; i++) {
+    char disabled[PATH_MAX];
+    snprintf(disabled, sizeof(disabled), "%s/%s/disable", PATH_MODULES_DIR, context->modules[i].name);
+
+    if (access(disabled, F_OK) == 0) {
+      LOGI("Module \"%s\" disabled, removing from live list", context->modules[i].name);
+      if (context->modules[i].companion >= 0) close(context->modules[i].companion);
+      if (context->modules[i].lib_fd >= 0) close(context->modules[i].lib_fd);
+      free(context->modules[i].name);
+
+      continue;
+    }
+
+    if (kept != i) context->modules[kept] = context->modules[i];
+    kept++;
+  }
+  context->len = kept;
+}
+
 static void free_modules(struct Context *restrict context) {
   for (size_t i = 0; i < context->len; i++) {
     free(context->modules[i].name);
@@ -412,6 +438,11 @@ void zygiskd_start(char *restrict argv[]) {
           close(context.modules[i].companion);
           context.modules[i].companion = -1;
         }
+
+        /* MuSu: re-read disable flags on zygote restart. The injector fetches a
+           fresh module list after a restart, so pruning here keeps indexes in
+           sync and makes disable effective without uninstalling. */
+        sync_disabled_modules(&context);
 
         break;
       }

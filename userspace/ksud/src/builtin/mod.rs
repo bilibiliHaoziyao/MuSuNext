@@ -31,7 +31,7 @@ pub use error::{
 #[cfg(target_os = "android")]
 pub use conflict::{
     Conflict, Detection, Warning, ZYGISK_ABI_FILES, detect, metamodule_conflict, metamodule_ids,
-    zip_provides_zygisk, zygisk_abi_evidence, zygisk_conflict, zygisk_provider_ids,
+    zip_provides_zygisk, zygisk_conflict, zygisk_provider_evidence, zygisk_provider_ids,
 };
 #[cfg(target_os = "android")]
 pub use payload::{
@@ -617,11 +617,11 @@ mod platform {
     ) -> Option<BuiltinError> {
         let state = State::load();
         if state.component(ComponentId::Zygisk.as_str()).enabled
-            && conflict::zygisk_abi_evidence(module_path).is_some()
+            && conflict::zygisk_provider_evidence(module_path).is_some()
         {
             return Some(fail(
                 CONFLICT_ZYGISK_BUILTIN_ON,
-                "MuZygisk 已启用，无法启用其它 Zygisk 模块",
+                "MuZygisk 已启用，无法启用其它 Zygisk 实现",
             ));
         }
         if state.component(ComponentId::Metamodule.as_str()).enabled

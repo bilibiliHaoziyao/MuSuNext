@@ -10,17 +10,33 @@ use regex_lite::Regex;
 use serde_json::{Value, json};
 use std::collections::HashMap;
 use std::fs;
+use std::io::Read;
 use std::path::{Path, PathBuf};
 
 use super::ComponentId;
 use super::runtime::{KNOWN_ZYGISK_PROCESSES, is_our_process};
 
 /// The only contract a Zygisk module has: `zygisk/<abi>.so` inside its own directory.
+/// Every Zygisk *consumer* (LSPosed etc.) carries this too — it does NOT make a
+/// module a Zygisk implementation, so it must never be used alone as a conflict.
 pub const ZYGISK_ABI_FILES: [&str; 4] = [
     "arm64-v8a.so",
     "x86_64.so",
     "armeabi-v7a.so",
     "x86.so",
+];
+
+/// Module ids of Zygisk implementations that own the Zygisk slot.
+const ZYGISK_PROVIDER_IDS: [&str; 2] = ["zygisksu", "rezygisk"];
+
+/// Daemon binaries shipped only by a provider's monitor/ptracer. A consumer
+/// module only carries `zygisk/<abi>.so` and relies on a provider to load it.
+const ZYGISK_PROVIDER_BINS: [&str; 5] = [
+    "zygiskd",
+    "zygiskd32",
+    "zygiskd64",
+    "zygisk-ptrace32",
+    "zygisk-ptrace64",
 ];
 
 #[derive(Debug, Clone)]
@@ -106,22 +122,47 @@ fn prop(path: &Path) -> HashMap<String, String> {
     crate::module::read_module_prop(path).unwrap_or_default()
 }
 
-/// A1: an enabled module ships a Zygisk ABI library.
-pub fn zygisk_abi_evidence(path: &Path) -> Option<String> {
-    for abi in ZYGISK_ABI_FILES {
-        let candidate = path.join("zygisk").join(abi);
-        if candidate.exists() {
-            return Some(candidate.to_string_lossy().to_string());
+/// A module is another Zygisk *implementation* (provider) only when it either
+/// uses a known provider id or ships a daemon binary. Merely carrying
+/// `zygisk/<abi>.so` makes it a consumer (LSPosed, etc.), which MuZygisk is
+/// supposed to host, not to conflict with.
+pub fn zygisk_provider_evidence(path: &Path) -> Option<String> {
+    let id = module_id(path);
+    if ZYGISK_PROVIDER_IDS.contains(&id.as_str()) {
+        return Some(id);
+    }
+    // Provider daemons may live at the module root or under bin/.
+    for sub in ["", "bin"] {
+        for bin in ZYGISK_PROVIDER_BINS {
+            let candidate = path.join(sub).join(bin);
+            if candidate.exists() {
+                return Some(candidate.to_string_lossy().to_string());
+            }
         }
     }
     None
 }
 
-/// Ids of installed modules that provide a Zygisk ABI library (used for grey-out).
+/// Ids of installed modules that are other Zygisk implementations (used for grey-out).
 pub fn zygisk_provider_ids() -> Vec<String> {
     module_dirs()
         .into_iter()
-        .filter(|path| zygisk_abi_evidence(path).is_some())
+        .filter(|path| zygisk_provider_evidence(path).is_some())
+        .map(|path| module_id(&path))
+        .filter(|id| !id.is_empty())
+        .collect()
+}
+
+/// Ids of installed modules carrying a Zygisk ABI library, including consumers.
+/// Used only for the "modules_total" metric, not for conflict / grey-out.
+pub fn zygisk_module_ids() -> Vec<String> {
+    module_dirs()
+        .into_iter()
+        .filter(|path| {
+            ZYGISK_ABI_FILES
+                .iter()
+                .any(|abi| path.join("zygisk").join(abi).exists())
+        })
         .map(|path| module_id(&path))
         .filter(|id| !id.is_empty())
         .collect()
@@ -149,10 +190,11 @@ fn zygisk_name_hint(props: &HashMap<String, String>) -> bool {
 
 /// A1/A2/A3: another Zygisk implementation is present and would fight ours.
 pub fn zygisk_conflict(detection: &mut Detection) -> Option<Conflict> {
-    // A1 first: a module carrying the library is the strongest file-level signal.
+    // A1: only another *implementation* blocks us. A module merely carrying
+    // zygisk/<abi>.so is a consumer that MuZygisk hosts, not a rival provider.
     let mut weak: Option<Conflict> = None;
     for dir in module_dirs() {
-        let Some(evidence) = zygisk_abi_evidence(&dir) else {
+        let Some(evidence) = zygisk_provider_evidence(&dir) else {
             continue;
         };
         let props = prop(&dir);
@@ -166,7 +208,8 @@ pub fn zygisk_conflict(detection: &mut Detection) -> Option<Conflict> {
             version: props.get("version").cloned().unwrap_or_default(),
             evidence,
         };
-        // A2 only sharpens the reason; it never blocks on its own.
+        // A known provider id / daemon binary is already a hard signal; a name
+        // hint on top makes the reason more readable but is not required.
         if zygisk_name_hint(&props) {
             return Some(conflict);
         }
@@ -307,7 +350,9 @@ fn process_ids() -> Vec<String> {
         .collect()
 }
 
-/// Install-time check: "install == enabled" on MuSu, so the zip itself must be inspected.
+/// Install-time check: only a rival Zygisk *implementation* should be blocked.
+/// A consumer module ships `zygisk/<abi>.so` but relies on our provider and is
+/// allowed; a provider ships its own daemon binary (or a known provider id).
 pub fn zip_provides_zygisk(zip: &Path) -> bool {
     let Ok(file) = fs::File::open(zip) else {
         warn!("cannot open {} to inspect zygisk payload", zip.display());
@@ -317,16 +362,31 @@ pub fn zip_provides_zygisk(zip: &Path) -> bool {
         return false;
     };
     for index in 0..archive.len() {
-        let Ok(entry) = archive.by_index(index) else {
+        let Ok(mut entry) = archive.by_index(index) else {
             continue;
         };
         let name = entry.name().trim_start_matches("./").replace('\\', "/");
-        if name.starts_with("zygisk/")
-            && ZYGISK_ABI_FILES
-                .iter()
-                .any(|abi| name.rsplit('/').next() == Some(*abi))
-        {
+        let file_name = name.rsplit('/').next().unwrap_or("");
+        // Known provider module ids are declared in module.prop; a fast signal is
+        // the provider's daemon binary, which no consumer module ships.
+        if ZYGISK_PROVIDER_BINS.contains(&file_name) {
             return true;
+        }
+        if file_name == "module.prop" {
+            let mut raw = Vec::new();
+            if entry.read_to_end(&mut raw).is_ok() {
+                let text = String::from_utf8_lossy(&raw);
+                let is_provider = text.lines().any(|line| {
+                    let mut parts = line.splitn(2, '=');
+                    parts.next().is_some_and(|k| k.trim() == "id")
+                        && parts
+                            .next()
+                            .is_some_and(|v| ZYGISK_PROVIDER_IDS.contains(&v.trim()))
+                });
+                if is_provider {
+                    return true;
+                }
+            }
         }
     }
     false
