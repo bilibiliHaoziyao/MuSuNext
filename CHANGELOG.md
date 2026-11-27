@@ -2,6 +2,20 @@
 
 All notable changes to MuSu Next will be documented in this file.
 
+## [0.0.11] - 2026-11-27
+
+### Fixed
+- 修复"直接安装"从其他 KernelSU 系管理器（如 BakaSU）转换后设备无法开机：boot-patch 此前把
+  已被旧方案 patch 过镜像里的 `/init` 盲目改名为 `/init.real`，覆盖掉原厂 init——刷入后开机
+  会先加载 musu.ko 再 exec 旧方案 ksuinit，后者再次 insmod 旧方案内核模块，两套内核态 root
+  共存导致 panic 变砖。现改为原位转换：保留 `/init.real`（原厂 init）、覆盖 `/init` 为本
+  ksuinit、清除旧方案注入的 ramdisk 根目录内核模块与 ksu_config，确保开机只有 musu.ko 一套
+  内核态
+
+### Removed
+- 移除 Home 一键越狱按钮与 DirtyFrag 界面（此前要求回滚）：删除入口按钮、路由、界面及五语言
+  dirtyfrag 文案；late-load 模式标签、软重启保持、安装警告等越狱模式相关行为不受影响
+
 ## [0.0.10] - 2026-11-27
 
 ### Added

@@ -822,7 +822,36 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
             println!("- Adding MuSu Next LKM");
             let is_musu_patched = cpio.exists("musu.ko");
 
-            if !is_musu_patched && cpio.exists("init") {
+            // Converting from another KernelSU-style installation: its ksuinit occupies /init
+            // and the stock init was already renamed to /init.real. Blindly renaming /init to
+            // /init.real here would OVERWRITE the stock init with the foreign ksuinit — after
+            // flashing, the boot chain loads musu.ko and then execs the foreign ksuinit, which
+            // insmods the foreign kernel module on top of ours. Two kernel-side root
+            // implementations coexisting panics the device (observed: direct install from
+            // another manager on a MTK GKI device failed to boot). Convert in place instead:
+            // keep /init.real (stock init), overwrite /init with our ksuinit, and drop the
+            // foreign kernel modules plus its config so only musu.ko lives in the ramdisk.
+            let has_foreign_ksu = !is_musu_patched && cpio.exists("init.real");
+            if has_foreign_ksu {
+                println!("- Detected existing KernelSU-style install, converting in place");
+                let foreign_modules: Vec<String> = cpio
+                    .entries()
+                    .keys()
+                    .filter(|k| {
+                        !k.contains('/')
+                            && std::path::Path::new(k.as_str())
+                                .extension()
+                                .is_some_and(|ext| ext.eq_ignore_ascii_case("ko"))
+                            && k.as_str() != "musu.ko"
+                    })
+                    .cloned()
+                    .collect();
+                for name in foreign_modules {
+                    println!("- Removing foreign kernel module: {name}");
+                    cpio.rm(&name, false);
+                }
+                cpio.rm("ksu_config", false);
+            } else if !is_musu_patched && cpio.exists("init") {
                 cpio.mv("init", "init.real")?;
             }
 

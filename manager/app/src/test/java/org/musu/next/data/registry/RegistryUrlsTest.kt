@@ -89,7 +89,7 @@ class RegistryUrlsTest {
     fun sameOriginComparesSchemeHostAndPort() {
         val base = RegistryUrls.DEFAULT_BASE_URL
         assertTrue(RegistryUrls.isSameOrigin("https://modules.kernelsu.org/assets/a.png", base))
-        assertTrue(RegistryUrls.isSameOrigin("HTTPS://Modules.MuSu Next.org:443/assets/a.png", base))
+        assertTrue(RegistryUrls.isSameOrigin("HTTPS://Modules.KernelSU.org:443/assets/a.png", base))
         assertFalse(RegistryUrls.isSameOrigin("http://modules.kernelsu.org/assets/a.png", base))
         assertFalse(RegistryUrls.isSameOrigin("https://modules.kernelsu.org:8443/assets/a.png", base))
         assertFalse(RegistryUrls.isSameOrigin("https://evil.modules.kernelsu.org/a.png", base))

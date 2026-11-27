@@ -52,9 +52,6 @@ fun HomePager(
         onUpdateClick = {
             viewModel.updateManager(uiState.latestVersionInfo, openFallback = uriHandler::openUri)
         },
-        // The jailbreak entry now opens the native DirtyFrag page. MagicaService is intentionally
-        // left in place for the boot-time late-load path (spec §7.1 / F6); we no longer start it here.
-        onJailbreakClick = { navigator.push(Route.DirtyFrag) },
     )
 
     when (LocalUiMode.current) {

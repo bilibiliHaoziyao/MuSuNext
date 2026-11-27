@@ -144,28 +144,6 @@ fun execKsudForResult(args: String, newShell: Boolean = false, globalMnt: Boolea
     }
 }
 
-/**
- * Runs a ksud command that reads exactly one JSON object from stdin (the `dirtyfrag` subcommands,
- * spec §5.1) and answers with exactly one JSON object on stdout.
- *
- * Unlike [execKsudForResult], a non-zero process exit is *not* a failure: dirtyfrag uses exit codes
- * 2 (busy / already rooted) and 3 (unsupported) while still returning a well-formed JSON object, and
- * the UI must read `error.code` / `supported` / `reasons` from that JSON (§5.1, §5.2). We only fail
- * when there is no JSON object at all on stdout.
- */
-fun execKsudStdinForResult(args: String, stdinJson: String): Result<String> {
-    // The JSON objects we build contain only double quotes; single-quote wrapping is safe here.
-    val cmd = "printf '%s' ${stdinJson.shellQuote()} | ${getKsuDaemonPath()} $args"
-    val out = ArrayList<String>()
-    withNewRootShell { newJob().add(cmd).to(out, null).exec() }
-    val stdout = out.joinToString("\n")
-    return if (stdout.indexOf('{') >= 0) {
-        Result.success(stdout)
-    } else {
-        Result.failure(IOException("ksud $args returned no JSON on stdout"))
-    }
-}
-
 suspend fun getFeatureStatus(feature: String): String = withContext(Dispatchers.IO) {
     val shell = getRootShell()
     val out = shell.newJob()
